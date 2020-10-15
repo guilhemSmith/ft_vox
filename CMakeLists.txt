@@ -26,6 +26,7 @@ file(GLOB SOURCES
     "${PROJECT_SOURCE_DIR}/src/ft_vox.cpp"
     "${PROJECT_SOURCE_DIR}/src/Camera.cpp"
     "${PROJECT_SOURCE_DIR}/src/Mesh.cpp"
+    "${PROJECT_SOURCE_DIR}/src/Time.cpp"
 )
 
 add_executable(ft_vox ${SOURCES})
