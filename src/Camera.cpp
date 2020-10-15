@@ -8,24 +8,35 @@ const SDL_Scancode		Camera::_RIGHT = SDL_SCANCODE_D;
 const SDL_Scancode		Camera::_SPRINT = SDL_SCANCODE_LSHIFT;
 const SDL_Scancode		Camera::_QUIT = SDL_SCANCODE_ESCAPE;
 
-Camera::Camera(void): _position(), _direction(), _should_quit(false), \
-	_inputs({{_FORWARD, false}, {_BACKWARD, false}, {_LEFT, false}, {_RIGHT, false}, {_SPRINT, false}, {_QUIT, false}}) {}
+Camera::Camera(void): 
+	_position(),
+	_direction(),
+	_should_quit(false),
+	_inputs({
+		{_FORWARD, false},
+		{_BACKWARD, false},
+		{_LEFT, false},
+		{_RIGHT, false},
+		{_SPRINT, false},
+		{_QUIT, false}
+	}),
+	_handle_event({
+		{SDL_WINDOWEVENT, &Camera::_poll_window_event},
+		{SDL_MOUSEMOTION, &Camera::_poll_mousemotion_event},
+		{SDL_KEYDOWN, &Camera::_poll_keydown_event},
+		{SDL_KEYUP, &Camera::_poll_keyup_event},
+	})
+{}
 
 void 			Camera::_poll_inputs(void) {
 	SDL_Event		event;
 
 	while (SDL_PollEvent(&event)) {
-		if (event.type == SDL_EventType::SDL_WINDOWEVENT) {
-			_poll_window_event(event);
+		try {
+			(this->*_handle_event.at(event.type))(event);
 		}
-		if (event.type == SDL_EventType::SDL_MOUSEMOTION) {
-			_poll_mousemotion_event(event);
-		}
-		if (event.type == SDL_EventType::SDL_KEYDOWN) {
-			_poll_keydown_event(event);
-		}
-		if (event.type == SDL_EventType::SDL_KEYUP) {
-			_poll_keyup_event(event);
+		catch (std::out_of_range oor) {
+			// TODO handle unused event
 		}
 	}
 	if (_inputs[Camera::_QUIT]) {

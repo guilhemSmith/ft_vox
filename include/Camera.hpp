@@ -20,6 +20,9 @@ private:
 	void							_poll_keyup_event(SDL_Event& event);
 	void							_poll_key_event(SDL_Event& event, bool is_down);
 
+	typedef void	(Camera::*_polled_event)(SDL_Event&);
+	const std::map<Uint32, _polled_event> _handle_event;
+
 	static const SDL_Scancode		_FORWARD;
 	static const SDL_Scancode		_BACKWARD;
 	static const SDL_Scancode		_LEFT;
