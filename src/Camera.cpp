@@ -12,6 +12,7 @@ Camera::Camera(void):
 	_position(),
 	_direction(),
 	_should_quit(false),
+	_mouse_rel(),
 	_inputs({
 		{_FORWARD, false},
 		{_BACKWARD, false},
@@ -51,6 +52,8 @@ void			Camera::_poll_window_event(SDL_Event& event) {
 }
 
 void			Camera::_poll_mousemotion_event(SDL_Event& event) {
+	_mouse_rel.x += event.motion.xrel;
+	_mouse_rel.y += event.motion.yrel;
 }
 
 void			Camera::_poll_keydown_event(SDL_Event& event) {

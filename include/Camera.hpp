@@ -10,6 +10,7 @@ private:
 	glm::vec3						_position;
 	glm::vec3						_direction;
 	bool							_should_quit;
+	glm::vec2						_mouse_rel;
 	std::map<SDL_Scancode, bool>	_inputs;
 
 	void							_poll_inputs(void);
