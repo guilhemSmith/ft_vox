@@ -20,11 +20,12 @@ private:
 	void							_poll_keyup_event(SDL_Event& event);
 	void							_poll_key_event(SDL_Event& event, bool is_down);
 
-	static SDL_Scancode const		_FORWARD = SDL_SCANCODE_W;
-	static SDL_Scancode const		_BACKWARD = SDL_SCANCODE_S;
-	static SDL_Scancode const		_LEFT = SDL_SCANCODE_A;
-	static SDL_Scancode const		_RIGHT = SDL_SCANCODE_D;
-	static SDL_Scancode const		_SPRINT = SDL_SCANCODE_LSHIFT;
+	static const SDL_Scancode		_FORWARD;
+	static const SDL_Scancode		_BACKWARD;
+	static const SDL_Scancode		_LEFT;
+	static const SDL_Scancode		_RIGHT;
+	static const SDL_Scancode		_SPRINT;
+	static const SDL_Scancode		_QUIT;
 
 public:
 	Camera(void);

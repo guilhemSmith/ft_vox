@@ -1,8 +1,15 @@
 #include <SDL2/SDL.h>
 #include "Camera.hpp"
 
+const SDL_Scancode		Camera::_FORWARD = SDL_SCANCODE_W;
+const SDL_Scancode		Camera::_BACKWARD = SDL_SCANCODE_S;
+const SDL_Scancode		Camera::_LEFT = SDL_SCANCODE_A;
+const SDL_Scancode		Camera::_RIGHT = SDL_SCANCODE_D;
+const SDL_Scancode		Camera::_SPRINT = SDL_SCANCODE_LSHIFT;
+const SDL_Scancode		Camera::_QUIT = SDL_SCANCODE_ESCAPE;
+
 Camera::Camera(void): _position(), _direction(), _should_quit(false), \
-	_inputs({{_FORWARD, false}, {_BACKWARD, false}, {_LEFT, false}, {_RIGHT, false}, {_SPRINT, false}}) {}
+	_inputs({{_FORWARD, false}, {_BACKWARD, false}, {_LEFT, false}, {_RIGHT, false}, {_SPRINT, false}, {_QUIT, false}}) {}
 
 void 			Camera::_poll_inputs(void) {
 	SDL_Event		event;
@@ -20,6 +27,9 @@ void 			Camera::_poll_inputs(void) {
 		if (event.type == SDL_EventType::SDL_KEYUP) {
 			_poll_keyup_event(event);
 		}
+	}
+	if (_inputs[Camera::_QUIT]) {
+		_should_quit = true;
 	}
 }
 
