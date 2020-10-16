@@ -1,6 +1,7 @@
 #include "ft_vox.hpp"
 #include "Camera.hpp"
 #include "Time.hpp"
+#include "Inputs.hpp"
 
 bool	game_init(SDL_Window *&window) {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -16,30 +17,33 @@ bool	game_init(SDL_Window *&window) {
 		SDL_WINDOWPOS_UNDEFINED,
 		640,
 		480,
-		0
+		0 // SDL_WINDOW_FULLSCREEN_DESKTOP
 	);
 	if (window == NULL) {
 		TTF_Quit();
 		SDL_Quit();
 		return false;
 	}
+	SDL_SetRelativeMouseMode(SDL_TRUE);
 	return true;
 }
 
 void	game_loop(SDL_Window *window) {
 	Camera			cam = Camera();
 	Time			time = Time();
+	Inputs			inputs = Inputs();
 	
 	SDL_Surface		*surface = SDL_GetWindowSurface(window);
 
-	while (!cam.should_quit()) {
-		cam.update(time.delta_time());
+	while (!inputs.should_quit()) {
+		inputs.update();
+		cam.update(time.delta_time(), inputs);
 		
 		SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0x00, 0x00, 0x00));
 		SDL_UpdateWindowSurface(window);
 
 		if (time.update()){
-			std::cout << time.fps() << "fps" << std::endl;
+			std::cout << time.fps() << "fps; " << cam << std::endl;
 		}
 	}
 }

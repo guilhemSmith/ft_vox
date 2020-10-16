@@ -4,42 +4,28 @@
 # include <glm/glm.hpp>
 # include <ostream>
 # include <map>
+# include "Inputs.hpp"
 
 class Camera {
 private:
 	glm::vec3						_position;
 	glm::vec3						_direction;
-	bool							_should_quit;
-	glm::vec2						_mouse_rel;
-	std::map<SDL_Scancode, bool>	_inputs;
+	float							_yaw;
+	float							_pitch;
 
-	void							_poll_inputs(void);
+	void							_update_dir(const Inputs& input);
+	void							_update_pos(float delta_time, const Inputs& input);
 
-	void							_poll_window_event(SDL_Event& event);
-	void							_poll_mousemotion_event(SDL_Event& event);
-	void							_poll_keydown_event(SDL_Event& event);
-	void							_poll_keyup_event(SDL_Event& event);
-	void							_poll_key_event(SDL_Event& event, bool is_down);
-
-	typedef void	(Camera::*_polled_event)(SDL_Event&);
-	const std::map<Uint32, _polled_event> _handle_event;
-
-	static const SDL_Scancode		_FORWARD;
-	static const SDL_Scancode		_BACKWARD;
-	static const SDL_Scancode		_LEFT;
-	static const SDL_Scancode		_RIGHT;
-	static const SDL_Scancode		_SPRINT;
-	static const SDL_Scancode		_QUIT;
+	static const glm::vec3			_WORLD_UP;
 
 public:
 	Camera(void);
 
-	void							update(unsigned int delta_time);
+	void							update(float delta_time, const Inputs& input);
 
-	glm::vec3						position(void);
-	glm::vec3						direction(void);
-	bool							should_quit(void);
-
+	glm::vec3						position(void) const;
+	glm::vec3						direction(void) const;
+	glm::mat4						view_mat(void) const;
 };
 
 std::ostream&	operator<<(std::ostream& os, Camera& cam);

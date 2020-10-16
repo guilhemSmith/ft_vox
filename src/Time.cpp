@@ -21,8 +21,9 @@ bool			Time::update(void) {
 	}
 }
 
-unsigned int	Time::delta_time(void) {
-	return _delta_time;
+float			Time::delta_time(void) {
+	float seconds = static_cast<float>(_delta_time) / 1000.0;
+	return seconds;
 }
 
 unsigned int	Time::fps(void) {
