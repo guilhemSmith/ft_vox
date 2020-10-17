@@ -2,62 +2,17 @@
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "Inputs.hpp"
-
-bool	game_init(SDL_Window *&window) {
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		return false;
-	}
-	if (TTF_Init() < 0) {
-		SDL_Quit();
-		return false;
-	};
-	window = SDL_CreateWindow(
-		"ft_vox",
-		SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED,
-		640,
-		480,
-		0 // SDL_WINDOW_FULLSCREEN_DESKTOP
-	);
-	if (window == NULL) {
-		TTF_Quit();
-		SDL_Quit();
-		return false;
-	}
-	SDL_SetRelativeMouseMode(SDL_TRUE);
-	return true;
-}
-
-void	game_loop(SDL_Window *window) {
-	Camera			cam = Camera();
-	Time			time = Time();
-	Inputs			inputs = Inputs();
-	
-	SDL_Surface		*surface = SDL_GetWindowSurface(window);
-
-	while (!inputs.should_quit()) {
-		inputs.update();
-		cam.update(time.delta_time(), inputs);
-		
-		SDL_FillRect(surface, NULL, SDL_MapRGB(surface->format, 0x00, 0x00, 0x00));
-		SDL_UpdateWindowSurface(window);
-
-		if (time.update()){
-			std::cout << time.fps() << "fps; " << cam << std::endl;
-		}
-	}
-}
+#include "Render.hpp"
 
 int main(int argc, char *argv[])
 {
-	SDL_Window *window;
+	Render 		render;
 
-	if (game_init(window)) {
-		game_loop(window);
+	if (render.gameInit()) {
+		render.gameLoop();
 
+		render.gameQuit();
 		std::cout << "Game Over." << std::endl;
-		TTF_Quit();
-		SDL_Quit();
 		return 0;
 	}
 	else {
