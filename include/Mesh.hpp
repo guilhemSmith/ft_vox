@@ -21,10 +21,9 @@ private:
 
 public:
 	Mesh(std::vector<char> voxels);
-	Mesh();
+	Mesh();//TODO remove
 
 	void						draw();
-	void						draw(glm::vec3 chunk_pos, glm::vec3 camera_pos, glm::vec3 camera_dir);
 };
 
 std::ostream&	operator<<(std::ostream& os, Mesh& mesh);

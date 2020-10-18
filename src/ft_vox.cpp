@@ -1,7 +1,4 @@
 #include "ft_vox.hpp"
-#include "Camera.hpp"
-#include "Time.hpp"
-#include "Inputs.hpp"
 #include "Render.hpp"
 
 int main(int argc, char *argv[])

@@ -31,6 +31,8 @@ file(GLOB SOURCES
     "${PROJECT_SOURCE_DIR}/src/Mesh.cpp"
     "${PROJECT_SOURCE_DIR}/src/Time.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Render.cpp"
+	"${PROJECT_SOURCE_DIR}/src/Shader.cpp"
+	"${PROJECT_SOURCE_DIR}/src/Chunk.cpp"
 )
 
 add_executable(ft_vox ${SOURCES})

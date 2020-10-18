@@ -1,11 +1,18 @@
-#include "../include/Chunk.hpp"
+#include "Chunk.hpp"
 
-void 		Chunk::render() {
-	_mesh.render();
+Chunk::Chunk() {
+	_pos = glm::vec3(0.0f, 0.0f, 0.0f);
+}
+
+void 		Chunk::draw() {
+	_mesh.draw();
 }
 
 void 		Chunk::remesh() {
-	Mesh 		new_mesh;
+	//TODO init mesh with voxel data
+	//_mesh = Mesh(_cubes);
+}
 
-	_mesh = new_mesh;
+const glm::vec3 	Chunk::getPos() {
+	return _pos;
 }
