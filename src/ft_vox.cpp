@@ -1,5 +1,6 @@
 #include "ft_vox.hpp"
 #include "Render.hpp"
+#include "OS.hpp"
 
 int main(int argc, char *argv[])
 {

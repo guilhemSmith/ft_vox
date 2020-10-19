@@ -20,8 +20,31 @@ include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
 include_directories(${OPENGL_INCLUDE_DIRS})
 
-include_directories(
-    ${PROJECT_SOURCE_DIR}/include
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_BINARY_DIR})
+
+if(APPLE)
+    set(
+		PLATFORM
+		"APPLE"
+	)
+endif()
+if(UNIX AND NOT APPLE)
+	set(
+		PLATFORM
+		"LINUX"
+	)
+endif()
+if(WIN32)
+	set(
+		PLATFORM
+		"WINDOWS"
+	)
+endif()
+
+configure_file(
+	OS.hpp.in
+	OS.hpp
 )
 
 file(GLOB SOURCES

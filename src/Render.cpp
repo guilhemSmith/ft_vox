@@ -39,8 +39,8 @@ bool 	Render::gameInit() {
 		SDL_Quit();
 		return false;
 	}
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
     SDL_GL_SetAttribute(
             SDL_GL_CONTEXT_PROFILE_MASK,
             SDL_GL_CONTEXT_PROFILE_CORE);
@@ -92,7 +92,7 @@ void 	Render::gameLoop() {
 		SDL_GL_SwapWindow(_window);
 
 		if (time.update()){
-			std::cout << time.fps() << "fps; " << _cam << std::endl;
+			std::cout << time.fps() << "fps" << std::endl;
 		}
 	}
 }

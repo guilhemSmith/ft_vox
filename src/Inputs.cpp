@@ -1,6 +1,6 @@
 #include "Inputs.hpp"
 
-const float				Inputs::_MOUSE_SENSITIVITY = 0.1f;
+const float				Inputs::_MOUSE_SENSITIVITY = 0.3f;
 
 const SDL_Scancode		Inputs::_FORWARD = SDL_SCANCODE_W;
 const SDL_Scancode		Inputs::_BACKWARD = SDL_SCANCODE_S;

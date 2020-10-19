@@ -2,7 +2,7 @@
 # define INPUTS_HPP
 
 # include <glm/glm.hpp>
-#include <SDL2/SDL.h>
+# include "libs.hpp"
 # include <map>
 
 class Inputs {
