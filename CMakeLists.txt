@@ -41,6 +41,6 @@ target_link_libraries(ft_vox
 	${SDL2_IMAGE_LIBRARIES}
 	${SDL2_TTF_LIBRARIES}
 	${GLM_LIBRARIES}
-	${GLEW_LIBRARIES}
+        GLEW::GLEW
 	${OPENGL_LIBRARIES}
 )

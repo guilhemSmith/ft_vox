@@ -40,12 +40,22 @@ bool 	Render::gameInit() {
 		return false;
 	}
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
+    SDL_GL_SetAttribute(
+            SDL_GL_CONTEXT_PROFILE_MASK,
+            SDL_GL_CONTEXT_PROFILE_CORE);
 	_context = SDL_GL_CreateContext(_window);
+    if (!_context) {
+        std::cout << "failed to create gl context" << std::endl;
+        SDL_DestroyWindow(_window);
+        SDL_Quit();
+        return 1;
+    }
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glViewport(0, 0 ,  _win_w, _win_h);
+    glewExperimental = GL_TRUE; // Please expose OpenGL 3.x+ interfaces
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{

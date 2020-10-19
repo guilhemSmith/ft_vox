@@ -1,5 +1,5 @@
 #include "Time.hpp"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 Time::Time(void): _delta_time(0), _last_frame(0), _frame(0), _frames_count(0), _fps(0), _delta_sum(0) {}
 
