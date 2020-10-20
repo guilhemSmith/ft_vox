@@ -16,7 +16,7 @@ public:
 
 	bool			update(void);
 
-	float			delta_time(void);
+	float			deltaTime(void);
 	unsigned int	fps(void);
 };
 

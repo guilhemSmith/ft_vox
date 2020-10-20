@@ -1,19 +1,20 @@
 #ifndef CHUNK_HPP
 #define CHUNK_HPP
 
-#include <vector>
+#include "ft_vox.hpp"
+#include "Mesh.hpp"
 
 class Chunk {
 	private:
 		std::vector<char> 	_cubes;
 		Mesh 				_mesh;
-		
-
+		glm::vec3 			_pos;
 		
 	public:
-		void 	render();
-		void 	remesh();
+		Chunk();
+		void 				draw();
+		void 				remesh();
+		const glm::vec3 	getPos();
 };
-
 
 #endif

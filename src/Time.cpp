@@ -1,5 +1,5 @@
 #include "Time.hpp"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 Time::Time(void): _delta_time(0), _last_frame(0), _frame(0), _frames_count(0), _fps(0), _delta_sum(0) {}
 
@@ -21,7 +21,7 @@ bool			Time::update(void) {
 	}
 }
 
-float			Time::delta_time(void) {
+float			Time::deltaTime(void) {
 	float seconds = static_cast<float>(_delta_time) / 1000.0;
 	return seconds;
 }

@@ -2,7 +2,8 @@
 # define FT_VOX_HPP
 
 # include <iostream>
-# include <SDL2/SDL.h>
-# include <SDL2/SDL_ttf.h>
+# include <vector>
+# include "libs.hpp"
+# include <glm/gtc/matrix_transform.hpp>
 
 #endif
