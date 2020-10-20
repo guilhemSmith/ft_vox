@@ -56,21 +56,21 @@ Mesh::Mesh(std::vector<char> voxels) {
 }
 
 void 	Mesh::draw() {
-	glBindVertexArray(_VAO);
+	glBindVertexArray(_vao);
 	glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void 	Mesh::setupBuffers() {
-	glGenVertexArrays(1, &_VAO);
-    glGenBuffers(1, &_VBO);
-    glGenBuffers(1, &_EBO);
+	glGenVertexArrays(1, &_vao);
+    glGenBuffers(1, &_vbo);
+    glGenBuffers(1, &_ebo);
 
-    glBindVertexArray(_VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+    glBindVertexArray(_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
 
     glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(Mesh::Vertex), &_vertices[0], GL_STATIC_DRAW);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
 
     // vertex positions

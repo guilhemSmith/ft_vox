@@ -21,7 +21,7 @@ bool			Time::update(void) {
 	}
 }
 
-float			Time::delta_time(void) {
+float			Time::deltaTime(void) {
 	float seconds = static_cast<float>(_delta_time) / 1000.0;
 	return seconds;
 }

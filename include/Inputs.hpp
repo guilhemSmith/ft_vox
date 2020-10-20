@@ -11,11 +11,11 @@ private:
 	glm::vec2						_mouse_rel;
 	std::map<SDL_Scancode, bool>	_keys;
 
-	void							_poll_window_event(SDL_Event& event);
-	void							_poll_mousemotion_event(SDL_Event& event);
-	void							_poll_keydown_event(SDL_Event& event);
-	void							_poll_keyup_event(SDL_Event& event);
-	void							_poll_key_event(SDL_Event& event, bool is_down);
+	void							_pollWindowEvent(SDL_Event& event);
+	void							_pollMousemotionEvent(SDL_Event& event);
+	void							_pollKeydownEvent(SDL_Event& event);
+	void							_pollKeyupEvent(SDL_Event& event);
+	void							_pollKeyEvent(SDL_Event& event, bool is_down);
 
 	typedef void	(Inputs::*_polled_event)(SDL_Event&);
 	const std::map<Uint32, _polled_event> _handle_event;
@@ -25,9 +25,9 @@ public:
 	Inputs(void);
 
 	void							update(void);
-	bool							should_quit(void) const;
-	const glm::vec2&				mouse_rel(void) const;
-	bool							key_state(SDL_Scancode key) const;
+	bool							shouldQuit(void) const;
+	const glm::vec2&				mouseRel(void) const;
+	bool							keyState(SDL_Scancode key) const;
 
 	static const SDL_Scancode		_FORWARD;
 	static const SDL_Scancode		_BACKWARD;

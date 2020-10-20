@@ -13,8 +13,8 @@ private:
 	float							_yaw;
 	float							_pitch;
 
-	void							_update_dir(const Inputs& input);
-	void							_update_pos(float delta_time, const Inputs& input);
+	void							_updateDir(const Inputs& input);
+	void							_updatePos(float delta_time, const Inputs& input);
 
 	static const glm::vec3			_WORLD_UP;
 
@@ -25,7 +25,7 @@ public:
 
 	glm::vec3						position(void) const;
 	glm::vec3						direction(void) const;
-	glm::mat4						view_mat(void) const;
+	glm::mat4						viewMat(void) const;
 };
 
 std::ostream&	operator<<(std::ostream& os, Camera& cam);

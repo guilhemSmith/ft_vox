@@ -6,7 +6,7 @@ Render::Render() {
 }
 
 void 	Render::drawChunks(std::vector<Chunk> &chunks) {
-	glm::mat4 view = _cam.view_mat();
+	glm::mat4 view = _cam.viewMat();
 	_shader.setMat4("view", view);
 	for (auto &chunk : chunks)
 	{
@@ -66,7 +66,7 @@ bool 	Render::gameInit() {
 	}
 	_cam = Camera();
 	_shader = Shader();
-	_shader.compute_shaders();
+	_shader.computeShaders();
 	return true;
 }
 
@@ -81,11 +81,11 @@ void 	Render::gameLoop() {
 			(float)_win_w / (float)_win_h, 0.1f, 100.0f);
 	_shader.setMat4("projection", projection);
 
-	while (!inputs.should_quit()) {
+	while (!inputs.shouldQuit()) {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
-		_cam.update(time.delta_time(), inputs);
+		_cam.update(time.deltaTime(), inputs);
 
 		drawChunks(chunks);
 

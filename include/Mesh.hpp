@@ -11,9 +11,9 @@ private:
 		glm::vec3				position;
 		//glm::vec3				normal;
 	};
-	unsigned int 				_VAO;
-	unsigned int 				_VBO;
-	unsigned int 				_EBO;
+	unsigned int 				_vao;
+	unsigned int 				_vbo;
+	unsigned int 				_ebo;
 
 	std::vector<Mesh::Vertex>	_vertices;
 	std::vector<unsigned int>	_indices;

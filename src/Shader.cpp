@@ -4,7 +4,7 @@ void 		Shader::use() {
 	glUseProgram(_shader_program);
 }
 
-void 		Shader::compute_shaders() {
+void 		Shader::computeShaders() {
 	unsigned int vertex_shader;
 	unsigned int fragment_shader;
 	int success;
