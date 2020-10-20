@@ -52,10 +52,12 @@ file(GLOB SOURCES
     "${PROJECT_SOURCE_DIR}/src/Camera.cpp"
     "${PROJECT_SOURCE_DIR}/src/Inputs.cpp"
     "${PROJECT_SOURCE_DIR}/src/Mesh.cpp"
+    "${PROJECT_SOURCE_DIR}/src/Noise.cpp"
     "${PROJECT_SOURCE_DIR}/src/Time.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Render.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Shader.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Chunk.cpp"
+	"${PROJECT_SOURCE_DIR}/src/World.cpp"
 )
 
 add_executable(ft_vox ${SOURCES})
