@@ -15,6 +15,8 @@ class Chunk {
 		void 				draw();
 		void 				remesh();
 		const glm::vec3 	getPos();
+		
+		static const unsigned int	SIZE;
 };
 
 #endif

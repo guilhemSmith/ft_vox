@@ -1,5 +1,7 @@
 #include "Chunk.hpp"
 
+const unsigned int	Chunk::SIZE = 16;
+
 Chunk::Chunk() {
 	_pos = glm::vec3(0.0f, 0.0f, 0.0f);
 }
