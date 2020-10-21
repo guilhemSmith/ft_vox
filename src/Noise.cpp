@@ -27,16 +27,16 @@ double				Noise::_noise3d(unsigned int x, unsigned int y, unsigned int z) const 
 	return _rand(tmp + z);
 }
 
-double				Noise::_interpolateLinear(double a, double b, double t) const {
+double				Noise::_interpolateLinear(double a, double b, double t) {
 	return a * (1.0 - t) + b * t;
 }
 
-double				Noise::_interpolateCosine(double a, double b, double t) const {
+double				Noise::_interpolateCosine(double a, double b, double t) {
 	double c = (1.0 - std::cos(t * M_PI)) / 2;
 	return a * (1.0 - c) + b * c;
 }
 
-double				Noise::_interpolateCubic(double before_a, double a, double b, double after_b, double t) const {
+double				Noise::_interpolateCubic(double before_a, double a, double b, double after_b, double t) {
 	double a3 = -0.5 * before_a + 1.5 * a - 1.5 * b + 0.5 * after_b;
     double a2 = before_a - 2.5 * a + 2 * b - 0.5 * after_b;
     double a1 = -0.5 * before_a + 0.5 * b;
@@ -139,4 +139,36 @@ double				Noise::noise3dSmoothCosine(double x, double y, double z) const {
 	double w = _interpolateCosine(c, d, fractional_y);
 
 	return _interpolateCosine(v, w, fractional_z);
+}
+
+double				Noise::perlin2d(int octaves, double frequency, double persistence, double x, double y) const {
+	double r = 0.0;
+	double f = frequency;
+	double amplitude = 1.0;
+
+	for (auto i = 0; i < octaves; i++) {
+		int t = i * 4096;
+		r += noise2dSmoothCosine(x * f + t, y * f + t) * amplitude;
+		amplitude *= persistence;
+		f *= 2;
+	}
+
+	double geo_lim = (1 - persistence) / (1 - amplitude);
+	return r * geo_lim;
+}
+
+double				Noise::perlin3d(int octaves, double frequency, double persistence, double x, double y, double z) const {
+	double r = 0.0;
+	double f = frequency;
+	double amplitude = 1.0;
+
+	for (auto i = 0; i < octaves; i++) {
+		int t = i * 4096;
+		r += noise3dSmoothCosine(x * f + t, y * f + t, z * f + t) * amplitude;
+		amplitude *= persistence;
+		f *= 2;
+	}
+
+	double geo_lim = (1 - persistence) / (1 - amplitude);
+	return r * geo_lim;
 }
