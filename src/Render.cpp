@@ -68,9 +68,9 @@ bool 	Render::gameInit() {
 	_cam = Camera();
 	_shader = Shader();
 	_shader.computeShaders();
-//	glEnable(GL_CULL_FACE);
-//	glCullFace(GL_BACK);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	return true;
 }
 
@@ -80,14 +80,21 @@ void 	Render::gameLoop() {
 	std::vector<Chunk> 	chunks;
 
 	chunks.push_back(Chunk(glm::vec3(0.0f, 0.0f, 0.0f)));
-//    chunks.push_back(Chunk(glm::vec3(16.0f, 0.0f, 0.0f)));
+    chunks.push_back(Chunk(glm::vec3(16.0f, 0.0f, 0.0f)));
+    chunks.push_back(Chunk(glm::vec3(32.0f, 0.0f, 0.0f)));
+    chunks.push_back(Chunk(glm::vec3(48.0f, 0.0f, 0.0f)));
+    chunks.push_back(Chunk(glm::vec3(0.0f, 0.0f, 16.0f)));
+    chunks.push_back(Chunk(glm::vec3(16.0f, 0.0f,16.0f)));
+    chunks.push_back(Chunk(glm::vec3(32.0f, 0.0f, 16.0f)));
+    chunks.push_back(Chunk(glm::vec3(48.0f, 0.0f, 16.0f)));
 	_shader.use();
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), 
 			(float)_win_w / (float)_win_h, 0.1f, 1000.0f);
 	_shader.setMat4("projection", projection);
 
-	chunks.at(0).remesh();
-//    chunks.at(1).remesh();
+	for (auto &chunk: chunks) {
+	    chunk.remesh();
+    }
 	while (!inputs.shouldQuit()) {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

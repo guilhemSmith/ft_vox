@@ -1,122 +1,160 @@
 #include "Mesh.hpp"
 #include "ft_vox.hpp"
 #include <cstddef>
-#include <algorithm>
-
 
 Mesh::Mesh() {
 	_next_index = 0;
 }
 
-void 		Mesh::_createCube(float x, float y, float z) {
-	const glm::vec3 p1 = glm::vec3(x , y , z + 1.0f);
-	const glm::vec3 p2 = glm::vec3(x + 1.0f, y , z + 1.0f);
-	const glm::vec3 p3 = glm::vec3(x + 1.0f, y + 1.0f, z + 1.0f);
-	const glm::vec3 p4 = glm::vec3(x , y + 1.0f, z + 1.0f);
-	const glm::vec3 p5 = glm::vec3(x + 1.0f, y , z );
-	const glm::vec3 p6 = glm::vec3(x , y , z );
-	const glm::vec3 p7 = glm::vec3(x , y + 1.0f, z );
-	const glm::vec3 p8 = glm::vec3(x + 1.0f, y + 1.0f, z );
+void 		Mesh::_createCube(Mesh::CubeData &data) {
+	const glm::vec3 p1 = glm::vec3(data.pos.x , data.pos.y , data.pos.z + 1.0f);
+	const glm::vec3 p2 = glm::vec3(data.pos.x + 1.0f, data.pos.y , data.pos.z + 1.0f);
+	const glm::vec3 p3 = glm::vec3(data.pos.x + 1.0f, data.pos.y + 1.0f, data.pos.z + 1.0f);
+	const glm::vec3 p4 = glm::vec3(data.pos.x , data.pos.y + 1.0f, data.pos.z + 1.0f);
+	const glm::vec3 p5 = glm::vec3(data.pos.x + 1.0f, data.pos.y , data.pos.z );
+	const glm::vec3 p6 = glm::vec3(data.pos.x , data.pos.y , data.pos.z );
+	const glm::vec3 p7 = glm::vec3(data.pos.x , data.pos.y + 1.0f, data.pos.z );
+	const glm::vec3 p8 = glm::vec3(data.pos.x + 1.0f, data.pos.y + 1.0f, data.pos.z );
 
 	//front quad
-	glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
-	_vertices.push_back({p1, normal});
-    _vertices.push_back({p2, normal});
-    _vertices.push_back({p3, normal});
-    _vertices.push_back({p4, normal});
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 1);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 3);
+	if (!data.f_neighbor) {
+        glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
+        _vertices.push_back({p1, normal});
+        _vertices.push_back({p2, normal});
+        _vertices.push_back({p3, normal});
+        _vertices.push_back({p4, normal});
+        _next_index += 4;
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 1);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 3);
+    }
 
 	//back quad
-	normal = glm::vec3(0.0f, 0.0f, -1.0f);
-    _vertices.push_back({p5, normal});
-    _vertices.push_back({p6, normal});
-    _vertices.push_back({p7, normal});
-    _vertices.push_back({p8, normal});
-	_next_index += 4;
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 1);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 3);
+    if (!data.ba_neighbor) {
+        glm::vec3 normal = glm::vec3(0.0f, 0.0f, -1.0f);
+        _vertices.push_back({p5, normal});
+        _vertices.push_back({p6, normal});
+        _vertices.push_back({p7, normal});
+        _vertices.push_back({p8, normal});
+        _next_index += 4;
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 1);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 3);
+    }
+
+	//left quad
+    if (!data.l_neighbor) {
+        glm::vec3 normal = glm::vec3(1.0f, 0.0f, 0.0f);
+        _vertices.push_back({p2, normal});
+        _vertices.push_back({p5, normal});
+        _vertices.push_back({p8, normal});
+        _vertices.push_back({p3, normal});
+        _next_index += 4;
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 1);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 3);
+    } else {
+        std::cout << "no l quad" << std::endl;
+    }
 
 	//right quad
-	normal = glm::vec3(1.0f, 0.0f, 0.0f);
-    _vertices.push_back({p2, normal});
-    _vertices.push_back({p5, normal});
-    _vertices.push_back({p8, normal});
-    _vertices.push_back({p3, normal});
-	_next_index += 4;
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 1);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 3);
-	//left quad
-	normal = glm::vec3(-1.0f, 0.0f, 0.0f);
-    _vertices.push_back({p6, normal});
-    _vertices.push_back({p1, normal});
-    _vertices.push_back({p4, normal});
-    _vertices.push_back({p7, normal});
-	_next_index += 4;
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 1);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 3);
-	//top quad
-	normal = glm::vec3(0.0f, -1.0f, 0.0f);
-    _vertices.push_back({p4, normal});
-    _vertices.push_back({p3, normal});
-    _vertices.push_back({p8, normal});
-    _vertices.push_back({p7, normal});
-	_next_index += 4;
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 1);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 3);
-	//bot quad
-	normal = glm::vec3(0.0f, 1.0f, 0.0f);
-    _vertices.push_back({p6, normal});
-    _vertices.push_back({p5, normal});
-    _vertices.push_back({p2, normal});
-    _vertices.push_back({p1, normal});
-	_next_index += 4;
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 1);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 0);
-	_indices.push_back(_next_index + 2);
-	_indices.push_back(_next_index + 3);
-    _next_index += 4;
-//	std::cout << _indices.size() << std::endl;
-}
+	if (!data.r_neighbor) {
+        glm::vec3 normal = glm::vec3(-1.0f, 0.0f, 0.0f);
+        _vertices.push_back({p6, normal});
+        _vertices.push_back({p1, normal});
+        _vertices.push_back({p4, normal});
+        _vertices.push_back({p7, normal});
+        _next_index += 4;
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 1);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 3);
+    } else {
+        std::cout << "no r quad" << std::endl;
 
-bool 	 isOnASide(int x, int y, int z)
-{
-	return x == 0 || x == 15 || y == 0 || y == 15 || z == 0 || z == 15;
+	}
+
+	//top quad
+	if (!data.t_neighbor) {
+        glm::vec3 normal = glm::vec3(0.0f, -1.0f, 0.0f);
+        _vertices.push_back({p4, normal});
+        _vertices.push_back({p3, normal});
+        _vertices.push_back({p8, normal});
+        _vertices.push_back({p7, normal});
+        _next_index += 4;
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 1);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 3);
+	}
+
+	//bot quad
+	if (!data.bo_neighbor) {
+        glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f);
+        _vertices.push_back({p6, normal});
+        _vertices.push_back({p5, normal});
+        _vertices.push_back({p2, normal});
+        _vertices.push_back({p1, normal});
+        _next_index += 4;
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 1);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 0);
+        _indices.push_back(_next_index + 2);
+        _indices.push_back(_next_index + 3);
+    }
+//	std::cout << _indices.size() << std::endl;
 }
 
 Mesh::Mesh(const std::array<std::array<std::array<char, 16>, 16>, 16> &cubes, glm::vec3 &pos) {
 	for (int z = 0; z < 16; z++) {
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				if (!isOnASide(x, y, z) && (cubes[x - 1][y][z] != 'e' && cubes[x + 1][y][z] != 'e' && cubes[x][y - 1][z] != 'e' && cubes[x][y + 1][z] != 'e' && cubes[x][y][z - 1] != 'e' && cubes[x][y][z + 1] != 'e'))
-				{
-//					std::cout << "cube is surrounded" << std::endl;
-				}
-				else if (cubes[x][y][z] != 'e')
-				if (cubes[x][y][z] != 'e')
-					_createCube(x + pos.x, y + pos.y ,z + pos.z);
+                if (cubes[x][y][z] == 'e')
+                    continue;
+                Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z));
+                if (x != 0 && cubes[x - 1][y][z] != 'e') {
+                    std::cout << " rn found " << std::endl;
+                    cube_data.r_neighbor = true;
+                }
+                if (x != 15 && cubes[x + 1][y][z] != 'e') {
+                    std::cout << " ln found " << std::endl;
+                    cube_data.l_neighbor = true;
+                }
+                if (y != 0 && cubes[x][y - 1][z] != 'e') {
+                    std::cout << " bo found " << std::endl;
+                    cube_data.bo_neighbor = true;
+                }
+                if (y != 15 && cubes[x][y + 1][z] != 'e') {
+                    std::cout << " t found " << std::endl;
+                    cube_data.t_neighbor = true;
+                }
+                if (z != 0 && cubes[x][y][z - 1] != 'e') {
+                    std::cout << " ba found " << std::endl;
+                    cube_data.ba_neighbor = true;
+                }
+                if (z != 15 && cubes[x][y][z + 1] != 'e') {
+                    std::cout << " f found " << std::endl;
+                    cube_data.f_neighbor = true;
+                }
+                if (cube_data.l_neighbor && cube_data.r_neighbor && cube_data.t_neighbor && cube_data.bo_neighbor && cube_data.f_neighbor && cube_data.ba_neighbor)
+                    continue;
+                //cube_data.pos = glm::vec3(glm::vec3(x + pos.x, y + pos.y, z + pos.z));
+                _createCube(cube_data);
+
 			}
 		}
 	}
