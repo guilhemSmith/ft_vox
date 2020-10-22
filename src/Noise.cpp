@@ -1,6 +1,7 @@
 #include "Noise.hpp"
 #include <stdlib.h>
 #include <cmath>
+#include <glm/glm.hpp>
 
 const unsigned int	Noise::_SCALE = 85000;
 
@@ -170,5 +171,5 @@ double				Noise::perlin3d(int octaves, double frequency, double persistence, dou
 	}
 
 	double geo_lim = (1 - persistence) / (1 - amplitude);
-	return r * geo_lim;
+	return glm::clamp(r * geo_lim, 0.0, 1.0);
 }

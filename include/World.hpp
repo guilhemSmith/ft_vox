@@ -10,21 +10,23 @@ class World {
 private:
 	unsigned int const						_seed;
 	Noise									_noise_height;
-	std::unordered_map<unsigned int, Chunk>	_chunks;
+	std::unordered_map<unsigned int, Chunk*>	_chunks;
 
-	static const glm::u32vec3				_SIZES;
-	static const unsigned int				_NOISE_SIZE;
-
-	unsigned int							_chunkIndex(glm::i32vec3 pos) const;
+	unsigned int							_chunkIndex(glm::u32vec3 pos) const;
 
 public:
 	World(void);
 	World(unsigned int seed);
 
-	Chunk&									getChunk(glm::i32vec3 pos);
-	Chunk&									removeChunk(glm::i32vec3 pos);
+	Chunk*									getChunk(glm::u32vec3 pos);
+	void									removeChunk(glm::u32vec3 pos);
 
-	glm::i32vec3							ChunkCoord(glm::vec3 world_pos) const;
+	glm::u32vec3							ChunkCoord(glm::vec3 world_pos) const;
+
+	static const glm::u32vec3				SIZES_VOXELS;
+	static const glm::u32vec3				SIZES_CHUNKS;
+	static const unsigned int				NOISE_STRETCH;
+	static const unsigned int				NOISE_SIZE;
 };
 
 #endif

@@ -75,7 +75,9 @@ void 	Render::gameLoop() {
 	Inputs				inputs = Inputs();
 	std::vector<Chunk> 	chunks;
 
-	chunks.push_back(Chunk());
+	chunks.push_back(*_world.getChunk({0,0,0}));
+	chunks.push_back(*_world.getChunk({16,0,0}));
+	chunks.push_back(*_world.getChunk({0,16,0}));
 	_shader.use();
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), 
 			(float)_win_w / (float)_win_h, 0.1f, 100.0f);

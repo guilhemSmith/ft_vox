@@ -7,6 +7,7 @@
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "Inputs.hpp"
+#include "World.hpp"
 
 class Render {
 	private:
@@ -17,6 +18,7 @@ class Render {
 		unsigned int 				_win_h;
 		Shader 						_shader;
 		Camera						_cam;
+		World						_world;
 
 	public:
 		Render();
