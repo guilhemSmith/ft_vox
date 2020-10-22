@@ -8,8 +8,8 @@ class Shader {
 		unsigned int _shader_program;
 	public:
 		void 	computeShaders();
-		void 	use(void);
-		void 	setMat4(const char *, glm::mat4 &mat);
+		void 	use(void) const;
+		void 	setMat4(const char *, glm::mat4 &mat) const;
 };
 
 #endif

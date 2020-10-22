@@ -23,13 +23,13 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
         _vertices.push_back({p2, normal});
         _vertices.push_back({p3, normal});
         _vertices.push_back({p4, normal});
-        _next_index += 4;
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 3);
+        _next_index += 4;
     }
 
 	//back quad
@@ -39,13 +39,13 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
         _vertices.push_back({p6, normal});
         _vertices.push_back({p7, normal});
         _vertices.push_back({p8, normal});
-        _next_index += 4;
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 3);
+        _next_index += 4;
     }
 
 	//left quad
@@ -55,15 +55,13 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
         _vertices.push_back({p5, normal});
         _vertices.push_back({p8, normal});
         _vertices.push_back({p3, normal});
-        _next_index += 4;
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 3);
-    } else {
-        std::cout << "no l quad" << std::endl;
+        _next_index += 4;
     }
 
 	//right quad
@@ -73,17 +71,14 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
         _vertices.push_back({p1, normal});
         _vertices.push_back({p4, normal});
         _vertices.push_back({p7, normal});
-        _next_index += 4;
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 3);
-    } else {
-        std::cout << "no r quad" << std::endl;
-
-	}
+        _next_index += 4;
+    }
 
 	//top quad
 	if (!data.t_neighbor) {
@@ -92,13 +87,13 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
         _vertices.push_back({p3, normal});
         _vertices.push_back({p8, normal});
         _vertices.push_back({p7, normal});
-        _next_index += 4;
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 3);
+        _next_index += 4;
 	}
 
 	//bot quad
@@ -108,13 +103,13 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
         _vertices.push_back({p5, normal});
         _vertices.push_back({p2, normal});
         _vertices.push_back({p1, normal});
-        _next_index += 4;
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 2);
         _indices.push_back(_next_index + 3);
+        _next_index += 4;
     }
 //	std::cout << _indices.size() << std::endl;
 }
@@ -123,36 +118,29 @@ Mesh::Mesh(const std::array<std::array<std::array<char, 16>, 16>, 16> &cubes, gl
 	for (int z = 0; z < 16; z++) {
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-                if (cubes[x][y][z] == 'e')
+                if (cubes[x][y][z] == 0)
                     continue;
                 Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z));
-                if (x != 0 && cubes[x - 1][y][z] != 'e') {
-                    std::cout << " rn found " << std::endl;
+                if (x != 0 && cubes[x - 1][y][z] != 0) {
                     cube_data.r_neighbor = true;
                 }
-                if (x != 15 && cubes[x + 1][y][z] != 'e') {
-                    std::cout << " ln found " << std::endl;
+                if (x != 15 && cubes[x + 1][y][z] != 0) {
                     cube_data.l_neighbor = true;
                 }
-                if (y != 0 && cubes[x][y - 1][z] != 'e') {
-                    std::cout << " bo found " << std::endl;
+                if (y != 0 && cubes[x][y - 1][z] != 0) {
                     cube_data.bo_neighbor = true;
                 }
-                if (y != 15 && cubes[x][y + 1][z] != 'e') {
-                    std::cout << " t found " << std::endl;
+                if (y != 15 && cubes[x][y + 1][z] != 0) {
                     cube_data.t_neighbor = true;
                 }
-                if (z != 0 && cubes[x][y][z - 1] != 'e') {
-                    std::cout << " ba found " << std::endl;
+                if (z != 0 && cubes[x][y][z - 1] != 0) {
                     cube_data.ba_neighbor = true;
                 }
-                if (z != 15 && cubes[x][y][z + 1] != 'e') {
-                    std::cout << " f found " << std::endl;
+                if (z != 15 && cubes[x][y][z + 1] != 0) {
                     cube_data.f_neighbor = true;
                 }
                 if (cube_data.l_neighbor && cube_data.r_neighbor && cube_data.t_neighbor && cube_data.bo_neighbor && cube_data.f_neighbor && cube_data.ba_neighbor)
                     continue;
-                //cube_data.pos = glm::vec3(glm::vec3(x + pos.x, y + pos.y, z + pos.z));
                 _createCube(cube_data);
 
 			}
@@ -163,7 +151,7 @@ Mesh::Mesh(const std::array<std::array<std::array<char, 16>, 16>, 16> &cubes, gl
 
 void 	Mesh::draw() {
 	glBindVertexArray(_vao);
-	glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, nullptr);
 }
 
 void 	Mesh::_setupBuffers() {
@@ -180,7 +168,7 @@ void 	Mesh::_setupBuffers() {
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)nullptr);
     glEnableVertexAttribArray(1);	
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, normal));
 

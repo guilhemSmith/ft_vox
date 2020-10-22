@@ -1,8 +1,8 @@
 #include "Render.hpp"
 
 Render::Render() {
-	_win_w = 640;	
-	_win_h = 480;	
+	_win_w = 1920;
+	_win_h = 1080;
 }
 
 void 	Render::drawChunks(std::vector<Chunk> &chunks) {
@@ -18,13 +18,15 @@ void 	Render::drawChunks(std::vector<Chunk> &chunks) {
 	}
 }
 
-bool 	Render::gameInit() {
+void 	Render::gameInit() {
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-		return false;
+        std::cout << "failed to init sdl2" << std::endl;
+        exit(0);
 	}
 	if (TTF_Init() < 0) {
 		SDL_Quit();
-		return false;
+        std::cout << "failed to init ttf" << std::endl;
+        exit(0);
 	};
 	_window = SDL_CreateWindow(
 			"ft_vox",
@@ -33,12 +35,11 @@ bool 	Render::gameInit() {
 			_win_w,
 			_win_h,
 			SDL_WINDOW_OPENGL
-			// SDL_WINDOW_FULLSCREEN_DESKTOP
+			 | SDL_WINDOW_FULLSCREEN_DESKTOP
 			);
 	if (_window == NULL) {
-		TTF_Quit();
-		SDL_Quit();
-		return false;
+        std::cout << "failed to create window" << std::endl;
+	    gameQuit();
 	}
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
@@ -49,21 +50,18 @@ bool 	Render::gameInit() {
     if (!_context) {
         std::cout << "failed to create gl context" << std::endl;
         SDL_DestroyWindow(_window);
-        SDL_Quit();
-        return 1;
+        gameQuit();
     }
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 	glViewport(0, 0 ,  _win_w, _win_h);
-    glewExperimental = GL_TRUE; // Please expose OpenGL 3.x+ interfaces
+    glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
 	if (err != GLEW_OK)
 	{
 		std::cout << "Glew error: " << glewGetErrorString(err) << std::endl;
-		TTF_Quit();
-		SDL_Quit();
-		return false;
+	    gameQuit();
 	}
 	_cam = Camera();
 	_shader = Shader();
@@ -71,7 +69,6 @@ bool 	Render::gameInit() {
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	return true;
 }
 
 void 	Render::gameLoop() {
@@ -79,14 +76,14 @@ void 	Render::gameLoop() {
 	Inputs				inputs = Inputs();
 	std::vector<Chunk> 	chunks;
 
-	chunks.push_back(Chunk(glm::vec3(0.0f, 0.0f, 0.0f)));
-    chunks.push_back(Chunk(glm::vec3(16.0f, 0.0f, 0.0f)));
-    chunks.push_back(Chunk(glm::vec3(32.0f, 0.0f, 0.0f)));
-    chunks.push_back(Chunk(glm::vec3(48.0f, 0.0f, 0.0f)));
-    chunks.push_back(Chunk(glm::vec3(0.0f, 0.0f, 16.0f)));
-    chunks.push_back(Chunk(glm::vec3(16.0f, 0.0f,16.0f)));
-    chunks.push_back(Chunk(glm::vec3(32.0f, 0.0f, 16.0f)));
-    chunks.push_back(Chunk(glm::vec3(48.0f, 0.0f, 16.0f)));
+	chunks.emplace_back(glm::vec3(0.0f, 0.0f, 0.0f));
+    chunks.emplace_back(glm::vec3(16.0f, 0.0f, 0.0f));
+    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 0.0f));
+    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 0.0f));
+    chunks.emplace_back(glm::vec3(0.0f, 0.0f, 16.0f));
+    chunks.emplace_back(glm::vec3(16.0f, 0.0f,16.0f));
+    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 16.0f));
+    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 16.0f));
 	_shader.use();
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), 
 			(float)_win_w / (float)_win_h, 0.1f, 1000.0f);
@@ -114,4 +111,5 @@ void 	Render::gameLoop() {
 void 	Render::gameQuit() {
 	TTF_Quit();
 	SDL_Quit();
+	exit(0);
 }

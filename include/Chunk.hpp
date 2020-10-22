@@ -15,7 +15,7 @@ class Chunk {
 		bool 				is_empty;
 		void 				draw();
 		void 				remesh();
-		const glm::vec3 	getPos();
+		glm::vec3 	getPos();
 };
 
 #endif

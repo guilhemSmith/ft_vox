@@ -4,15 +4,16 @@ Chunk::Chunk(glm::vec3 pos) : _pos(pos){
 	for (int z = 0; z < 16; z++) {
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				_cubes[x][y][z] = 'e';
+				_cubes[x][y][z] = 'a';
 			}
 		}
 	}
-	_cubes[0][0][0] = 'a';
-    _cubes[2][0][0] = 'a';
-    _cubes[4][0][0] = 'a';
-    _cubes[15][0][0] = 'a';
-    _cubes[15][15][15] = 'a';
+	is_empty = false;
+//	_cubes[0][0][0] = 'a';
+//    _cubes[2][0][0] = 'a';
+//    _cubes[4][0][0] = 'a';
+//    _cubes[15][0][0] = 'a';
+//    _cubes[15][15][15] = 'a';
 }
 
 void 		Chunk::draw() {
@@ -24,7 +25,7 @@ void 		Chunk::remesh() {
 	_mesh = Mesh(_cubes, _pos);
 }
 
-const glm::vec3 	Chunk::getPos() {
+glm::vec3 	Chunk::getPos() {
 	return _pos;
 }
 
