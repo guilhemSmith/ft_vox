@@ -6,12 +6,13 @@
 
 class Chunk {
 	private:
-		std::vector<char> 	_cubes;
+    std::array<std::array<std::array<char, 16>, 16>, 16>				_cubes;
 		Mesh 				_mesh;
 		glm::vec3 			_pos;
 		
 	public:
-		Chunk();
+		Chunk(glm::vec3);
+		bool 				is_empty;
 		void 				draw();
 		void 				remesh();
 		const glm::vec3 	getPos();

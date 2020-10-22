@@ -10,6 +10,7 @@ void 	Render::drawChunks(std::vector<Chunk> &chunks) {
 	_shader.setMat4("view", view);
 	for (auto &chunk : chunks)
 	{
+		//chunk.remesh();
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::translate(model, chunk.getPos());
 		_shader.setMat4("model", model);
@@ -67,6 +68,9 @@ bool 	Render::gameInit() {
 	_cam = Camera();
 	_shader = Shader();
 	_shader.computeShaders();
+//	glEnable(GL_CULL_FACE);
+//	glCullFace(GL_BACK);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	return true;
 }
 
@@ -75,12 +79,15 @@ void 	Render::gameLoop() {
 	Inputs				inputs = Inputs();
 	std::vector<Chunk> 	chunks;
 
-	chunks.push_back(Chunk());
+	chunks.push_back(Chunk(glm::vec3(0.0f, 0.0f, 0.0f)));
+//    chunks.push_back(Chunk(glm::vec3(16.0f, 0.0f, 0.0f)));
 	_shader.use();
 	glm::mat4 projection = glm::perspective(glm::radians(90.0f), 
-			(float)_win_w / (float)_win_h, 0.1f, 100.0f);
+			(float)_win_w / (float)_win_h, 0.1f, 1000.0f);
 	_shader.setMat4("projection", projection);
 
+	chunks.at(0).remesh();
+//    chunks.at(1).remesh();
 	while (!inputs.shouldQuit()) {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
