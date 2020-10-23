@@ -20,9 +20,9 @@ class Render {
 
 	public:
 		Render();
-		bool 	gameInit();
+		void 	gameInit();
 		void 	gameLoop();
-		void 	gameQuit();
+		static void 	gameQuit();
 		void 	drawChunks(std::vector<Chunk> &);
 };
 
