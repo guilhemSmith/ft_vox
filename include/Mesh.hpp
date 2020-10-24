@@ -41,7 +41,7 @@ private:
 
 public:
 	//Mesh(std::vector<char> voxels);
-	Mesh(const std::array<std::array<std::array<char, 16>, 16>, 16> &, glm::vec3 &);
+	Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &, glm::vec3 &);
 	Mesh();//TODO remove
 
 	void						draw();
