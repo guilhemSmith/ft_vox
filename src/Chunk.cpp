@@ -4,7 +4,7 @@ Chunk::Chunk(glm::vec3 pos) : _pos(pos) {
 	for (int z = 0; z < 16; z++) {
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
-				_cubes[x][y][z] = 'a';
+				_cubes[x][y][z] = 1;
 			}
 		}
 	}

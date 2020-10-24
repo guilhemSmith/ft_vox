@@ -35,7 +35,7 @@ void 	Render::gameInit() {
 			_win_w,
 			_win_h,
 			SDL_WINDOW_OPENGL
-			 | SDL_WINDOW_FULLSCREEN_DESKTOP
+			//  | SDL_WINDOW_FULLSCREEN_DESKTOP
 			);
 	if (_window == NULL) {
         std::cout << "failed to create window" << std::endl;
@@ -77,75 +77,32 @@ void 	Render::gameLoop() {
 	std::vector<Chunk> 	chunks;
 
 	chunks.emplace_back(glm::vec3(0.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(16.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(64.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(80.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(96.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(112.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(128.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(144.0f, 0.0f, 0.0f));
-    chunks.emplace_back(glm::vec3(0.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(16.0f, 0.0f,16.0f));
-    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(64.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(80.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(96.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(112.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(128.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(144.0f, 0.0f, 16.0f));
-    chunks.emplace_back(glm::vec3(0.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(16.0f, 0.0f,32.0f));
-    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(64.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(80.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(96.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(112.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(128.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(144.0f, 0.0f, 32.0f));
-    chunks.emplace_back(glm::vec3(0.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(16.0f, 0.0f,48.0f));
-    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(64.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(80.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(96.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(112.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(128.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(144.0f, 0.0f, 48.0f));
-    chunks.emplace_back(glm::vec3(0.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(16.0f, 0.0f,64.0f));
-    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(64.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(80.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(96.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(112.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(128.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(144.0f, 0.0f, 64.0f));
-    chunks.emplace_back(glm::vec3(0.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(16.0f, 0.0f,80.0f));
-    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(64.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(80.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(96.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(112.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(128.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(144.0f, 0.0f, 80.0f));
-    chunks.emplace_back(glm::vec3(0.0f, 0.0f, 96.0f));
-    chunks.emplace_back(glm::vec3(16.0f, 0.0f,96.0f));
-    chunks.emplace_back(glm::vec3(32.0f, 0.0f, 96.0f));
-    chunks.emplace_back(glm::vec3(48.0f, 0.0f, 96.0f));
-    chunks.emplace_back(glm::vec3(64.0f, 0.0f, 96.0f));
-    chunks.emplace_back(glm::vec3(80.0f, 0.0f, 96.0f));
-    chunks.emplace_back(glm::vec3(96.0f, 0.0f, 96.0f));
-    chunks.emplace_back(glm::vec3(112.0f, 0.0f, 96.0f));
-    chunks.emplace_back(glm::vec3(128.0f, 0.0f, 96.0f));
-    chunks.emplace_back(glm::vec3(144.0f, 0.0f, 96.0f));
+    
+
+    GLuint TextureID = 0;
+    int imgFlags = IMG_INIT_PNG;
+    if ((IMG_Init(imgFlags)) > 0)
+        std::cout << "couln't init IMG" << std::endl;
+
+    SDL_Surface *surface = IMG_Load("../textures/dirt.png");
+    if (!surface)
+    {
+        std::cout << "IMG_Load: " << IMG_GetError() << std::endl ;
+    }
+        
+    glGenTextures(1, &TextureID);
+    glBindTexture(GL_TEXTURE_2D, TextureID);
+    int Mode = GL_RGB;
+    if(surface->format->BytesPerPixel == 4) {
+        Mode = GL_RGBA;
+    }
+ 
+    glTexImage2D(GL_TEXTURE_2D, 0, Mode, surface->w, surface->h, 0, Mode, GL_UNSIGNED_BYTE, surface->pixels);
+ 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glBindTexture(GL_TEXTURE_2D, TextureID);
 	_shader.use();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
 			(float)_win_w / (float)_win_h, 0.1f, 1000.0f);

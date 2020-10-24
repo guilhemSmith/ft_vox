@@ -1,5 +1,5 @@
 #include "Mesh.hpp"
-#include "ft_vox.hpp"
+#include <ft_vox.hpp>
 #include <cstddef>
 
 void 		Mesh::_createCube(Mesh::CubeData &data) {
@@ -16,6 +16,7 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
     const glm::vec2 tp3 = glm::vec2(1.0f, 0.0f);
     const glm::vec2 tp4 = glm::vec2(0.0f, 0.0f);
 
+    //std::cout << data.texture << std::endl;
 	//front quad
 	if (!data.f_neighbor) {
         glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -121,7 +122,8 @@ Mesh::Mesh(const std::array<std::array<std::array<char, 16>, 16>, 16> &cubes, gl
 			for (int x = 0; x < 16; x++) {
                 if (cubes[x][y][z] == 0)
                     continue;
-                Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z), cubes[x][y][z] - 96);
+                // std::cout << static_cast<int>(cubes[x][y][z]) << std::endl;
+                Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z), cubes[x][y][z]);
                 if (x != 0 && cubes[x - 1][y][z] != 0) {
                     cube_data.r_neighbor = true;
                 }
@@ -175,7 +177,7 @@ void 	Mesh::_setupBuffers() {
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, tex_coords));
     glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, texture));
+    glVertexAttribIPointer(3, 1, GL_INT, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, texture));
 
     glBindVertexArray(0);
 }
