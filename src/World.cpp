@@ -46,16 +46,20 @@ std::vector<Chunk*>	World::getChunksFromPos(glm::vec3 cam_pos) {
 	return chunk_at_range;
 }
 
-Chunk*				World::getChunk(glm::u32vec3 cam_pos) {
-	glm::u32vec3		pos = cam_pos / Chunk::SIZE;
+Chunk*				World::getChunk(glm::vec3 cam_pos) {
+	glm::u32vec3		pos = cam_pos / static_cast<float>(Chunk::SIZE);
 	unsigned int index = _chunkIndex(pos);
+
+	if (cam_pos.x < 0.0 || cam_pos.y < 0.0 || cam_pos.z < 0.0) {
+		return NULL;
+	}
 
 	if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
 		try {
 			return _chunks.at(index);
 		}
 		catch (std::out_of_range oor) {
-			_chunks[index] = new Chunk(pos * Chunk::SIZE);
+			_chunks[index] = new Chunk(_noise_height, pos * Chunk::SIZE);
 			_chunks[index]->remesh();
 			return _chunks[index];
 		}
@@ -73,12 +77,4 @@ void				World::removeChunk(glm::u32vec3 pos) {
 	catch (std::out_of_range oor) {
 		// Can't unload not loaded chunk
 	}
-}
-
-glm::u32vec3		World::ChunkCoord(glm::vec3 world_pos) const {
-	return {
-		static_cast<unsigned int>(world_pos.x / Chunk::SIZE),
-		static_cast<unsigned int>(world_pos.y / Chunk::SIZE),
-		static_cast<unsigned int>(world_pos.z / Chunk::SIZE),
-	};
 }
