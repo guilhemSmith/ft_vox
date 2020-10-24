@@ -7,6 +7,11 @@
 
 class Chunk {
 	private:
+	enum Voxel {
+		Empty = 'e',
+		rock = 'a'
+	};
+
     std::array<std::array<std::array<char, 16>, 16>, 16>				_cubes;
 		Mesh 				_mesh;
 		glm::vec3 			_pos;

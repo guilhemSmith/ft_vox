@@ -18,6 +18,7 @@ public:
 	World(void);
 	World(unsigned int seed);
 
+	std::vector<Chunk*>						getChunksFromPos(glm::vec3 cam_pos);
 	Chunk*									getChunk(glm::u32vec3 pos);
 	void									removeChunk(glm::u32vec3 pos);
 

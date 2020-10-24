@@ -36,14 +36,32 @@ unsigned int		World::_chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
 }
 
-Chunk*				World::getChunk(glm::u32vec3 pos) {
-	unsigned int index = _chunkIndex(pos);
-	try {
-		return _chunks.at(index);
+std::vector<Chunk*>	World::getChunksFromPos(glm::vec3 cam_pos) {
+	std::vector<Chunk*>	chunk_at_range;
+
+	Chunk*				cam_chunk = getChunk(cam_pos);
+	if (cam_chunk != NULL) {
+		chunk_at_range.push_back(cam_chunk);
 	}
-	catch (std::out_of_range oor) {
-		_chunks[index] = new Chunk(pos);
-		return _chunks[index];
+	return chunk_at_range;
+}
+
+Chunk*				World::getChunk(glm::u32vec3 cam_pos) {
+	glm::u32vec3		pos = cam_pos / Chunk::SIZE;
+	unsigned int index = _chunkIndex(pos);
+
+	if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
+		try {
+			return _chunks.at(index);
+		}
+		catch (std::out_of_range oor) {
+			_chunks[index] = new Chunk(pos * Chunk::SIZE);
+			_chunks[index]->remesh();
+			return _chunks[index];
+		}
+	}
+	else {
+		return NULL;
 	}
 }
 
