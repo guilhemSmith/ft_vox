@@ -9,11 +9,7 @@ const glm::u32vec3	World::SIZES_VOXELS = {
 	16384
 };
 
-const glm::u32vec3	World::SIZES_CHUNKS = {
-	SIZES_VOXELS.x / Chunk::SIZE,
-	SIZES_VOXELS.y / Chunk::SIZE,
-	SIZES_VOXELS.z / Chunk::SIZE
-};
+const glm::u32vec3	World::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
 const unsigned int	World::NOISE_STRETCH = 64;
 
@@ -38,21 +34,23 @@ unsigned int		World::_chunkIndex(glm::u32vec3 pos) const {
 
 std::vector<Chunk*>	World::getChunksFromPos(glm::vec3 cam_pos) {
 	std::vector<Chunk*>	chunk_at_range;
+	glm::u32vec3		chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
 
-	Chunk*				cam_chunk = getChunk(cam_pos);
-	if (cam_chunk != NULL) {
-		chunk_at_range.push_back(cam_chunk);
+	for (auto x = -10; x < 11; x++) {
+		for (auto y = -10; y < 11; y++) {
+			for (auto z = -10; z < 11; z++) {
+				Chunk*	chunk = getChunk(chunk_pos + glm::u32vec3(x, y, z));
+				if (chunk != NULL) {
+					chunk_at_range.push_back(chunk);
+				}
+			}
+		}
 	}
 	return chunk_at_range;
 }
 
-Chunk*				World::getChunk(glm::vec3 cam_pos) {
-	glm::u32vec3		pos = cam_pos / static_cast<float>(Chunk::SIZE);
+Chunk*				World::getChunk(glm::u32vec3 pos) {
 	unsigned int index = _chunkIndex(pos);
-
-	if (cam_pos.x < 0.0 || cam_pos.y < 0.0 || cam_pos.z < 0.0) {
-		return NULL;
-	}
 
 	if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
 		try {

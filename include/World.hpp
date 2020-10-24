@@ -19,7 +19,7 @@ public:
 	World(unsigned int seed);
 
 	std::vector<Chunk*>						getChunksFromPos(glm::vec3 cam_pos);
-	Chunk*									getChunk(glm::vec3 pos);
+	Chunk*									getChunk(glm::u32vec3 pos);
 	void									removeChunk(glm::u32vec3 pos);
 
 	static const glm::u32vec3				SIZES_VOXELS;
