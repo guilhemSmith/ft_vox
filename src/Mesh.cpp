@@ -1,4 +1,5 @@
-#include "Mesh.hpp"
+#include <Mesh.hpp>
+#include <Chunk.hpp>
 #include <ft_vox.hpp>
 #include <cstddef>
 
@@ -115,31 +116,29 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 //	std::cout << _indices.size() << std::endl;
 }
 
-Mesh::Mesh(const std::array<std::array<std::array<char, 16>, 16>, 16> &cubes, glm::vec3 &pos) {
-    _next_index = 0;
-	for (int z = 0; z < 16; z++) {
-		for (int y = 0; y < 16; y++) {
-			for (int x = 0; x < 16; x++) {
-                if (cubes[x][y][z] == 0)
+Mesh::Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos) {
+	for (int z = 0; z < Chunk::SIZE; z++) {
+		for (int y = 0; y < Chunk::SIZE; y++) {
+			for (int x = 0; x < Chunk::SIZE; x++) {
+                if (cubes[x][y][z] == Chunk::Voxel::Empty)
                     continue;
-                // std::cout << static_cast<int>(cubes[x][y][z]) << std::endl;
                 Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z), cubes[x][y][z]);
-                if (x != 0 && cubes[x - 1][y][z] != 0) {
+                if (x != 0 && cubes[x - 1][y][z] != Chunk::Voxel::Empty) {
                     cube_data.r_neighbor = true;
                 }
-                if (x != 15 && cubes[x + 1][y][z] != 0) {
+                if (x != Chunk::SIZE - 1 && cubes[x + 1][y][z] != Chunk::Voxel::Empty) {
                     cube_data.l_neighbor = true;
                 }
-                if (y != 0 && cubes[x][y - 1][z] != 0) {
+                if (y != 0 && cubes[x][y - 1][z] != Chunk::Voxel::Empty) {
                     cube_data.bo_neighbor = true;
                 }
-                if (y != 15 && cubes[x][y + 1][z] != 0) {
+                if (y != Chunk::SIZE - 1 && cubes[x][y + 1][z] != Chunk::Voxel::Empty) {
                     cube_data.t_neighbor = true;
                 }
-                if (z != 0 && cubes[x][y][z - 1] != 0) {
+                if (z != 0 && cubes[x][y][z - 1] != Chunk::Voxel::Empty) {
                     cube_data.ba_neighbor = true;
                 }
-                if (z != 15 && cubes[x][y][z + 1] != 0) {
+                if (z != Chunk::SIZE - 1 && cubes[x][y][z + 1] != Chunk::Voxel::Empty) {
                     cube_data.f_neighbor = true;
                 }
                 if (cube_data.l_neighbor && cube_data.r_neighbor && cube_data.t_neighbor && cube_data.bo_neighbor && cube_data.f_neighbor && cube_data.ba_neighbor)

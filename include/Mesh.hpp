@@ -43,8 +43,8 @@ private:
     void 	                    _createCube(Mesh::CubeData &);
 
 public:
-	Mesh(const std::array<std::array<std::array<char, 16>, 16>, 16> &, glm::vec3 &);
 	Mesh() = default;
+	Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &, glm::vec3 &);
 
 	void						draw();
 };

@@ -7,6 +7,7 @@
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "Inputs.hpp"
+#include "World.hpp"
 
 class Render {
 	private:
@@ -18,13 +19,14 @@ class Render {
 		Shader 						_shader;
 		Camera						_cam;
 		void                        _loadTextures();
+		World						_world;
 
 	public:
 		Render();
 		void 	gameInit();
 		void 	gameLoop();
 		static void 	gameQuit();
-		void 	drawChunks(std::vector<Chunk> &);
+		void 	drawChunks(std::vector<Chunk*>&);
 };
 
 #endif
