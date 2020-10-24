@@ -28,6 +28,14 @@ void 	Render::gameInit() {
         std::cout << "failed to init ttf" << std::endl;
         exit(0);
 	};
+    int img_flags = IMG_INIT_PNG;
+    int init = IMG_Init(img_flags);
+    if ((init & img_flags) != img_flags) {
+        std::cout << "couln't init IMG" << std::endl;
+        SDL_Quit();
+        TTF_Quit();
+        exit(0);
+    }
 	_window = SDL_CreateWindow(
 			"ft_vox",
 			SDL_WINDOWPOS_UNDEFINED,
@@ -71,38 +79,37 @@ void 	Render::gameInit() {
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
+void    Render::_loadTextures() {
+    SDL_Surface *surface = IMG_Load("../textures/grass.png");
+    if (!surface)
+        std::cout << "IMG_Load: " << IMG_GetError() << std::endl ;
+
+    GLuint TextureID = 0;
+    glGenTextures(1, &TextureID);
+    glBindTexture(GL_TEXTURE_2D, TextureID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int Mode = GL_RGB;
+    if(surface->format->BytesPerPixel == 4) {
+        Mode = GL_RGBA;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, Mode, surface->w, surface->h, 0, Mode, GL_UNSIGNED_BYTE, surface->pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, TextureID);
+    SDL_FreeSurface(surface);
+}
+
 void 	Render::gameLoop() {
 	Time				time = Time();
 	Inputs				inputs = Inputs();
 	std::vector<Chunk> 	chunks;
 
 	chunks.emplace_back(glm::vec3(0.0f, 0.0f, 0.0f));
-    
+    _loadTextures();
 
-    GLuint TextureID = 0;
-    int imgFlags = IMG_INIT_PNG;
-    if ((IMG_Init(imgFlags)) > 0)
-        std::cout << "couln't init IMG" << std::endl;
-
-    SDL_Surface *surface = IMG_Load("../textures/dirt.png");
-    if (!surface)
-    {
-        std::cout << "IMG_Load: " << IMG_GetError() << std::endl ;
-    }
-        
-    glGenTextures(1, &TextureID);
-    glBindTexture(GL_TEXTURE_2D, TextureID);
-    int Mode = GL_RGB;
-    if(surface->format->BytesPerPixel == 4) {
-        Mode = GL_RGBA;
-    }
- 
-    glTexImage2D(GL_TEXTURE_2D, 0, Mode, surface->w, surface->h, 0, Mode, GL_UNSIGNED_BYTE, surface->pixels);
- 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    glBindTexture(GL_TEXTURE_2D, TextureID);
 	_shader.use();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
 			(float)_win_w / (float)_win_h, 0.1f, 1000.0f);
@@ -129,6 +136,7 @@ void 	Render::gameLoop() {
 
 void 	Render::gameQuit() {
 	TTF_Quit();
+    IMG_Quit();
 	SDL_Quit();
 	exit(0);
 }
