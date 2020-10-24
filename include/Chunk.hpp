@@ -7,17 +7,18 @@
 
 class Chunk {
 	private:
-		std::vector<char> 	_cubes;
+    std::array<std::array<std::array<char, 16>, 16>, 16>				_cubes;
 		Mesh 				_mesh;
 		glm::vec3 			_pos;
 		
 	public:
-		Chunk(const Noise& heights, glm::u32vec3 pos);
+		Chunk(glm::vec3);
+		bool 				is_empty;
 		void 				draw();
 		void 				remesh();
-		const glm::vec3 	getPos();
-		
-		static const unsigned int	SIZE;
+		glm::vec3 			getPos();
+
+		static const unsigned int SIZE;
 };
 
 #endif

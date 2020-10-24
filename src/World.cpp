@@ -42,7 +42,7 @@ Chunk*				World::getChunk(glm::u32vec3 pos) {
 		return _chunks.at(index);
 	}
 	catch (std::out_of_range oor) {
-		_chunks[index] = new Chunk(_noise_height, pos);
+		_chunks[index] = new Chunk(pos);
 		return _chunks[index];
 	}
 }

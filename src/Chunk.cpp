@@ -1,19 +1,22 @@
 #include "Chunk.hpp"
 #include <glm/glm.hpp>
 
-const unsigned int	Chunk::SIZE = 16;
+const unsigned int			Chunk::SIZE = 16;
 
-Chunk::Chunk(const Noise& heights, glm::u32vec3 pos): _cubes(SIZE * SIZE * SIZE, 0), _mesh(), _pos(pos) {
-	double chunk_height = pos.y + SIZE;
-	for (int z = 0; z < SIZE; z++) {
-		for (int x = 0; x < SIZE; x++) {
-			double cell_height = glm::min(heights.perlin2d(4, 1.0, 0.5, (x + pos.x) / 64.0, (z + pos.z) / 64.0) * SIZE, chunk_height);
-			for (int y = pos.y; y <= cell_height; y++) {
-				_cubes[x + y * SIZE + z * SIZE * SIZE] = 1;
+Chunk::Chunk(glm::vec3 pos) : _pos(pos){
+	for (int z = 0; z < 16; z++) {
+		for (int y = 0; y < 16; y++) {
+			for (int x = 0; x < 16; x++) {
+				_cubes[x][y][z] = 'a';
 			}
 		}
 	}
-	remesh();
+	is_empty = false;
+//	_cubes[0][0][0] = 'a';
+//    _cubes[2][0][0] = 'a';
+//    _cubes[4][0][0] = 'a';
+//    _cubes[15][0][0] = 'a';
+//    _cubes[15][15][15] = 'a';
 }
 
 void 		Chunk::draw() {
@@ -22,9 +25,10 @@ void 		Chunk::draw() {
 
 void 		Chunk::remesh() {
 	//TODO init mesh with voxel data
-	//_mesh = Mesh(_cubes);
+	_mesh = Mesh(_cubes, _pos);
 }
 
-const glm::vec3 	Chunk::getPos() {
+glm::vec3 	Chunk::getPos() {
 	return _pos;
 }
+
