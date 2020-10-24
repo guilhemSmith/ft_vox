@@ -1,8 +1,32 @@
 #include <Render.hpp>
 #include <Shader.hpp>
+#include <fstream>
+#include <sstream>
 
 void 		Shader::use() const {
 	glUseProgram(_shader_program);
+}
+
+void        Shader::_parseShaders(const char *vertex_shader_path, const char *frag_shader_path) {
+    std::ifstream v_shader_file;
+    std::ifstream f_shader_file;
+    std::stringstream v_shader_stream;
+    std::stringstream f_shader_stream;
+
+
+    v_shader_file.open(vertex_shader_path);
+    f_shader_file.open(frag_shader_path);
+    if (!v_shader_file.is_open() || !f_shader_file.is_open())
+    {
+        std::cout << "couln't open shaders" << std::endl;
+        Render::gameQuit();
+    }
+    v_shader_stream << v_shader_file.rdbuf();
+    f_shader_stream << f_shader_file.rdbuf();
+    v_shader_file.close();
+    f_shader_file.close();
+    _vertex_shader_src = v_shader_stream.str();
+    _fragment_shader_src = f_shader_stream.str();
 }
 
 void 		Shader::computeShaders() {
@@ -10,39 +34,11 @@ void 		Shader::computeShaders() {
 	unsigned int fragment_shader;
 	int success;
 	char info_log[512];
-	const char* vshader_src= "#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"layout (location = 1) in vec3 aNorm;\n"
-		"uniform mat4 model;\n"
-		"uniform mat4 view;\n"
-		"uniform mat4 projection;\n"
-		"out vec4 norm;\n"
-		"void main()\n"
-		"{\n"
-			"norm = vec4(aNorm, 1.0);\n"
-			"gl_Position =  projection * view * model * vec4(aPos, 1.0);\n"
-		"}\n";
-	const char *fshader_src= "#version 330 core\n"
-		"in vec4 norm;\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-            "if (norm.z < 0)\n"
-			"   FragColor = vec4(0.7f, 0.7f, 0.7f, 1.0f);\n"
-            "else if (norm.z > 0)\n"
-            "   FragColor = vec4(0.7f, 0.7f, 0.7f, 1.0f);\n"
-            "else if (norm.x < 0)\n"
-            "   FragColor = vec4(0.5f, 0.5f, 0.5f, 1.0f);\n"
-            "else if (norm.x > 0)\n"
-            "   FragColor = vec4(0.4f, 0.4f, 0.4f, 1.0f);\n"
-            "else if (norm.y < 0)\n"
-            "   FragColor = vec4(0.9f, 0.9f, 0.9f, 1.0f);\n"
-            "else if (norm.y > 0)\n"
-            "   FragColor = vec4(0.3f, 0.3f, 0.3f, 1.0f);\n"
-		"}\n";
 
+	_parseShaders("../Shaders/vertex_shader.glsl", "../Shaders/fragment_shader.glsl");
+	const char* v_shader_code = _vertex_shader_src.c_str();
 	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertex_shader, 1,&vshader_src, nullptr);
+	glShaderSource(vertex_shader, 1, &v_shader_code, nullptr);
 	glCompileShader(vertex_shader);
 	glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &success);
 	if (!success)
@@ -51,8 +47,10 @@ void 		Shader::computeShaders() {
 		std::cout << "VERTEX SHADER COMPILE ERROR: " << info_log << std::endl;
 		Render::gameQuit();
 	}
+
+	const char * f_shader_code = _fragment_shader_src.c_str();
 	fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragment_shader, 1, &fshader_src, nullptr);
+	glShaderSource(fragment_shader, 1, &f_shader_code, nullptr);
 	glCompileShader(fragment_shader);
 	glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &success);
 	if (!success)

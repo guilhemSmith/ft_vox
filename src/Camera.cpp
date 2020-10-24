@@ -6,7 +6,7 @@
 const glm::vec3			Camera::_WORLD_UP = {0.0f, 1.0f, 0.0f};
 
 Camera::Camera(void): 
-	_position({0, 0, -5}),
+	_position({-5, 18, -5}),
 	_direction({0, 0, 1}),
 	_yaw(90.0f),
 	_pitch(0.0f)

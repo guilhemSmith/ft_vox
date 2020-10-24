@@ -1,6 +1,6 @@
 #include "Chunk.hpp"
 
-Chunk::Chunk(glm::vec3 pos) : _pos(pos){
+Chunk::Chunk(glm::vec3 pos) : _pos(pos) {
 	for (int z = 0; z < 16; z++) {
 		for (int y = 0; y < 16; y++) {
 			for (int x = 0; x < 16; x++) {
@@ -8,6 +8,7 @@ Chunk::Chunk(glm::vec3 pos) : _pos(pos){
 			}
 		}
 	}
+    _mesh = Mesh(_cubes, _pos);
 	is_empty = false;
 //	_cubes[0][0][0] = 'a';
 //    _cubes[2][0][0] = 'a';

@@ -11,16 +11,19 @@ private:
 	struct Vertex {
 		glm::vec3				position;
 		glm::vec3				normal;
+		glm::vec2               tex_coords;
+		int                     texture;
 	};
 	struct CubeData {
 	    glm::vec3               pos;
+	    int                     texture;
 	    bool                    r_neighbor;
         bool                    l_neighbor;
         bool                    f_neighbor;
         bool                    ba_neighbor;
         bool                    t_neighbor;
         bool                    bo_neighbor;
-        explicit CubeData(glm::vec3 pos) : pos(pos) {
+        explicit CubeData(glm::vec3 pos, int texture) : pos(pos), texture(texture) {
             r_neighbor = false;
             l_neighbor = false;
             f_neighbor = false;
@@ -40,13 +43,10 @@ private:
     void 	                    _createCube(Mesh::CubeData &);
 
 public:
-	//Mesh(std::vector<char> voxels);
 	Mesh(const std::array<std::array<std::array<char, 16>, 16>, 16> &, glm::vec3 &);
-	Mesh();//TODO remove
+	Mesh() = default;//TODO remove
 
 	void						draw();
 };
-
-std::ostream&	operator<<(std::ostream& os, Mesh& mesh);
 
 #endif
