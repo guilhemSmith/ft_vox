@@ -17,7 +17,6 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
     const glm::vec2 tp3 = glm::vec2(1.0f, 0.0f);
     const glm::vec2 tp4 = glm::vec2(0.0f, 0.0f);
 
-    //std::cout << data.texture << std::endl;
 	//front quad
 	if (!data.f_neighbor) {
         glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
@@ -113,7 +112,6 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
         _indices.push_back(_next_index + 3);
         _next_index += 4;
     }
-//	std::cout << _indices.size() << std::endl;
 }
 
 Mesh::Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos) {

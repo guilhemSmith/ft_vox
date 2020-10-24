@@ -12,7 +12,6 @@ void 	Render::drawChunks(std::vector<Chunk*>& chunks) {
 	{
 		if (chunk->is_empty)
 			continue;
-		//chunk.remesh();
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::translate(model, chunk->getPos());
 		_shader.setMat4("model", model);
