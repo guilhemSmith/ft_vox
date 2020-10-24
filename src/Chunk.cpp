@@ -2,7 +2,7 @@
 #include "World.hpp"
 #include <glm/glm.hpp>
 
-const unsigned int			Chunk::SIZE = 16;
+const unsigned int			Chunk::SIZE = 32;
 
 Chunk::Chunk(const Noise& heights, glm::vec3 pos) : _pos(pos) {
 	is_empty = true;

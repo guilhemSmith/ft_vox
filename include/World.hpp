@@ -5,12 +5,15 @@
 # include "Chunk.hpp"
 # include <glm/glm.hpp>
 # include <unordered_map>
+# include <vector>
 
 class World {
 private:
 	unsigned int const						_seed;
 	Noise									_noise_height;
 	std::unordered_map<unsigned int, Chunk*>	_chunks;
+	std::vector<Chunk*>						_loaded;
+	glm::u32vec3							_last_cam_chunk;
 
 	unsigned int							_chunkIndex(glm::u32vec3 pos) const;
 
@@ -18,7 +21,7 @@ public:
 	World(void);
 	World(unsigned int seed);
 
-	std::vector<Chunk*>						getChunksFromPos(glm::vec3 cam_pos);
+	std::vector<Chunk*>&					getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);
 	Chunk*									getChunk(glm::u32vec3 pos);
 	void									removeChunk(glm::u32vec3 pos);
 

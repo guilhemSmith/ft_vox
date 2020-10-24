@@ -5,7 +5,7 @@ Render::Render() {
 	_win_h = 720;
 }
 
-void 	Render::drawChunks(std::vector<Chunk*> chunks) {
+void 	Render::drawChunks(std::vector<Chunk*>& chunks) {
 	glm::mat4 view = _cam.viewMat();
 	_shader.setMat4("view", view);
 	for (auto chunk : chunks)
@@ -85,7 +85,7 @@ void 	Render::gameLoop() {
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
 
-		std::vector<Chunk*> chunks = _world.getChunksFromPos(_cam.position());
+		std::vector<Chunk*>& chunks = _world.getChunksFromPos(_cam.position(), _cam.direction());
 		drawChunks(chunks);
 
 		SDL_GL_SwapWindow(_window);

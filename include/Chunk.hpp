@@ -8,14 +8,16 @@
 class Chunk {
 	private:
 
-    std::array<std::array<std::array<char, 16>, 16>, 16>				_cubes;
+    std::array<std::array<std::array<char, 32>, 32>, 32>				_cubes;
 		Mesh 				_mesh;
 		glm::vec3 			_pos;
 		
 	public:
 		enum Voxel {
-			Empty = 'e',
-			Rock = 'a'
+			Empty = 0,
+			Rock = 1,
+			Dirt = 2,
+			Grass = 3
 		};
 
 		Chunk(const Noise& heights, glm::vec3);

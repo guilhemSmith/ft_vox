@@ -32,21 +32,28 @@ unsigned int		World::_chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
 }
 
-std::vector<Chunk*>	World::getChunksFromPos(glm::vec3 cam_pos) {
-	std::vector<Chunk*>	chunk_at_range;
-	glm::u32vec3		chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
+std::vector<Chunk*>&	World::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
+	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
 
-	for (auto x = -10; x < 11; x++) {
-		for (auto y = -10; y < 11; y++) {
-			for (auto z = -10; z < 11; z++) {
-				Chunk*	chunk = getChunk(chunk_pos + glm::u32vec3(x, y, z));
-				if (chunk != NULL) {
-					chunk_at_range.push_back(chunk);
+	if (cam_chunk_pos != _last_cam_chunk) {
+		_loaded = std::vector<Chunk*>();
+		_last_cam_chunk = cam_chunk_pos;
+		for (auto x = -5; x < 6; x++) {
+			for (auto y = -5; y < 6; y++) {
+				for (auto z = -5; z < 6; z++) {
+					// glm::vec3	chunk_pos = cam_chunk_pos + glm::u32vec3(x, y, z);
+					// if (glm::length(glm::vec3(x, y, z)) > 2 && glm::dot(cam_dir, glm::vec3(x, y, z)) > 0) {
+						Chunk*	chunk = getChunk(cam_chunk_pos + glm::u32vec3(x, y, z));
+						if (chunk != NULL) {
+							_loaded.push_back(chunk);
+						}
+					// }
 				}
 			}
 		}
 	}
-	return chunk_at_range;
+
+	return _loaded;
 }
 
 Chunk*				World::getChunk(glm::u32vec3 pos) {
