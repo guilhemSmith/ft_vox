@@ -80,10 +80,35 @@ void 	Render::gameInit() {
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
+void 	Redner::_loadSkybox() {
+	unsigned int skybox;
+	std::vector<string> textures;
+	textures.push_back("right.jpg");
+	textures.push_back("left.jpg");
+	textures.push_back("top.jpg");
+	textures.push_back("bottom.jpg");
+	textures.push_back("front.jpg");
+	textures.push_back("back.jpg");
+	glGenTextures(1, &skybox);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+
+	for (auto &t: textures))
+	{
+		SDL_Surface *surface = IMG_Load(t);
+		if (!surface) {
+        	std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
+			gameQuit();
+		}
+	}
+
+}
+
 void    Render::_loadTextures(const char *file) {
     SDL_Surface *surface = IMG_Load(file);
-    if (!surface)
-        std::cout << "IMG_Load: " << IMG_GetError() << std::endl ;
+    if (!surface) {
+        std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
+		gameQuit();
+	}
 
     GLuint TextureID;
     glGenTextures(1, &TextureID);
