@@ -75,9 +75,7 @@ void 		Shader::computeShaders() {
 }
 
 void 		Shader::setMat4(const char *loc_name, glm::mat4 &mat) const {
-	// int 	loc = glGetUniformLocation(_shader_program, loc_name);
 	glUniformMatrix4fv(glGetUniformLocation(_shader_program, loc_name), 1, GL_FALSE, &mat[0][0]);
-	// glUniformMatrix4fv(loc, 1, GL_FALSE, &mat[0][0]);	
 }
 
 void 		Shader::setTexture(const char *tex_name, int tex_id) {

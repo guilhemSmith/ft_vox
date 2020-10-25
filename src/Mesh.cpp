@@ -152,6 +152,7 @@ Mesh::Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, gl
 void 	Mesh::draw() {
 	glBindVertexArray(_vao);
 	glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, nullptr);
+	// glBindVertexArray(0);
 }
 
 void 	Mesh::_setupBuffers() {
@@ -177,4 +178,14 @@ void 	Mesh::_setupBuffers() {
     glVertexAttribIPointer(3, 1, GL_INT, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, texture));
 
     glBindVertexArray(0);
+}
+
+void    Mesh::clearBuffers() {
+    glDeleteVertexArrays(1, &_vao);
+    glDeleteBuffers(1, &_vbo);
+    glDeleteBuffers(1, &_ebo);
+}
+
+Mesh::~Mesh() {
+    // std::cout << "Mesh destructor called" << std::endl;
 }

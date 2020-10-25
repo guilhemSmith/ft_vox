@@ -29,7 +29,7 @@ void 	Render::gameInit() {
         std::cout << "failed to init ttf" << std::endl;
         exit(0);
 	};
-    int img_flags = IMG_INIT_PNG;
+    int img_flags = IMG_INIT_PNG | IMG_INIT_JPG;
     int init = IMG_Init(img_flags);
     if ((init & img_flags) != img_flags) {
         std::cout << "couln't init IMG" << std::endl;
@@ -72,29 +72,29 @@ void 	Render::gameInit() {
 		std::cout << "Glew error: " << glewGetErrorString(err) << std::endl;
 	    gameQuit();
 	}
-	_cam = Camera();
-	_shader = Shader();
 	_shader.computeShaders();
+	_skybox.computeShaders();
+	
+
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-void 	Redner::_loadSkybox() {
-	unsigned int skybox;
-	std::vector<string> textures;
-	textures.push_back("right.jpg");
-	textures.push_back("left.jpg");
-	textures.push_back("top.jpg");
-	textures.push_back("bottom.jpg");
-	textures.push_back("front.jpg");
-	textures.push_back("back.jpg");
-	glGenTextures(1, &skybox);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
+void 	Render::_loadSkyboxTextures() {
+	std::vector<std::string> textures;
+	textures.push_back("../textures/skybox/right.jpg");
+	textures.push_back("../textures/skybox/left.jpg");
+	textures.push_back("../textures/skybox/top.jpg");
+	textures.push_back("../textures/skybox/bottom.jpg");
+	textures.push_back("../textures/skybox/front.jpg");
+	textures.push_back("../textures/skybox/back.jpg");
+	glGenTextures(1, &_skybox_id);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_id);
 
-	for (int i = 0; i < textures.size(); i++))
+	for (int i = 0; i < textures.size(); i++)
 	{
-		SDL_Surface *surface = IMG_Load(textures[i];
+		SDL_Surface *surface = IMG_Load(textures[i].c_str());
 		if (!surface) {
         	std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
 			gameQuit();
@@ -110,10 +110,9 @@ void 	Redner::_loadSkybox() {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
 }
 
-void    Render::_loadTextures(const char *file) {
+void    Render::_loadCubeTextures(const char *file) {
     SDL_Surface *surface = IMG_Load(file);
     if (!surface) {
         std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
@@ -138,12 +137,12 @@ void    Render::_loadTextures(const char *file) {
     SDL_FreeSurface(surface);
 }
 
-void 	Render::_setupTextures() {
-	_loadTextures("../textures/melon_top.png"); //will be grass top later
-	_loadTextures("../textures/grass_block_side.png");
-	_loadTextures("../textures/dirt.png");
-	_loadTextures("../textures/cobblestone.png"); //rock
-	_loadTextures("../textures/sand.png");
+void 	Render::_setupCubeTextures() {
+	_loadCubeTextures("../textures/melon_top.png"); //will be grass top later
+	_loadCubeTextures("../textures/grass_block_side.png");
+	_loadCubeTextures("../textures/dirt.png");
+	_loadCubeTextures("../textures/cobblestone.png"); //rock
+	_loadCubeTextures("../textures/sand.png");
 	_shader.setTexture("grass", 0);
 	_shader.setTexture("grass_side", 1);
 	_shader.setTexture("dirt", 2);
@@ -160,20 +159,36 @@ void 	Render::gameLoop() {
 	Inputs				inputs = Inputs();
 
 	_shader.use();
-	_setupTextures();
+	_setupCubeTextures();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
-			(float)_win_w / (float)_win_h, 0.1f, 160.0f);
+			(float)_win_w / (float)_win_h, 0.1f, 165.0f);
 	_shader.setMat4("projection", projection);
 
-	
+	_skybox.setupBuffers();
+	_skybox.use();
+	_skybox.setMat4("projection", projection);
+	_loadSkyboxTextures();
+	_skybox.setTexture("skybox", 0);
+
 	while (!inputs.shouldQuit()) {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
 
+		_shader.use();
 		std::vector<Chunk*>& chunks = _world.getChunksFromPos(_cam.position(), _cam.direction());
-		drawChunks(chunks);
+		// drawChunks(chunks);
+
+		glDepthFunc(GL_LEQUAL);
+		_skybox.use();
+		glm::mat4 view = glm::mat4(glm::mat3(_cam.viewMat()));
+		_skybox.setMat4("view", view);
+		glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_id);
+		_skybox.draw();
+
+		glDepthFunc(GL_LESS);
 
 		SDL_GL_SwapWindow(_window);
 

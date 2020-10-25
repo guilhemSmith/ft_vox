@@ -58,6 +58,7 @@ file(GLOB SOURCES
 	"${PROJECT_SOURCE_DIR}/src/Shader.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Chunk.cpp"
 	"${PROJECT_SOURCE_DIR}/src/World.cpp"
+	"${PROJECT_SOURCE_DIR}/src/Skybox.cpp"
 )
 
 add_executable(ft_vox ${SOURCES})
