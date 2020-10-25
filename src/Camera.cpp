@@ -8,8 +8,8 @@ const glm::vec3			Camera::_WORLD_UP = {0.0f, 1.0f, 0.0f};
 
 Camera::Camera(void): 
 	_position(World::SIZES_VOXELS),// / static_cast<unsigned int>(2)),
-	_direction({0, 0, 1}),
-	_yaw(90.0f),
+	_direction({0, 0, -1}),
+	_yaw(0.0f),
 	_pitch(0.0f)
 {}
 

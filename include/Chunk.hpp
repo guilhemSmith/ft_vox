@@ -22,9 +22,11 @@ class Chunk {
 
 		Chunk(const Noise& heights, glm::vec3);
 		bool 				is_empty;
+		bool 				is_visible;
 		void 				draw();
 		void 				remesh();
 		glm::vec3 			getPos();
+		glm::u32vec3		getPosChunk();
 
 		static const unsigned int SIZE;
 };

@@ -11,11 +11,14 @@ class World {
 private:
 	unsigned int const						_seed;
 	Noise									_noise_height;
-	std::unordered_map<unsigned int, Chunk*>	_chunks;
-	std::vector<Chunk*>						_loaded;
+	std::unordered_map<unsigned int, Chunk*>	_chunks_loaded;
+	std::vector<Chunk*>						_chunks_visible;
+	std::vector<Chunk*>						_chunk_last_loaded;
 	glm::u32vec3							_last_cam_chunk;
 
 	unsigned int							_chunkIndex(glm::u32vec3 pos) const;
+	void									_loadNeighbour(glm::vec3 pos, glm::vec3 dir, std::vector<Chunk*>& container);
+	void									_loadNewChunk(void);
 
 public:
 	World(void);
