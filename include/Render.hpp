@@ -18,8 +18,10 @@ class Render {
 		unsigned int 				_win_h;
 		Shader 						_shader;
 		Camera						_cam;
-		void                        _loadTextures();
+		void                        _loadTextures(const char *);
+		void 						_setupTextures();
 		World						_world;
+		std::vector<GLuint>			_texture_ids;
 
 	public:
 		Render();

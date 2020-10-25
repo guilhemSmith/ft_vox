@@ -80,13 +80,14 @@ void 	Render::gameInit() {
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-void    Render::_loadTextures() {
-    SDL_Surface *surface = IMG_Load("../textures/grass.png");
+void    Render::_loadTextures(const char *file) {
+    SDL_Surface *surface = IMG_Load(file);
     if (!surface)
         std::cout << "IMG_Load: " << IMG_GetError() << std::endl ;
 
-    GLuint TextureID = 0;
+    GLuint TextureID;
     glGenTextures(1, &TextureID);
+	_texture_ids.push_back(TextureID);
     glBindTexture(GL_TEXTURE_2D, TextureID);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -98,22 +99,38 @@ void    Render::_loadTextures() {
     }
     glTexImage2D(GL_TEXTURE_2D, 0, Mode, surface->w, surface->h, 0, Mode, GL_UNSIGNED_BYTE, surface->pixels);
     glGenerateMipmap(GL_TEXTURE_2D);
-
-    glBindTexture(GL_TEXTURE_2D, TextureID);
+    
     SDL_FreeSurface(surface);
+}
+
+void 	Render::_setupTextures() {
+	_loadTextures("../textures/melon_top.png"); //will be grass top later
+	_loadTextures("../textures/grass_block_side.png");
+	_loadTextures("../textures/dirt.png");
+	_loadTextures("../textures/cobblestone.png"); //rock
+	_loadTextures("../textures/sand.png");
+	_shader.setTexture("grass", 0);
+	_shader.setTexture("grass_side", 1);
+	_shader.setTexture("dirt", 2);
+	_shader.setTexture("rock", 3);
+	_shader.setTexture("sand", 4);
+	for (int i = 0; i < _texture_ids.size(); i++) {
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, _texture_ids[i]);
+	}
 }
 
 void 	Render::gameLoop() {
 	Time				time = Time();
 	Inputs				inputs = Inputs();
 
-    _loadTextures();
-
 	_shader.use();
+	_setupTextures();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
-			(float)_win_w / (float)_win_h, 0.1f, 1000.0f);
+			(float)_win_w / (float)_win_h, 0.1f, 160.0f);
 	_shader.setMat4("projection", projection);
 
+	
 	while (!inputs.shouldQuit()) {
 		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

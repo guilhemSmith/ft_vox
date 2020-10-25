@@ -13,6 +13,7 @@ class Shader {
 		void 	computeShaders();
 		void 	use(void) const;
 		void 	setMat4(const char *, glm::mat4 &mat) const;
+		void 	setTexture(const char *, int);
 };
 
 #endif

@@ -17,7 +17,8 @@ class Chunk {
 			Empty = 0,
 			Rock = 1,
 			Dirt = 2,
-			Grass = 3
+			Grass = 3,
+			Sand = 4
 		};
 
 		Chunk(const Noise& heights, glm::vec3);
