@@ -178,3 +178,9 @@ void 	Mesh::_setupBuffers() {
 
     glBindVertexArray(0);
 }
+
+Mesh::~Mesh() {
+    glDeleteVertexArrays(1, &_vao);
+    glDeleteBuffers(1, &_vbo);
+    glDeleteBuffers(1, &_ebo);
+}
