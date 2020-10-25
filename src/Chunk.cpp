@@ -28,7 +28,6 @@ void 		Chunk::draw() {
 }
 
 void 		Chunk::remesh() {
-	//TODO init mesh with voxel data
 	_mesh = Mesh(_cubes, _pos);
 }
 

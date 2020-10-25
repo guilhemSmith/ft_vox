@@ -12,7 +12,6 @@ void 	Render::drawChunks(std::vector<Chunk*>& chunks) {
 	{
 		if (chunk->is_empty)
 			continue;
-		//chunk.remesh();
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::translate(model, chunk->getPos());
 		_shader.setMat4("model", model);
@@ -30,6 +29,14 @@ void 	Render::gameInit() {
         std::cout << "failed to init ttf" << std::endl;
         exit(0);
 	};
+    int img_flags = IMG_INIT_PNG;
+    int init = IMG_Init(img_flags);
+    if ((init & img_flags) != img_flags) {
+        std::cout << "couln't init IMG" << std::endl;
+        SDL_Quit();
+        TTF_Quit();
+        exit(0);
+    }
 	_window = SDL_CreateWindow(
 			"ft_vox",
 			SDL_WINDOWPOS_UNDEFINED,
@@ -73,11 +80,37 @@ void 	Render::gameInit() {
 //	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
+void    Render::_loadTextures() {
+    SDL_Surface *surface = IMG_Load("../textures/grass.png");
+    if (!surface)
+        std::cout << "IMG_Load: " << IMG_GetError() << std::endl ;
+
+    GLuint TextureID = 0;
+    glGenTextures(1, &TextureID);
+    glBindTexture(GL_TEXTURE_2D, TextureID);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    int Mode = GL_RGB;
+    if(surface->format->BytesPerPixel == 4) {
+        Mode = GL_RGBA;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, Mode, surface->w, surface->h, 0, Mode, GL_UNSIGNED_BYTE, surface->pixels);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    glBindTexture(GL_TEXTURE_2D, TextureID);
+    SDL_FreeSurface(surface);
+}
+
 void 	Render::gameLoop() {
 	Time				time = Time();
 	Inputs				inputs = Inputs();
+
+    _loadTextures();
+
 	_shader.use();
-	glm::mat4 projection = glm::perspective(glm::radians(90.0f), 
+	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
 			(float)_win_w / (float)_win_h, 0.1f, 1000.0f);
 	_shader.setMat4("projection", projection);
 
@@ -100,6 +133,7 @@ void 	Render::gameLoop() {
 
 void 	Render::gameQuit() {
 	TTF_Quit();
+    IMG_Quit();
 	SDL_Quit();
 	exit(0);
 }

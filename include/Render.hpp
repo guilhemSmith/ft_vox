@@ -18,6 +18,7 @@ class Render {
 		unsigned int 				_win_h;
 		Shader 						_shader;
 		Camera						_cam;
+		void                        _loadTextures();
 		World						_world;
 
 	public:

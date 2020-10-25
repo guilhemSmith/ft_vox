@@ -1,11 +1,7 @@
-#include "Mesh.hpp"
-#include "Chunk.hpp"
-#include "ft_vox.hpp"
+#include <Mesh.hpp>
+#include <Chunk.hpp>
+#include <ft_vox.hpp>
 #include <cstddef>
-
-Mesh::Mesh() {
-	_next_index = 0;
-}
 
 void 		Mesh::_createCube(Mesh::CubeData &data) {
 	const glm::vec3 p1 = glm::vec3(data.pos.x , data.pos.y , data.pos.z + 1.0f);
@@ -16,14 +12,18 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 	const glm::vec3 p6 = glm::vec3(data.pos.x , data.pos.y , data.pos.z );
 	const glm::vec3 p7 = glm::vec3(data.pos.x , data.pos.y + 1.0f, data.pos.z );
 	const glm::vec3 p8 = glm::vec3(data.pos.x + 1.0f, data.pos.y + 1.0f, data.pos.z );
+	const glm::vec2 tp1 = glm::vec2(0.0f, 1.0f);
+    const glm::vec2 tp2 = glm::vec2(1.0f, 1.0f);
+    const glm::vec2 tp3 = glm::vec2(1.0f, 0.0f);
+    const glm::vec2 tp4 = glm::vec2(0.0f, 0.0f);
 
 	//front quad
 	if (!data.f_neighbor) {
         glm::vec3 normal = glm::vec3(0.0f, 0.0f, 1.0f);
-        _vertices.push_back({p1, normal});
-        _vertices.push_back({p2, normal});
-        _vertices.push_back({p3, normal});
-        _vertices.push_back({p4, normal});
+        _vertices.push_back({p1, normal, tp1, data.texture});
+        _vertices.push_back({p2, normal, tp2, data.texture});
+        _vertices.push_back({p3, normal, tp3, data.texture});
+        _vertices.push_back({p4, normal, tp4, data.texture});
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
@@ -36,10 +36,10 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 	//back quad
     if (!data.ba_neighbor) {
         glm::vec3 normal = glm::vec3(0.0f, 0.0f, -1.0f);
-        _vertices.push_back({p5, normal});
-        _vertices.push_back({p6, normal});
-        _vertices.push_back({p7, normal});
-        _vertices.push_back({p8, normal});
+        _vertices.push_back({p5, normal, tp1, data.texture});
+        _vertices.push_back({p6, normal, tp2, data.texture});
+        _vertices.push_back({p7, normal, tp3, data.texture});
+        _vertices.push_back({p8, normal, tp4, data.texture});
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
@@ -52,10 +52,10 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 	//left quad
     if (!data.l_neighbor) {
         glm::vec3 normal = glm::vec3(1.0f, 0.0f, 0.0f);
-        _vertices.push_back({p2, normal});
-        _vertices.push_back({p5, normal});
-        _vertices.push_back({p8, normal});
-        _vertices.push_back({p3, normal});
+        _vertices.push_back({p2, normal, tp1, data.texture});
+        _vertices.push_back({p5, normal, tp2, data.texture});
+        _vertices.push_back({p8, normal, tp3, data.texture});
+        _vertices.push_back({p3, normal, tp4, data.texture});
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
@@ -68,10 +68,10 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 	//right quad
 	if (!data.r_neighbor) {
         glm::vec3 normal = glm::vec3(-1.0f, 0.0f, 0.0f);
-        _vertices.push_back({p6, normal});
-        _vertices.push_back({p1, normal});
-        _vertices.push_back({p4, normal});
-        _vertices.push_back({p7, normal});
+        _vertices.push_back({p6, normal, tp1, data.texture});
+        _vertices.push_back({p1, normal, tp2, data.texture});
+        _vertices.push_back({p4, normal, tp3, data.texture});
+        _vertices.push_back({p7, normal, tp4, data.texture});
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
@@ -84,10 +84,10 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 	//top quad
 	if (!data.t_neighbor) {
         glm::vec3 normal = glm::vec3(0.0f, -1.0f, 0.0f);
-        _vertices.push_back({p4, normal});
-        _vertices.push_back({p3, normal});
-        _vertices.push_back({p8, normal});
-        _vertices.push_back({p7, normal});
+        _vertices.push_back({p4, normal, tp1, data.texture});
+        _vertices.push_back({p3, normal, tp2, data.texture});
+        _vertices.push_back({p8, normal, tp3, data.texture});
+        _vertices.push_back({p7, normal, tp4, data.texture});
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
@@ -100,10 +100,10 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 	//bot quad
 	if (!data.bo_neighbor) {
         glm::vec3 normal = glm::vec3(0.0f, 1.0f, 0.0f);
-        _vertices.push_back({p6, normal});
-        _vertices.push_back({p5, normal});
-        _vertices.push_back({p2, normal});
-        _vertices.push_back({p1, normal});
+        _vertices.push_back({p6, normal, tp1, data.texture});
+        _vertices.push_back({p5, normal, tp2, data.texture});
+        _vertices.push_back({p2, normal, tp3, data.texture});
+        _vertices.push_back({p1, normal, tp4, data.texture});
         _indices.push_back(_next_index + 0);
         _indices.push_back(_next_index + 1);
         _indices.push_back(_next_index + 2);
@@ -112,7 +112,6 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
         _indices.push_back(_next_index + 3);
         _next_index += 4;
     }
-//	std::cout << _indices.size() << std::endl;
 }
 
 Mesh::Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos) {
@@ -121,7 +120,7 @@ Mesh::Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, gl
 			for (int x = 0; x < Chunk::SIZE; x++) {
                 if (cubes[x][y][z] == Chunk::Voxel::Empty)
                     continue;
-                Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z));
+                Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z), cubes[x][y][z]);
                 if (x != 0 && cubes[x - 1][y][z] != Chunk::Voxel::Empty) {
                     cube_data.r_neighbor = true;
                 }
@@ -172,13 +171,10 @@ void 	Mesh::_setupBuffers() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)nullptr);
     glEnableVertexAttribArray(1);	
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, normal));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, tex_coords));
+    glEnableVertexAttribArray(3);
+    glVertexAttribIPointer(3, 1, GL_INT, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, texture));
 
     glBindVertexArray(0);
-}
-
-std::ostream&	operator<<(std::ostream& os, Mesh& mesh) {
-
-	//TODO print data for debug
-	os << "Mesh: ";
-	return os;
 }
