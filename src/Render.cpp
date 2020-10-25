@@ -92,14 +92,24 @@ void 	Redner::_loadSkybox() {
 	glGenTextures(1, &skybox);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox);
 
-	for (auto &t: textures))
+	for (int i = 0; i < textures.size(); i++))
 	{
-		SDL_Surface *surface = IMG_Load(t);
+		SDL_Surface *surface = IMG_Load(textures[i];
 		if (!surface) {
         	std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
 			gameQuit();
 		}
+		int Mode = GL_RGB;
+    	if(surface->format->BytesPerPixel == 4) {
+        	Mode = GL_RGBA;
+    	}
+    	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, Mode, surface->w, surface->h, 0, Mode, GL_UNSIGNED_BYTE, surface->pixels);
 	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 }
 
