@@ -13,12 +13,12 @@ private:
 	Noise									_noise_height;
 	std::unordered_map<unsigned int, Chunk*>	_chunks_loaded;
 	std::vector<Chunk*>						_chunks_visible;
-	std::vector<Chunk*>						_chunk_last_loaded;
+	std::vector<glm::u32vec3>				_chunks_to_load;
+	std::vector<glm::u32vec3>				_chunks_to_unload;
 	glm::u32vec3							_last_cam_chunk;
 
 	unsigned int							_chunkIndex(glm::u32vec3 pos) const;
-	void									_loadNeighbour(glm::vec3 pos, glm::vec3 dir, std::vector<Chunk*>& container);
-	void									_loadNewChunk(void);
+	void									_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir);
 
 public:
 	World(void);
@@ -32,6 +32,7 @@ public:
 	static const glm::u32vec3				SIZES_CHUNKS;
 	static const unsigned int				NOISE_STRETCH;
 	static const unsigned int				NOISE_SIZE;
+	static const float						VIEW_DISTANCE;
 };
 
 #endif
