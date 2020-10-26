@@ -76,19 +76,19 @@ void 	Render::gameInit() {
 	_skybox.computeShaders();
 	
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	// glEnable(GL_CULL_FACE);
+	// glCullFace(GL_BACK);
+	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void 	Render::_loadSkyboxTextures() {
 	std::vector<std::string> textures;
-	textures.push_back("../textures/skybox/right.jpg");
-	textures.push_back("../textures/skybox/left.jpg");
-	textures.push_back("../textures/skybox/top.jpg");
-	textures.push_back("../textures/skybox/bottom.jpg");
-	textures.push_back("../textures/skybox/front.jpg");
-	textures.push_back("../textures/skybox/back.jpg");
+	textures.push_back("../textures/skybox2/right.png");
+	textures.push_back("../textures/skybox2/left.png");
+	textures.push_back("../textures/skybox2/top.png");
+	textures.push_back("../textures/skybox2/bot.png");
+	textures.push_back("../textures/skybox2/front.png");
+	textures.push_back("../textures/skybox2/back.png");
 	glGenTextures(1, &_skybox_id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_id);
 
