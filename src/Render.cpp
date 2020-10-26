@@ -138,7 +138,7 @@ void    Render::_loadCubeTextures(const char *file) {
 }
 
 void 	Render::_setupCubeTextures() {
-	_loadCubeTextures("../textures/melon_top.png"); //will be grass top later
+	_loadCubeTextures("../textures/grass.png"); //will be grass top later
 	_loadCubeTextures("../textures/grass_block_side.png");
 	_loadCubeTextures("../textures/dirt.png");
 	_loadCubeTextures("../textures/cobblestone.png"); //rock
@@ -171,14 +171,14 @@ void 	Render::gameLoop() {
 	_skybox.setTexture("skybox", 0);
 
 	while (!inputs.shouldQuit()) {
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+//		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
 
 		_shader.use();
 		std::vector<Chunk*>& chunks = _world.getChunksFromPos(_cam.position(), _cam.direction());
-		// drawChunks(chunks);
+		drawChunks(chunks);
 
 		glDepthFunc(GL_LEQUAL);
 		_skybox.use();
