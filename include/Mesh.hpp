@@ -48,6 +48,7 @@ public:
 	Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &, glm::vec3 &);
 
 	void						draw();
+	void 						clearBuffers();
 };
 
 #endif
