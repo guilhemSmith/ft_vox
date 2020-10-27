@@ -15,7 +15,7 @@ Chunk::Chunk(const Noise& heights, glm::vec3 pos) : _pos(pos) {
 					_cubes[x][y][z] = Voxel::Empty;
 				}
 				else {
-					_cubes[x][y][z] = Voxel::Grass;
+					_cubes[x][y][z] = Voxel::Rock;
 					is_empty = false;
 				}
 			}
