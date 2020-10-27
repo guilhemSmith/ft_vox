@@ -13,7 +13,7 @@ uniform sampler2D sand;
 
 void main()
 {
-    if (tex == 2) { //dirt
+    if (tex == 3) { //grass
         if (norm.z < 0)
             FragColor = vec4(0.7f, 0.7f, 0.7f, 1.0f) * texture(grass_side, texcoords);
         else if (norm.z > 0)
@@ -27,7 +27,7 @@ void main()
         else if (norm.y > 0)
             FragColor = vec4(0.3f, 0.3f, 0.3f, 1.0f) * texture(dirt, texcoords);
     }
-    else if (tex == 3) { //grass
+    else if (tex == 2) { //dirt
         if (norm.z < 0)
             FragColor = vec4(0.7f, 0.7f, 0.7f, 1.0f) * texture(dirt, texcoords);
         else if (norm.z > 0)
