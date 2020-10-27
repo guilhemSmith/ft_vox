@@ -125,8 +125,8 @@ void    Render::_loadCubeTextures(const char *file) {
 	_texture_ids.push_back(TextureID);
     glBindTexture(GL_TEXTURE_2D, TextureID);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     int Mode = GL_RGB;
     if(surface->format->BytesPerPixel == 4) {
