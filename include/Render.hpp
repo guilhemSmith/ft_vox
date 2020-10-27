@@ -20,7 +20,8 @@ class Render {
 		Camera						_cam;
 		void                        _loadTextures(const char *);
 		void 						_setupTextures();
-    ChunkManager				_manager;
+    	ChunkManager				_manager;
+		std::vector<GLuint>			_texture_ids;
 
 	public:
 		Render();
