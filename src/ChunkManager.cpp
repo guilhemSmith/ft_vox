@@ -15,7 +15,7 @@ const unsigned int	ChunkManager::NOISE_STRETCH = 64;
 
 const unsigned int	ChunkManager::NOISE_SIZE = SIZES_VOXELS.x / NOISE_STRETCH * SIZES_VOXELS.z / NOISE_STRETCH;
 
-const float			ChunkManager::VIEW_DISTANCE = 7;	
+const float			ChunkManager::VIEW_DISTANCE = 6;	
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_seed(seed),
@@ -47,7 +47,8 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 		glm::vec3 pos_chunk = chunk->getPosChunk();
 		float dot = glm::dot(dir, pos_chunk + glm::vec3(0.5) - cam_chunk_pos);
 		glm::vec3 offset = pos_chunk - cam_chunk_pos;
-		float dist = glm::max(glm::length(offset * glm::vec3(1,0,0)), glm::max(glm::length(offset * glm::vec3(0,1,0)), glm::length(offset * glm::vec3(0,0,1))));
+		float dist = glm::distance(cam_chunk_pos, pos_chunk);
+		// float dist = glm::max(glm::length(offset * glm::vec3(1,0,0)), glm::max(glm::length(offset * glm::vec3(0,1,0)), glm::length(offset * glm::vec3(0,0,1))));
 		if ((dist < VIEW_DISTANCE && dot > 0) || dist < 2) {
 			_chunks_visible.push_back(chunk);
 		}
@@ -66,8 +67,8 @@ void					ChunkManager::_unloadTooFar(glm::vec3 cam_pos_chunk) {
 }
 
 void					ChunkManager::_detectChunkToLoad(glm::u32vec3 cam_chunk_pos) {
-	glm::i32vec3	offset = cam_chunk_pos - _last_cam_chunk;
-
+	glm::i32vec3	offset = cam_chunk_pos - _last_cam_chunk;	
+	
 	for (auto i = -VIEW_DISTANCE; i < VIEW_DISTANCE + 1; i++) {
 		for (auto j = -VIEW_DISTANCE; j < VIEW_DISTANCE + 1; j++) {
 			if (offset.x != 0) {
