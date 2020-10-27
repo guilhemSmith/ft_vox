@@ -5,9 +5,8 @@
 
 const unsigned int	Noise::_SCALE = 85000;
 
-Noise::Noise(unsigned int size, unsigned int seed): _values() {
+Noise::Noise(unsigned int size): _values() {
 	_values.reserve(size);
-	srand(seed);
 	for (auto i = 0; i < size; i++) {
 		_values.push_back(static_cast <double> (rand()) / static_cast <double> (RAND_MAX));
 	}
