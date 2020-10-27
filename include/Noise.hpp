@@ -19,7 +19,7 @@ private:
 	static double				_interpolateCubic(double before_a, double a, double b, double after_b, double t);
 
 public:
-	Noise(unsigned int size, unsigned int seed);
+	Noise(unsigned int size);
 
 	double						noise2dSmoothLinear(double x, double y) const;
 	double						noise2dSmoothCosine(double x, double y) const;

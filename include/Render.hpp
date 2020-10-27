@@ -29,7 +29,7 @@ class Render {
 		Skybox 						_skybox;
 
 	public:
-		Render();
+		Render(unsigned int seed);
 		void 	gameInit();
 		void 	gameLoop();
 		static void 	gameQuit();
