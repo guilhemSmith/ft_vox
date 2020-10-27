@@ -7,7 +7,7 @@
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "Inputs.hpp"
-#include "World.hpp"
+#include "ChunkManager.hpp"
 
 class Render {
 	private:
@@ -20,7 +20,7 @@ class Render {
 		Camera						_cam;
 		void                        _loadTextures(const char *);
 		void 						_setupTextures();
-		World						_world;
+    	ChunkManager				_manager;
 		std::vector<GLuint>			_texture_ids;
 
 	public:
