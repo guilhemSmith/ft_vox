@@ -6,6 +6,8 @@
 # include "Noise.hpp"
 
 
+// class Mesh;
+
 class Chunk {
 	private:
 
@@ -29,6 +31,7 @@ class Chunk {
 		void 				remesh(std::array<Chunk *, 6>&);
 		glm::vec3 			getPos();
 		glm::u32vec3		getPosChunk();
+		bool 				hasVoxelAt(int x, int y, int z) const;
 
 		static const unsigned int SIZE;
 };

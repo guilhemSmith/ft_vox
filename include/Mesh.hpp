@@ -5,7 +5,8 @@
 # include <glm/glm.hpp>
 # include <ostream>
 # include <array>
-# include <Chunk.hpp>
+
+class Chunk;
 
 class Mesh {
 private:
@@ -47,7 +48,6 @@ public:
 	Mesh() = default;
 	~Mesh();
 	void						init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos, std::array<Chunk*, 6> &);
-	// Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &, glm::vec3 &);
 	void						draw();
 	void 						clearBuffers();
 };

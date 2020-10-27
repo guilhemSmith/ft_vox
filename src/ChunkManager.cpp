@@ -126,27 +126,40 @@ std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3
 			if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
 				unsigned int index = _chunkIndex(pos);
 
-				std::array<Chunk*>, 6> neighbors;
-				auto x_p = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(1, 0, 0)));
+				std::array<Chunk*, 6> neighbors;
+				auto x_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(-1, 0, 0)));
 				if (x_p != _chunks_loaded.end())
-					neighbors[0] = *x_p;
-				auto x_n = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(-1, 0, 0)));
-				if (x_n != _chunks_loaded.end())
-					neighbors[1] = *x_n;
+					neighbors[0] = x_p->second;
+				else
+					neighbors[0] = nullptr;
 					
-				auto y_p = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(0, 1, 0)));
+				auto x_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(1, 0, 0)));
+				if (x_n != _chunks_loaded.end())
+					neighbors[1] = x_n->second;
+				else
+					neighbors[1] = nullptr;
+					
+				auto y_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, -1, 0)));
 				if (y_p != _chunks_loaded.end())
-					neighbors[2] = *y_p;
-				auto y_n = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(0, -1, 0)));
+					neighbors[2] = y_p->second;
+				else
+					neighbors[2] = nullptr;
+				auto y_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 1, 0)));
 				if (y_n != _chunks_loaded.end())
-					neighbors[3] = *y_n;
+					neighbors[3] = y_n->second;
+				else
+					neighbors[3] = nullptr;
 
-				auto z_p = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(0, 0, 1)));
+				auto z_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, -1)));
 				if (z_p != _chunks_loaded.end())
-					neighbors[4] = *z_p;
-				auto z_n = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(0, 0, -1)));
+					neighbors[4] = z_p->second;
+				else
+					neighbors[4] = nullptr;
+				auto z_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, 1)));
 				if (z_n != _chunks_loaded.end())
-					neighbors[5] = *z_n;
+					neighbors[5] = z_n->second;
+				else
+					neighbors[5] = nullptr;
 
 				_chunks_loaded[index] = new Chunk(_noise_height, pos * Chunk::SIZE);
 				_chunks_loaded[index]->remesh(neighbors);

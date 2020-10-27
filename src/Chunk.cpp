@@ -23,6 +23,12 @@ Chunk::Chunk(const Noise& heights, glm::vec3 pos) : _pos(pos) {
 	}
 }
 
+bool 		Chunk::hasVoxelAt(int x, int y, int z) const {
+	if (_cubes[x][y][z] == Voxel::Empty)
+		return false;
+	return true;
+}
+
 Chunk::~Chunk() {
 	_mesh.clearBuffers();
 }
