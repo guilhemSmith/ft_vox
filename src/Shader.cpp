@@ -81,3 +81,7 @@ void 		Shader::setMat4(const char *loc_name, glm::mat4 &mat) const {
 void 		Shader::setTexture(const char *tex_name, int tex_id) {
 	glUniform1i(glGetUniformLocation(_shader_program, tex_name), tex_id);
 }
+
+void 		Shader::delete_prog() {
+	glDeleteProgram(_shader_program);
+}

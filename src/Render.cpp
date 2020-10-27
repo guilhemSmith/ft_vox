@@ -76,19 +76,19 @@ void 	Render::gameInit() {
 	_skybox.computeShaders();
 	
 
-	// glEnable(GL_CULL_FACE);
-	// glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void 	Render::_loadSkyboxTextures() {
 	std::vector<std::string> textures;
-	textures.push_back("../textures/skybox2/right.png");
-	textures.push_back("../textures/skybox2/left.png");
-	textures.push_back("../textures/skybox2/top.png");
-	textures.push_back("../textures/skybox2/bot.png");
-	textures.push_back("../textures/skybox2/front.png");
-	textures.push_back("../textures/skybox2/back.png");
+	textures.push_back("../textures/skybox/right.png");
+	textures.push_back("../textures/skybox/left.png");
+	textures.push_back("../textures/skybox/top.png");
+	textures.push_back("../textures/skybox/bot.png");
+	textures.push_back("../textures/skybox/front.png");
+	textures.push_back("../textures/skybox/back.png");
 	glGenTextures(1, &_skybox_id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_id);
 
@@ -110,6 +110,7 @@ void 	Render::_loadSkyboxTextures() {
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glActiveTexture(GL_TEXTURE0);
 }
 
 void    Render::_loadCubeTextures(const char *file) {
@@ -154,6 +155,14 @@ void 	Render::_setupCubeTextures() {
 	}
 }
 
+void 	Render::_initSkybox(glm::mat4 &projection) {
+	_skybox.setupBuffers();
+	_skybox.use();
+	_skybox.setMat4("projection", projection);
+	_loadSkyboxTextures();
+	_skybox.setTexture("skybox", 0);
+}
+
 void 	Render::gameLoop() {
 	Time				time = Time();
 	Inputs				inputs = Inputs();
@@ -161,17 +170,11 @@ void 	Render::gameLoop() {
 	_shader.use();
 	_setupCubeTextures();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
-			(float)_win_w / (float)_win_h, 0.1f, 165.0f);
+			(float)_win_w / (float)_win_h, 0.3f, 165.0f);
 	_shader.setMat4("projection", projection);
-
-	_skybox.setupBuffers();
-	_skybox.use();
-	_skybox.setMat4("projection", projection);
-	_loadSkyboxTextures();
-	_skybox.setTexture("skybox", 0);
+	_initSkybox(projection);	
 
 	while (!inputs.shouldQuit()) {
-//		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
@@ -184,10 +187,8 @@ void 	Render::gameLoop() {
 		_skybox.use();
 		glm::mat4 view = glm::mat4(glm::mat3(_cam.viewMat()));
 		_skybox.setMat4("view", view);
-		glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_id);
 		_skybox.draw();
-
 		glDepthFunc(GL_LESS);
 
 		SDL_GL_SwapWindow(_window);
@@ -196,6 +197,7 @@ void 	Render::gameLoop() {
 			std::cout << time.fps() << "fps; " << chunks.size() << " chunks; " << _cam << std::endl;
 		}
 	}
+	_shader.delete_prog();
 }
 
 void 	Render::gameQuit() {

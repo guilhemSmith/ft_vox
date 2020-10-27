@@ -22,6 +22,7 @@ class Render {
 		void                        _loadCubeTextures(const char *);
 		void                        _loadSkyboxTextures();
 		void 						_setupCubeTextures();
+		void 						_initSkybox(glm::mat4 &);
 		World						_world;
 		std::vector<GLuint>			_texture_ids;
 		unsigned int 				_skybox_id;

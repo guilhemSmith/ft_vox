@@ -4,54 +4,6 @@
 #include <sstream>
 
 Skybox::Skybox() {
-    // _vertices.emplace_back(1.0f , -1.0f , 1.0f);
-	// _vertices.emplace_back(1.0f, -1.0f , 1.0f);
-	// _vertices.emplace_back(1.0f, 1.0f, 1.0f);
-	// _vertices.emplace_back(-1.0f , 1.0f, 1.0f);
-	// _vertices.emplace_back(1.0f, -1.0f , -1.0f);
-	// _vertices.emplace_back(-1.0f , -1.0f , -1.0f);
-	// _vertices.emplace_back(-1.0f , 1.0f, -1.0f);
-	// _vertices.emplace_back(1.0f, 1.0f, -1.0f);
-    // _indices.push_back(0); //front quad
-    // _indices.push_back(1);
-    // _indices.push_back(2);
-    // _indices.push_back(0);
-    // _indices.push_back(2);
-    // _indices.push_back(3);
-    // _indices.push_back(4); //back quad
-    // _indices.push_back(5);
-    // _indices.push_back(6);
-    // _indices.push_back(4);
-    // _indices.push_back(6);
-    // _indices.push_back(7);
-    // _indices.push_back(1); //left quad
-    // _indices.push_back(4);
-    // _indices.push_back(7);
-    // _indices.push_back(1);
-    // _indices.push_back(7);
-    // _indices.push_back(2);
-    // _indices.push_back(5); //right quad
-    // _indices.push_back(0);
-    // _indices.push_back(3);
-    // _indices.push_back(5);
-    // _indices.push_back(3);
-    // _indices.push_back(6);
-    // _indices.push_back(3); //top quad
-    // _indices.push_back(2);
-    // _indices.push_back(7);
-    // _indices.push_back(3);
-    // _indices.push_back(7);
-    // _indices.push_back(6);
-    // _indices.push_back(5); //bot quad
-    // _indices.push_back(4);
-    // _indices.push_back(1);
-    // _indices.push_back(5);
-    // _indices.push_back(1);
-    // _indices.push_back(0);
-}
-
-
-void        Skybox::setupBuffers() {
     _vertices.emplace_back(-1.0f , 1.0f , -1.0f);
     _vertices.emplace_back(-1.0f , -1.0f , -1.0f);
     _vertices.emplace_back(1.0f , -1.0f , -1.0f);
@@ -60,110 +12,56 @@ void        Skybox::setupBuffers() {
     _vertices.emplace_back(-1.0f , 1.0f , 1.0f);
     _vertices.emplace_back(1.0f , -1.0f , 1.0f);
     _vertices.emplace_back(1.0f , 1.0f , 1.0f);
-//     float skyboxVertices[] = {
-//     // positions          
-//     -1.0f,  1.0f, -1.0f, //0
-//     -1.0f, -1.0f, -1.0f, //1
-//      1.0f, -1.0f, -1.0f, //2
-//      1.0f, -1.0f, -1.0f, //2
-//      1.0f,  1.0f, -1.0f, //3
-//     -1.0f,  1.0f, -1.0f, //0
     _indices.push_back(0);
     _indices.push_back(1);
     _indices.push_back(2);
     _indices.push_back(2);
     _indices.push_back(3);
     _indices.push_back(0);
-
-//     -1.0f, -1.0f,  1.0f, //4
-//     -1.0f, -1.0f, -1.0f,
-//     -1.0f,  1.0f, -1.0f,
-//     -1.0f,  1.0f, -1.0f,
-//     -1.0f,  1.0f,  1.0f, //5
-//     -1.0f, -1.0f,  1.0f,
-
     _indices.push_back(4);
     _indices.push_back(1);
     _indices.push_back(0);
     _indices.push_back(0);
     _indices.push_back(5);
     _indices.push_back(4);
-
-//      1.0f, -1.0f, -1.0f,
-//      1.0f, -1.0f,  1.0f, //6
-//      1.0f,  1.0f,  1.0f, //7
-//      1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f, -1.0f,
-//      1.0f, -1.0f, -1.0f,
     _indices.push_back(2);
     _indices.push_back(6);
     _indices.push_back(7);
     _indices.push_back(7);
     _indices.push_back(3);
     _indices.push_back(2);
-
-//     -1.0f, -1.0f,  1.0f,
-//     -1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f,  1.0f,
-//      1.0f, -1.0f,  1.0f,
-//     -1.0f, -1.0f,  1.0f,
     _indices.push_back(4);
     _indices.push_back(5);
     _indices.push_back(7);
     _indices.push_back(7);
     _indices.push_back(6);
     _indices.push_back(4);
-
-//     -1.0f,  1.0f, -1.0f,
-//      1.0f,  1.0f, -1.0f,
-//      1.0f,  1.0f,  1.0f,
-//      1.0f,  1.0f,  1.0f,
-//     -1.0f,  1.0f,  1.0f,
-//     -1.0f,  1.0f, -1.0f,
     _indices.push_back(0);
     _indices.push_back(3);
     _indices.push_back(7);
     _indices.push_back(7);
     _indices.push_back(5);
     _indices.push_back(0);
-
-//     -1.0f, -1.0f, -1.0f,
-//     -1.0f, -1.0f,  1.0f,
-//      1.0f, -1.0f, -1.0f,
-//      1.0f, -1.0f, -1.0f,
-//     -1.0f, -1.0f,  1.0f,
-//      1.0f, -1.0f,  1.0f
     _indices.push_back(1);
     _indices.push_back(4);
     _indices.push_back(2);
     _indices.push_back(2);
     _indices.push_back(4);
     _indices.push_back(6);
-// };
-//     glGenVertexArrays(1, &_vao);
-//     glGenBuffers(1, &_vbo);
-//     glBindVertexArray(_vao);
-//     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-//     glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), &skyboxVertices, GL_STATIC_DRAW);
-//     glEnableVertexAttribArray(0);
-//     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+}
 
+
+void        Skybox::setupBuffers() {
     glGenVertexArrays(1, &_vao);
     glGenBuffers(1, &_vbo);
     glGenBuffers(1, &_ebo);
-
     glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-
     glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(glm::vec3), &_vertices[0], GL_STATIC_DRAW);
-
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
-
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(glm::vec3), (void*)nullptr);
-    
     glBindVertexArray(0);
 }
 
@@ -249,12 +147,13 @@ void 		Skybox::setMat4(const char *loc_name, glm::mat4 &mat) const {
 
 void        Skybox::draw() {
     glBindVertexArray(_vao);
-    // glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, nullptr);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, nullptr);
+    // glDrawArrays(GL_TRIANGLES, 0, 36);
 }
 
 Skybox::~Skybox() {
     glDeleteVertexArrays(1, &_vao);
     glDeleteBuffers(1, &_vbo);
     glDeleteBuffers(1, &_ebo);
+    glDeleteProgram(_shader_program);
 }

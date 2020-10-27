@@ -10,10 +10,11 @@ class Shader {
     	std::string     _fragment_shader_src;
 		void    		_parseShaders(const char*, const char*);
 	public:
-		void 	computeShaders();
-		void 	use(void) const;
-		void 	setMat4(const char *, glm::mat4 &mat) const;
-		void 	setTexture(const char *, int);
+		void 			computeShaders();
+		void 			use(void) const;
+		void 			setMat4(const char *, glm::mat4 &mat) const;
+		void 			setTexture(const char *, int);
+		void 			delete_prog();
 };
 
 #endif
