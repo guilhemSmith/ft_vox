@@ -125,8 +125,31 @@ std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3
 		for (auto &pos : _chunks_to_load) {
 			if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
 				unsigned int index = _chunkIndex(pos);
+
+				std::array<Chunk*>, 6> neighbors;
+				auto x_p = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(1, 0, 0)));
+				if (x_p != _chunks_loaded.end())
+					neighbors[0] = *x_p;
+				auto x_n = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(-1, 0, 0)));
+				if (x_n != _chunks_loaded.end())
+					neighbors[1] = *x_n;
+					
+				auto y_p = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(0, 1, 0)));
+				if (y_p != _chunks_loaded.end())
+					neighbors[2] = *y_p;
+				auto y_n = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(0, -1, 0)));
+				if (y_n != _chunks_loaded.end())
+					neighbors[3] = *y_n;
+
+				auto z_p = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(0, 0, 1)));
+				if (z_p != _chunks_loaded.end())
+					neighbors[4] = *z_p;
+				auto z_n = _chunks_loaded.find(_chunkIndex(pos + glm::vec3(0, 0, -1)));
+				if (z_n != _chunks_loaded.end())
+					neighbors[5] = *z_n;
+
 				_chunks_loaded[index] = new Chunk(_noise_height, pos * Chunk::SIZE);
-				_chunks_loaded[index]->remesh();
+				_chunks_loaded[index]->remesh(neighbors);
 			}
 		}
 		_chunks_to_load.clear();
@@ -135,23 +158,23 @@ std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3
 	return _chunks_visible;
 }
 
-Chunk*				ChunkManager::getChunk(glm::u32vec3 pos) {
-	unsigned int index = _chunkIndex(pos);
+// Chunk*				ChunkManager::getChunk(glm::u32vec3 pos) {
+// 	unsigned int index = _chunkIndex(pos);
 
-	if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
-		try {
-			return _chunks_loaded.at(index);
-		}
-		catch (std::out_of_range oor) {
-			_chunks_loaded[index] = new Chunk(_noise_height, pos * Chunk::SIZE);
-			_chunks_loaded[index]->remesh();
-			return _chunks_loaded[index];
-		}
-	}
-	else {
-		return NULL;
-	}
-}
+// 	if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
+// 		try {
+// 			return _chunks_loaded.at(index);
+// 		}
+// 		catch (std::out_of_range oor) {
+// 			_chunks_loaded[index] = new Chunk(_noise_height, pos * Chunk::SIZE);
+// 			_chunks_loaded[index]->remesh();
+// 			return _chunks_loaded[index];
+// 		}
+// 	}
+// 	else {
+// 		return NULL;
+// 	}
+// }
 
 void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 	unsigned int index = _chunkIndex(pos);

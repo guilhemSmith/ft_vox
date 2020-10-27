@@ -31,9 +31,9 @@ void 		Chunk::draw() {
 	_mesh.draw();
 }
 
-void 		Chunk::remesh() {
+void 		Chunk::remesh(std::array<Chunk*, 6> &neighbors) {
 	_mesh.clearBuffers();
-	_mesh.init(_cubes, _pos);
+	_mesh.init(_cubes, _pos, neighbors);
 }
 
 glm::vec3 	Chunk::getPos() {

@@ -26,7 +26,7 @@ class Chunk {
 		~Chunk();
 		bool 				is_empty;
 		void 				draw();
-		void 				remesh();
+		void 				remesh(std::array<Chunk *, 6>&);
 		glm::vec3 			getPos();
 		glm::u32vec3		getPosChunk();
 
