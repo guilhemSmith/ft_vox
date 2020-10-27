@@ -120,7 +120,7 @@ void 	Render::gameLoop() {
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
 
-		std::vector<Chunk*>& chunks = _world.getChunksFromPos(_cam.position(), _cam.direction());
+		std::vector<Chunk*>& chunks = _manager.getChunksFromPos(_cam.position(), _cam.direction());
 		drawChunks(chunks);
 
 		SDL_GL_SwapWindow(_window);

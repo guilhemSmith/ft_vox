@@ -1,5 +1,5 @@
-#ifndef WORLD_HPP
-# define WORLD_HPP
+#ifndef CHUNK_MANAGER_HPP
+# define CHUNK_MANAGER_HPP
 
 # include "Noise.hpp"
 # include "Chunk.hpp"
@@ -7,7 +7,7 @@
 # include <unordered_map>
 # include <vector>
 
-class World {
+class ChunkManager {
 private:
 	unsigned int const						_seed;
 	Noise									_noise_height;
@@ -21,8 +21,8 @@ private:
 	void									_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir);
 
 public:
-	World(void);
-	World(unsigned int seed);
+	ChunkManager(void);
+	ChunkManager(unsigned int seed);
 
 	std::vector<Chunk*>&					getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);
 	Chunk*									getChunk(glm::u32vec3 pos);

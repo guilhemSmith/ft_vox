@@ -7,7 +7,7 @@
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "Inputs.hpp"
-#include "World.hpp"
+#include "ChunkManager.hpp"
 
 class Render {
 	private:
@@ -19,7 +19,7 @@ class Render {
 		Shader 						_shader;
 		Camera						_cam;
 		void                        _loadTextures();
-		World						_world;
+		ChunkManager				_manager;
 
 	public:
 		Render();

@@ -1,5 +1,5 @@
 #include "Camera.hpp"
-#include "World.hpp"
+#include "ChunkManager.hpp"
 #include <glm/gtc/matrix_transform.hpp>
 
 #include <iostream>
@@ -7,7 +7,7 @@
 const glm::vec3			Camera::_WORLD_UP = {0.0f, 1.0f, 0.0f};
 
 Camera::Camera(void): 
-	_position(World::SIZES_VOXELS),// / static_cast<unsigned int>(2)),
+	_position(ChunkManager::SIZES_VOXELS),// / static_cast<unsigned int>(2)),
 	_direction({0, 0, -1}),
 	_yaw(0.0f),
 	_pitch(0.0f)

@@ -1,44 +1,44 @@
-#include "World.hpp"
+#include "ChunkManager.hpp"
 
 #include <stdlib.h>
 #include <time.h>
 
-const glm::u32vec3	World::SIZES_VOXELS = {
+const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 	16384,
 	256,
 	16384
 };
 
-const glm::u32vec3	World::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
+const glm::u32vec3	ChunkManager::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
-const unsigned int	World::NOISE_STRETCH = 64;
+const unsigned int	ChunkManager::NOISE_STRETCH = 64;
 
-const unsigned int	World::NOISE_SIZE = SIZES_VOXELS.x / NOISE_STRETCH * SIZES_VOXELS.z / NOISE_STRETCH;
+const unsigned int	ChunkManager::NOISE_SIZE = SIZES_VOXELS.x / NOISE_STRETCH * SIZES_VOXELS.z / NOISE_STRETCH;
 
-const float			World::VIEW_DISTANCE = 6;	
+const float			ChunkManager::VIEW_DISTANCE = 6;	
 
-World::World(unsigned int seed):
+ChunkManager::ChunkManager(unsigned int seed):
 	_seed(seed),
-	_noise_height(World::NOISE_SIZE, _seed),
+	_noise_height(ChunkManager::NOISE_SIZE, _seed),
 	_chunks_loaded(),
 	_chunks_visible(),
 	_chunks_to_load(),
 	_chunks_to_unload()
 {}
 
-World::World(void):
+ChunkManager::ChunkManager(void):
 	_seed(time(NULL)),
-	_noise_height(World::NOISE_SIZE, _seed),
+	_noise_height(ChunkManager::NOISE_SIZE, _seed),
 	_chunks_loaded(),
 	_chunks_to_load()
 {}
 
 
-unsigned int		World::_chunkIndex(glm::u32vec3 pos) const {
+unsigned int		ChunkManager::_chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
 }
 
-void					World::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
+void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 	glm::vec3		cam_chunk_pos = pos / static_cast<float>(Chunk::SIZE);
 
 	_chunks_visible.clear();
@@ -54,9 +54,9 @@ void					World::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 	}
 }
 
-std::vector<Chunk*>&	World::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
+std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
 	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
-	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (World::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
+	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (ChunkManager::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
 
 	if (cam_chunk_pos != _last_cam_chunk) {
 		for (auto x = -VIEW_DISTANCE; x < VIEW_DISTANCE + 1; x++) {
@@ -88,7 +88,6 @@ std::vector<Chunk*>&	World::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_di
 			removeChunk(pos);
 			count++;
 		}
-		std::cout << count << " unload." << std::endl;
 		_chunks_to_unload.clear();
 	}
 	if (_chunks_to_load.size() > 0) {
@@ -105,7 +104,7 @@ std::vector<Chunk*>&	World::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_di
 	return _chunks_visible;
 }
 
-Chunk*				World::getChunk(glm::u32vec3 pos) {
+Chunk*				ChunkManager::getChunk(glm::u32vec3 pos) {
 	unsigned int index = _chunkIndex(pos);
 
 	if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
@@ -123,7 +122,7 @@ Chunk*				World::getChunk(glm::u32vec3 pos) {
 	}
 }
 
-void				World::removeChunk(glm::u32vec3 pos) {
+void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 	unsigned int index = _chunkIndex(pos);
 	try {
 		delete _chunks_loaded.at(index);
