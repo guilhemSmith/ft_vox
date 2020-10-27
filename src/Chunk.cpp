@@ -6,7 +6,6 @@ const unsigned int			Chunk::SIZE = 32;
 
 Chunk::Chunk(const Noise& heights, glm::vec3 pos) : _pos(pos) {
 	is_empty = true;
-	is_visible = false;
 	for (int z = 0; z < SIZE; z++) {
 		for (int x = 0; x < SIZE; x++) {
 			double height = heights.perlin2d(4, 1.0, 0.5, (x + pos.x) / ChunkManager::NOISE_STRETCH, (z + pos.z) / ChunkManager::NOISE_STRETCH);
@@ -24,12 +23,17 @@ Chunk::Chunk(const Noise& heights, glm::vec3 pos) : _pos(pos) {
 	}
 }
 
+Chunk::~Chunk() {
+	_mesh.clearBuffers();
+}
+
 void 		Chunk::draw() {
 	_mesh.draw();
 }
 
 void 		Chunk::remesh() {
-	_mesh = Mesh(_cubes, _pos);
+	_mesh.clearBuffers();
+	_mesh.init(_cubes, _pos);
 }
 
 glm::vec3 	Chunk::getPos() {

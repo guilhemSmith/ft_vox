@@ -15,7 +15,7 @@ const unsigned int	ChunkManager::NOISE_STRETCH = 64;
 
 const unsigned int	ChunkManager::NOISE_SIZE = SIZES_VOXELS.x / NOISE_STRETCH * SIZES_VOXELS.z / NOISE_STRETCH;
 
-const float			ChunkManager::VIEW_DISTANCE = 6;	
+const float			ChunkManager::VIEW_DISTANCE = 7;	
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_seed(seed),
@@ -46,10 +46,48 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 		Chunk* chunk = loaded_chunk.second;
 		glm::vec3 pos_chunk = chunk->getPosChunk();
 		float dot = glm::dot(dir, pos_chunk + glm::vec3(0.5) - cam_chunk_pos);
-		float dist = glm::distance(cam_chunk_pos, pos_chunk);
-		// if (dist < VIEW_DISTANCE) {
+		glm::vec3 offset = pos_chunk - cam_chunk_pos;
+		float dist = glm::max(glm::length(offset * glm::vec3(1,0,0)), glm::max(glm::length(offset * glm::vec3(0,1,0)), glm::length(offset * glm::vec3(0,0,1))));
 		if ((dist < VIEW_DISTANCE && dot > 0) || dist < 2) {
 			_chunks_visible.push_back(chunk);
+		}
+	}
+}
+
+void					ChunkManager::_unloadTooFar(glm::vec3 cam_pos_chunk) {
+	for (auto &loaded : _chunks_loaded) {
+		Chunk* chunk = loaded.second;
+		glm::vec3 pos_chunk = chunk->getPosChunk();
+		float dist = glm::distance(cam_pos_chunk, pos_chunk);
+		if (dist > VIEW_DISTANCE * 2) {
+			_chunks_to_unload.push_back(chunk->getPosChunk());
+		}
+	}
+}
+
+void					ChunkManager::_detectChunkToLoad(glm::u32vec3 cam_chunk_pos) {
+	glm::i32vec3	offset = cam_chunk_pos - _last_cam_chunk;
+
+	for (auto i = -VIEW_DISTANCE; i < VIEW_DISTANCE + 1; i++) {
+		for (auto j = -VIEW_DISTANCE; j < VIEW_DISTANCE + 1; j++) {
+			if (offset.x != 0) {
+				glm::u32vec3 chunk_pos = cam_chunk_pos + glm::u32vec3(VIEW_DISTANCE * offset.x, i, j);
+				if (_chunks_loaded.find(_chunkIndex(chunk_pos)) == _chunks_loaded.end()) {
+					_chunks_to_load.push_back(chunk_pos);
+				}
+			}
+			if (offset.y != 0) {
+				glm::u32vec3 chunk_pos = cam_chunk_pos + glm::u32vec3(i, VIEW_DISTANCE * offset.y, j);
+				if (_chunks_loaded.find(_chunkIndex(chunk_pos)) == _chunks_loaded.end()) {
+					_chunks_to_load.push_back(chunk_pos);
+				}
+			}
+			if (offset.z != 0) {
+				glm::u32vec3 chunk_pos = cam_chunk_pos + glm::u32vec3(i, j, VIEW_DISTANCE * offset.z);
+				if (_chunks_loaded.find(_chunkIndex(chunk_pos)) == _chunks_loaded.end()) {
+					_chunks_to_load.push_back(chunk_pos);
+				}
+			}
 		}
 	}
 }
@@ -58,28 +96,20 @@ std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3
 	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
 	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (ChunkManager::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
 
-	if (cam_chunk_pos != _last_cam_chunk) {
-		for (auto x = -VIEW_DISTANCE; x < VIEW_DISTANCE + 1; x++) {
-			for (auto y = -VIEW_DISTANCE; y < VIEW_DISTANCE + 1; y++) {
-				for (auto z = -VIEW_DISTANCE; z < VIEW_DISTANCE + 1; z++) {
+	if (_chunks_loaded.size() == 0) {
+		for (auto x = -VIEW_DISTANCE - 1; x < VIEW_DISTANCE + 2; x++) {
+			for (auto y = -VIEW_DISTANCE - 1; y < VIEW_DISTANCE + 2; y++) {
+				for (auto z = -VIEW_DISTANCE - 1; z < VIEW_DISTANCE + 2; z++) {
 					glm::u32vec3 chunk_pos = cam_chunk_pos + glm::u32vec3(x, y, z);
-					if (_chunks_loaded.find(_chunkIndex(chunk_pos)) == _chunks_loaded.end()) {
-						_chunks_to_load.push_back(chunk_pos);
-					}
+					_chunks_to_load.push_back(chunk_pos);
 				}
 			}
 		}
-		for (auto &loaded : _chunks_loaded) {
-			Chunk* chunk = loaded.second;
-			// glm::vec3 dist = chunk->getPosChunk() - cam_chunk_pos;
-			glm::vec3 cam_chunk_pos_f = cam_chunk_pos;
-			glm::vec3 pos_chunk = chunk->getPosChunk();
-			float dist = glm::distance(cam_chunk_pos_f, pos_chunk);
-			// if (dist.x > VIEW_DISTANCE || dist.y > VIEW_DISTANCE || dist.z > VIEW_DISTANCE) {
-			if (dist > VIEW_DISTANCE) {
-				_chunks_to_unload.push_back(chunk->getPosChunk());
-			}
-		}
+	}
+
+	if (cam_chunk_pos != _last_cam_chunk) {
+		_detectChunkToLoad(cam_chunk_pos);
+		_unloadTooFar(cam_chunk_pos);
 		_last_cam_chunk = cam_chunk_pos;
 	}
 	if (_chunks_to_unload.size() > 0) {

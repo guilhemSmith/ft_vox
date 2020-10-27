@@ -5,6 +5,7 @@
 #include "Mesh.hpp"
 # include "Noise.hpp"
 
+
 class Chunk {
 	private:
 
@@ -22,8 +23,8 @@ class Chunk {
 		};
 
 		Chunk(const Noise& heights, glm::vec3);
+		~Chunk();
 		bool 				is_empty;
-		bool 				is_visible;
 		void 				draw();
 		void 				remesh();
 		glm::vec3 			getPos();

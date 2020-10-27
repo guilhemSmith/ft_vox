@@ -19,6 +19,8 @@ private:
 
 	unsigned int							_chunkIndex(glm::u32vec3 pos) const;
 	void									_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir);
+	void									_unloadTooFar(glm::vec3 cam_pos_chunk);
+	void									_detectChunkToLoad(glm::u32vec3 cam_chunk_pos);
 
 public:
 	ChunkManager(void);
