@@ -178,3 +178,13 @@ void 	Mesh::_setupBuffers() {
 
     glBindVertexArray(0);
 }
+
+void    Mesh::clearBuffers() {
+    glDeleteVertexArrays(1, &_vao);
+    glDeleteBuffers(1, &_vbo);
+    glDeleteBuffers(1, &_ebo);
+}
+
+Mesh::~Mesh() {
+    std::cout << "Mesh destructor called" << std::endl;
+}

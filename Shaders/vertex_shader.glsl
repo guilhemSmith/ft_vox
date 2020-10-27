@@ -17,6 +17,5 @@ void main()
 	norm = vec4(aNorm, 1.0);
 	gl_Position =  projection * view * model * vec4(aPos, 1.0);
     texcoords = vec2(aTexCoords.x, aTexCoords.y);
-    
     tex = aTex;
 }

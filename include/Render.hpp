@@ -18,8 +18,9 @@ class Render {
 		unsigned int 				_win_h;
 		Shader 						_shader;
 		Camera						_cam;
-		void                        _loadTextures();
-		ChunkManager				_manager;
+		void                        _loadTextures(const char *);
+		void 						_setupTextures();
+    ChunkManager				_manager;
 
 	public:
 		Render();
