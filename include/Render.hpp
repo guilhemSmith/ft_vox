@@ -7,8 +7,8 @@
 #include "Camera.hpp"
 #include "Time.hpp"
 #include "Inputs.hpp"
-#include "World.hpp"
 #include "Skybox.hpp"
+#include "ChunkManager.hpp"
 
 class Render {
 	private:
@@ -23,7 +23,7 @@ class Render {
 		void                        _loadSkyboxTextures();
 		void 						_setupCubeTextures();
 		void 						_initSkybox(glm::mat4 &);
-		World						_world;
+    	ChunkManager				_manager;
 		std::vector<GLuint>			_texture_ids;
 		unsigned int 				_skybox_id;
 		Skybox 						_skybox;

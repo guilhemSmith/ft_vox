@@ -180,7 +180,7 @@ void 	Render::gameLoop() {
 		_cam.update(time.deltaTime(), inputs);
 
 		_shader.use();
-		std::vector<Chunk*>& chunks = _world.getChunksFromPos(_cam.position(), _cam.direction());
+		std::vector<Chunk*>& chunks = _manager.getChunksFromPos(_cam.position(), _cam.direction());
 		drawChunks(chunks);
 
 		glDepthFunc(GL_LEQUAL);

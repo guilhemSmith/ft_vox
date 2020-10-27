@@ -114,7 +114,8 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
     }
 }
 
-Mesh::Mesh(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos) {
+
+void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos) {
 	for (int z = 0; z < Chunk::SIZE; z++) {
 		for (int y = 0; y < Chunk::SIZE; y++) {
 			for (int x = 0; x < Chunk::SIZE; x++) {
@@ -187,5 +188,5 @@ void    Mesh::clearBuffers() {
 }
 
 Mesh::~Mesh() {
-    std::cout << "Mesh destructor called" << std::endl;
+    // std::cout << "Mesh destructor called" << std::endl;
 }
