@@ -2,6 +2,7 @@
 # define WORLD_HPP
 
 # include "Noise.hpp"
+# include <array>
 # include <glm/glm.hpp>
 
 class World {
