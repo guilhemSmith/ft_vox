@@ -27,6 +27,7 @@ class Chunk {
 		Chunk(const Noise& heights, glm::vec3);
 		~Chunk();
 		bool 				is_empty;
+		bool                is_meshed;
 		void 				draw();
 		void 				remesh(std::array<Chunk *, 6>&);
 		glm::vec3 			getPos();

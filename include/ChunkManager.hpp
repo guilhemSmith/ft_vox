@@ -21,6 +21,7 @@ private:
 	void									_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir);
 	void									_unloadTooFar(glm::vec3 cam_pos_chunk);
 	void									_detectChunkToLoad(glm::u32vec3 cam_chunk_pos);
+	void                                    _chunkRemesh(glm::vec3);
 
 public:
 	ChunkManager(void);
