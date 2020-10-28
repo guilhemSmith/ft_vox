@@ -6,9 +6,6 @@ const unsigned int			Chunk::SIZE = 32;
 
 Chunk::Chunk(const World& world, glm::vec3 pos) : _pos(pos) {
 	is_empty = world.fillChunk(_cubes, pos);
-	if (!is_empty) {
-		remesh();
-	}
 	is_meshed = false;
 }
 
