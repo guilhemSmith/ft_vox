@@ -8,7 +8,7 @@ const unsigned int	Noise::_SCALE = 85000;
 Noise::Noise(unsigned int size): _values() {
 	_values.reserve(size);
 	for (auto i = 0; i < size; i++) {
-		_values.push_back(static_cast <double> (rand()) / static_cast <double> (RAND_MAX));
+		_values.push_back(static_cast <double> (rand()) / static_cast <double> (RAND_MAX / 2) - 1.0);
 	}
 }
 
@@ -27,11 +27,11 @@ double				Noise::_noise3d(unsigned int x, unsigned int y, unsigned int z) const 
 	return _rand(tmp + z);
 }
 
-double				Noise::_interpolateLinear(double a, double b, double t) {
+double				Noise::interpolateLinear(double a, double b, double t) {
 	return a * (1.0 - t) + b * t;
 }
 
-double				Noise::_interpolateCosine(double a, double b, double t) {
+double				Noise::interpolateCosine(double a, double b, double t) {
 	double c = (1.0 - std::cos(t * M_PI)) / 2;
 	return a * (1.0 - c) + b * c;
 }
@@ -56,10 +56,10 @@ double				Noise::noise2dSmoothLinear(double x, double y) const {
 	double b0 = _noise2d(integer_x, integer_y + 1);
 	double b1 = _noise2d(integer_x + 1, integer_y + 1);
 
-	double a = _interpolateLinear(a0, a1, fractional_x);
-	double b = _interpolateLinear(b0, b1, fractional_x);
+	double a = interpolateLinear(a0, a1, fractional_x);
+	double b = interpolateLinear(b0, b1, fractional_x);
 
-	return _interpolateLinear(a, b, fractional_y);
+	return interpolateLinear(a, b, fractional_y);
 }
 
 double				Noise::noise2dSmoothCosine(double x, double y) const {
@@ -73,10 +73,10 @@ double				Noise::noise2dSmoothCosine(double x, double y) const {
 	double b0 = _noise2d(integer_x, integer_y + 1);
 	double b1 = _noise2d(integer_x + 1, integer_y + 1);
 
-	double a = _interpolateCosine(a0, a1, fractional_x);
-	double b = _interpolateCosine(b0, b1, fractional_x);
+	double a = interpolateCosine(a0, a1, fractional_x);
+	double b = interpolateCosine(b0, b1, fractional_x);
 
-	return _interpolateCosine(a, b, fractional_y);
+	return interpolateCosine(a, b, fractional_y);
 }
 
 double				Noise::noise3dSmoothLinear(double x, double y, double z) const {
@@ -99,15 +99,15 @@ double				Noise::noise3dSmoothLinear(double x, double y, double z) const {
 	double d0 = _noise3d(integer_x, integer_y + 1, integer_z + 1);
 	double d1 = _noise3d(integer_x + 1, integer_y + 1, integer_z + 1);
 
-	double a = _interpolateLinear(a0, a1, fractional_x);
-	double b = _interpolateLinear(b0, b1, fractional_x);
-	double v = _interpolateLinear(a, b, fractional_y);
+	double a = interpolateLinear(a0, a1, fractional_x);
+	double b = interpolateLinear(b0, b1, fractional_x);
+	double v = interpolateLinear(a, b, fractional_y);
 
-	double c = _interpolateLinear(c0, c1, fractional_x);
-	double d = _interpolateLinear(d0, d1, fractional_x);
-	double w = _interpolateLinear(c, d, fractional_y);
+	double c = interpolateLinear(c0, c1, fractional_x);
+	double d = interpolateLinear(d0, d1, fractional_x);
+	double w = interpolateLinear(c, d, fractional_y);
 
-	return _interpolateLinear(v, w, fractional_z);
+	return interpolateLinear(v, w, fractional_z);
 }
 
 double				Noise::noise3dSmoothCosine(double x, double y, double z) const {
@@ -130,15 +130,15 @@ double				Noise::noise3dSmoothCosine(double x, double y, double z) const {
 	double d0 = _noise3d(integer_x, integer_y + 1, integer_z + 1);
 	double d1 = _noise3d(integer_x + 1, integer_y + 1, integer_z + 1);
 
-	double a = _interpolateCosine(a0, a1, fractional_x);
-	double b = _interpolateCosine(b0, b1, fractional_x);
-	double v = _interpolateCosine(a, b, fractional_y);
+	double a = interpolateCosine(a0, a1, fractional_x);
+	double b = interpolateCosine(b0, b1, fractional_x);
+	double v = interpolateCosine(a, b, fractional_y);
 
-	double c = _interpolateCosine(c0, c1, fractional_x);
-	double d = _interpolateCosine(d0, d1, fractional_x);
-	double w = _interpolateCosine(c, d, fractional_y);
+	double c = interpolateCosine(c0, c1, fractional_x);
+	double d = interpolateCosine(d0, d1, fractional_x);
+	double w = interpolateCosine(c, d, fractional_y);
 
-	return _interpolateCosine(v, w, fractional_z);
+	return interpolateCosine(v, w, fractional_z);
 }
 
 double				Noise::perlin2d(int octaves, double frequency, double persistence, double x, double y) const {
@@ -170,5 +170,5 @@ double				Noise::perlin3d(int octaves, double frequency, double persistence, dou
 	}
 
 	double geo_lim = (1 - persistence) / (1 - amplitude);
-	return glm::clamp(r * geo_lim, 0.0, 1.0);
+	return glm::clamp(r * geo_lim, -1.0, 1.0);
 }
