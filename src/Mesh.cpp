@@ -122,27 +122,27 @@ void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cube
                 if (cubes[x][y][z] == Chunk::Voxel::Empty)
                     continue;
                 Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z), cubes[x][y][z]);
-                if (x == 0 && (neighbours[0] == nullptr || neighbours[0]->hasVoxelAt(Chunk::SIZE - 1, y, z)))
+                if (x == 0 && (neighbours[0] != nullptr && neighbours[0]->hasVoxelAt(Chunk::SIZE - 1, y, z)))
                     cube_data.r_neighbor = true;
                 if (x != 0 && cubes[x - 1][y][z] != Chunk::Voxel::Empty) 
                     cube_data.r_neighbor = true;
-                if (x == Chunk::SIZE - 1 && (neighbours[1] == nullptr || neighbours[1]->hasVoxelAt(0, y, z)))
+                if (x == Chunk::SIZE - 1 && (neighbours[1] != nullptr && neighbours[1]->hasVoxelAt(0, y, z)))
                     cube_data.l_neighbor = true;
                 if (x != Chunk::SIZE - 1 && cubes[x + 1][y][z] != Chunk::Voxel::Empty)
                     cube_data.l_neighbor = true;
-                if (y == 0 && (neighbours[2] == nullptr || neighbours[2]->hasVoxelAt(x, Chunk::SIZE - 1 ,z)))
+                if (y == 0 && (neighbours[2] != nullptr && neighbours[2]->hasVoxelAt(x, Chunk::SIZE - 1 ,z)))
                     cube_data.bo_neighbor = true;
                 if (y != 0 && cubes[x][y - 1][z] != Chunk::Voxel::Empty)
                     cube_data.bo_neighbor = true;
-                if (y == Chunk::SIZE - 1 && (neighbours[3] == nullptr || neighbours[3]->hasVoxelAt(x, 0, z)))
+                if (y == Chunk::SIZE - 1 && (neighbours[3] != nullptr && neighbours[3]->hasVoxelAt(x, 0, z)))
                     cube_data.t_neighbor = true;
                 if (y != Chunk::SIZE - 1 && cubes[x][y + 1][z] != Chunk::Voxel::Empty)
                     cube_data.t_neighbor = true;
-                if (z == 0 && (neighbours[4] == nullptr || neighbours[4]->hasVoxelAt(x, y , Chunk::SIZE - 1)))
+                if (z == 0 && (neighbours[4] != nullptr && neighbours[4]->hasVoxelAt(x, y , Chunk::SIZE - 1)))
                     cube_data.ba_neighbor = true;
                 if (z != 0 && cubes[x][y][z - 1] != Chunk::Voxel::Empty)
                     cube_data.ba_neighbor = true;
-                if (z == Chunk::SIZE - 1 && (neighbours[5] == nullptr || neighbours[5]->hasVoxelAt(x, y , 0)))
+                if (z == Chunk::SIZE - 1 && (neighbours[5] != nullptr && neighbours[5]->hasVoxelAt(x, y , 0)))
                     cube_data.f_neighbor = true;
                 if (z != Chunk::SIZE - 1 && cubes[x][y][z + 1] != Chunk::Voxel::Empty)
                     cube_data.f_neighbor = true;

@@ -25,9 +25,7 @@ Chunk::Chunk(const Noise& heights, glm::vec3 pos) : _pos(pos) {
 }
 
 bool 		Chunk::hasVoxelAt(int x, int y, int z) const {
-	if (_cubes[x][y][z] == Voxel::Empty)
-		return false;
-	return true;
+	return _cubes[x][y][z] != Voxel::Empty;
 }
 
 Chunk::~Chunk() {
@@ -39,7 +37,9 @@ void 		Chunk::draw() {
 }
 
 void 		Chunk::remesh(std::array<Chunk*, 6> &neighbors) {
-	_mesh.clearBuffers();
+	if (is_meshed) {
+		_mesh.clearBuffers();
+	}
 	_mesh.init(_cubes, _pos, neighbors);
 	is_meshed = true;
 }
