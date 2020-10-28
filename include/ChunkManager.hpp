@@ -21,13 +21,14 @@ private:
 	void									_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir);
 	void									_unloadTooFar(glm::vec3 cam_pos_chunk);
 	void									_detectChunkToLoad(glm::u32vec3 cam_chunk_pos);
+	void                                    _chunkRemesh(glm::vec3);
 
 public:
 	ChunkManager(void);
 	ChunkManager(unsigned int seed);
 
 	std::vector<Chunk*>&					getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);
-	Chunk*									getChunk(glm::u32vec3 pos);
+	// Chunk*									getChunk(glm::u32vec3 pos);
 	void									removeChunk(glm::u32vec3 pos);
 
 	static const glm::u32vec3				SIZES_VOXELS;

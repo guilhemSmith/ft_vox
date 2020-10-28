@@ -15,7 +15,7 @@ const unsigned int	ChunkManager::NOISE_STRETCH = 64;
 
 const unsigned int	ChunkManager::NOISE_SIZE = SIZES_VOXELS.x / NOISE_STRETCH * SIZES_VOXELS.z / NOISE_STRETCH;
 
-const float			ChunkManager::VIEW_DISTANCE = 6;	
+const float			ChunkManager::VIEW_DISTANCE = 8;
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_seed(seed),
@@ -38,6 +38,46 @@ unsigned int		ChunkManager::_chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
 }
 
+void                    ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
+    glm::u32vec3 pos(pos_chunk);
+    unsigned int index = _chunkIndex(pos_chunk);
+    std::array<Chunk*, 6> neighbors;
+    auto x_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(-1, 0, 0)));
+    if (x_p != _chunks_loaded.end())
+        neighbors[0] = x_p->second;
+    else
+        neighbors[0] = nullptr;
+
+    auto x_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(1, 0, 0)));
+    if (x_n != _chunks_loaded.end())
+        neighbors[1] = x_n->second;
+    else
+        neighbors[1] = nullptr;
+
+    auto y_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, -1, 0)));
+    if (y_p != _chunks_loaded.end())
+        neighbors[2] = y_p->second;
+    else
+        neighbors[2] = nullptr;
+    auto y_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 1, 0)));
+    if (y_n != _chunks_loaded.end())
+        neighbors[3] = y_n->second;
+    else
+        neighbors[3] = nullptr;
+
+    auto z_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, -1)));
+    if (z_p != _chunks_loaded.end())
+        neighbors[4] = z_p->second;
+    else
+        neighbors[4] = nullptr;
+    auto z_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, 1)));
+    if (z_n != _chunks_loaded.end())
+        neighbors[5] = z_n->second;
+    else
+        neighbors[5] = nullptr;
+    _chunks_loaded[index]->remesh(neighbors);
+}
+
 void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 	glm::vec3		cam_chunk_pos = pos / static_cast<float>(Chunk::SIZE);
 
@@ -48,6 +88,9 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 		float dot = glm::dot(dir, pos_chunk + glm::vec3(0.5) - cam_chunk_pos);
 		glm::vec3 offset = pos_chunk - cam_chunk_pos;
 		float dist = glm::distance(cam_chunk_pos, pos_chunk);
+		if (dist < VIEW_DISTANCE && !chunk->is_meshed) {
+		    _chunkRemesh(pos_chunk);
+		}
 		// float dist = glm::max(glm::length(offset * glm::vec3(1,0,0)), glm::max(glm::length(offset * glm::vec3(0,1,0)), glm::length(offset * glm::vec3(0,0,1))));
 		if ((dist < VIEW_DISTANCE && dot > 0) || dist < 2) {
 			_chunks_visible.push_back(chunk);
@@ -126,7 +169,6 @@ std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3
 			if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
 				unsigned int index = _chunkIndex(pos);
 				_chunks_loaded[index] = new Chunk(_noise_height, pos * Chunk::SIZE);
-				_chunks_loaded[index]->remesh();
 			}
 		}
 		_chunks_to_load.clear();
@@ -135,23 +177,23 @@ std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3
 	return _chunks_visible;
 }
 
-Chunk*				ChunkManager::getChunk(glm::u32vec3 pos) {
-	unsigned int index = _chunkIndex(pos);
+// Chunk*				ChunkManager::getChunk(glm::u32vec3 pos) {
+// 	unsigned int index = _chunkIndex(pos);
 
-	if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
-		try {
-			return _chunks_loaded.at(index);
-		}
-		catch (std::out_of_range oor) {
-			_chunks_loaded[index] = new Chunk(_noise_height, pos * Chunk::SIZE);
-			_chunks_loaded[index]->remesh();
-			return _chunks_loaded[index];
-		}
-	}
-	else {
-		return NULL;
-	}
-}
+// 	if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
+// 		try {
+// 			return _chunks_loaded.at(index);
+// 		}
+// 		catch (std::out_of_range oor) {
+// 			_chunks_loaded[index] = new Chunk(_noise_height, pos * Chunk::SIZE);
+// 			_chunks_loaded[index]->remesh();
+// 			return _chunks_loaded[index];
+// 		}
+// 	}
+// 	else {
+// 		return NULL;
+// 	}
+// }
 
 void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 	unsigned int index = _chunkIndex(pos);

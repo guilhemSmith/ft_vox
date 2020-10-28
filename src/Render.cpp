@@ -76,8 +76,8 @@ void 	Render::gameInit() {
 	_skybox.computeShaders();
 	
 
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
+	 glEnable(GL_CULL_FACE);
+	 glCullFace(GL_BACK);
 	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
@@ -170,7 +170,7 @@ void 	Render::gameLoop() {
 	_shader.use();
 	_setupCubeTextures();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
-			(float)_win_w / (float)_win_h, 0.3f, 165.0f);
+			(float)_win_w / (float)_win_h, 0.3f, 224.0f);
 	_shader.setMat4("projection", projection);
 	_initSkybox(projection);	
 
