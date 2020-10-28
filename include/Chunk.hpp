@@ -3,7 +3,7 @@
 
 #include "ft_vox.hpp"
 #include "Mesh.hpp"
-# include "Noise.hpp"
+# include "World.hpp"
 
 
 // class Mesh;
@@ -24,7 +24,7 @@ class Chunk {
 			Sand = 4
 		};
 
-		Chunk(const Noise& heights, glm::vec3);
+		Chunk(const World& world, glm::vec3 pos);
 		~Chunk();
 		bool 				is_empty;
 		bool                is_meshed;

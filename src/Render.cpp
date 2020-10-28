@@ -1,6 +1,6 @@
 #include "Render.hpp"
 
-Render::Render() {
+Render::Render(unsigned int seed): _manager(seed) {
 	_win_w = 1080;
 	_win_h = 720;
 }
@@ -170,7 +170,7 @@ void 	Render::gameLoop() {
 	_shader.use();
 	_setupCubeTextures();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
-			(float)_win_w / (float)_win_h, 0.3f, 224.0f);
+			(float)_win_w / (float)_win_h, 0.3f, 300.0f);
 	_shader.setMat4("projection", projection);
 	_initSkybox(projection);	
 

@@ -4,23 +4,8 @@
 
 const unsigned int			Chunk::SIZE = 32;
 
-Chunk::Chunk(const Noise& heights, glm::vec3 pos) : _pos(pos) {
-	is_empty = true;
-	for (int z = 0; z < SIZE; z++) {
-		for (int x = 0; x < SIZE; x++) {
-			double height = heights.perlin2d(4, 1.0, 0.5, (x + pos.x) / ChunkManager::NOISE_STRETCH, (z + pos.z) / ChunkManager::NOISE_STRETCH);
-			height = height * ChunkManager::SIZES_VOXELS.y;
-			for (int y = 0; y < SIZE; y++) {
-				if (y + pos.y > height) {
-					_cubes[x][y][z] = Voxel::Empty;
-				}
-				else {
-					_cubes[x][y][z] = Voxel::Rock;
-					is_empty = false;
-				}
-			}
-		}
-	}
+Chunk::Chunk(const World& world, glm::vec3 pos) : _pos(pos) {
+	is_empty = world.fillChunk(_cubes, pos);
 	is_meshed = false;
 }
 
