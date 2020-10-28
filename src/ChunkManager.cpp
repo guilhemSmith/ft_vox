@@ -15,7 +15,7 @@ const unsigned int	ChunkManager::NOISE_STRETCH = 64;
 
 const unsigned int	ChunkManager::NOISE_SIZE = SIZES_VOXELS.x / NOISE_STRETCH * SIZES_VOXELS.z / NOISE_STRETCH;
 
-const float			ChunkManager::VIEW_DISTANCE = 6;	
+const float			ChunkManager::VIEW_DISTANCE = 8;
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_seed(seed),

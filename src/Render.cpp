@@ -170,7 +170,7 @@ void 	Render::gameLoop() {
 	_shader.use();
 	_setupCubeTextures();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
-			(float)_win_w / (float)_win_h, 0.3f, 165.0f);
+			(float)_win_w / (float)_win_h, 0.3f, 224.0f);
 	_shader.setMat4("projection", projection);
 	_initSkybox(projection);	
 
