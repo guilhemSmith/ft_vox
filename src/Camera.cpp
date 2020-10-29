@@ -28,7 +28,7 @@ void			Camera::_updateDir(const Inputs& input) {
 }
 
 void			Camera::_updatePos(float delta_time, const Inputs& input) {
-	float offset = input.keyState(Inputs::_SPRINT) ? 20 * delta_time : delta_time;
+	float offset = input.keyState(Inputs::_SPRINT) ? 25 * delta_time : 5 * delta_time;
 	glm::vec3 input_dir = {0, 0, 0};
 	
 	if (input.keyState(Inputs::_FORWARD)) {
@@ -42,6 +42,12 @@ void			Camera::_updatePos(float delta_time, const Inputs& input) {
 	}
 	if (input.keyState(Inputs::_LEFT)) {
 		input_dir -= glm::normalize(glm::cross(_direction, _WORLD_UP));
+	}
+	if (input.keyState(Inputs::_UP)) {
+		input_dir += glm::normalize(glm::cross(glm::cross(_direction, _WORLD_UP), _direction));
+	}
+	if (input.keyState(Inputs::_DOWN)) {
+		input_dir -= glm::normalize(glm::cross(glm::cross(_direction, _WORLD_UP), _direction));
 	}
 	if (glm::length(input_dir) > 0) {
 		input_dir = glm::normalize(input_dir);

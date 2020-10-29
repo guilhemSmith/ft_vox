@@ -6,6 +6,8 @@ const SDL_Scancode		Inputs::_FORWARD = SDL_SCANCODE_W;
 const SDL_Scancode		Inputs::_BACKWARD = SDL_SCANCODE_S;
 const SDL_Scancode		Inputs::_LEFT = SDL_SCANCODE_A;
 const SDL_Scancode		Inputs::_RIGHT = SDL_SCANCODE_D;
+const SDL_Scancode		Inputs::_UP = SDL_SCANCODE_SPACE;
+const SDL_Scancode		Inputs::_DOWN = SDL_SCANCODE_LCTRL;
 const SDL_Scancode		Inputs::_SPRINT = SDL_SCANCODE_LSHIFT;
 const SDL_Scancode		Inputs::_QUIT = SDL_SCANCODE_ESCAPE;
 
@@ -17,6 +19,8 @@ Inputs::Inputs(void):
 		{_BACKWARD, false},
 		{_LEFT, false},
 		{_RIGHT, false},
+		{_UP, false},
+		{_DOWN, false},
 		{_SPRINT, false},
 		{_QUIT, false}
 	}),
