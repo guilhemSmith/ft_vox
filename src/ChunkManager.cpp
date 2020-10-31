@@ -1,8 +1,5 @@
 #include "ChunkManager.hpp"
 
-#include <stdlib.h>
-#include <time.h>
-
 const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 	16384,
 	256,
@@ -21,13 +18,6 @@ ChunkManager::ChunkManager(unsigned int seed):
 	_chunks_to_unload()
 {}
 
-// ChunkManager::ChunkManager(void):
-// 	_seed(time(NULL)),
-// 	_noise_height(ChunkManager::NOISE_SIZE, _seed),
-// 	_chunks_loaded(),
-// 	_chunks_to_load()
-// {}
-
 
 unsigned int		ChunkManager::_chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
@@ -36,7 +26,7 @@ unsigned int		ChunkManager::_chunkIndex(glm::u32vec3 pos) const {
 void                    ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
     glm::u32vec3 pos(pos_chunk);
     unsigned int index = _chunkIndex(pos_chunk);
-    std::array<Chunk*, 6> neighbors;
+    std::array<std::shared_ptr<Chunk>, 6> neighbors;
     auto x_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(-1, 0, 0)));
     if (x_p != _chunks_loaded.end())
         neighbors[0] = x_p->second;
@@ -78,28 +68,25 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 
 	_chunks_visible.clear();
 	for (auto &loaded_chunk : _chunks_loaded) {
-		Chunk* chunk = loaded_chunk.second;
-		glm::vec3 pos_chunk = chunk->getPosChunk();
-		float dot = glm::dot(dir, pos_chunk + glm::vec3(0.5) - cam_chunk_pos);
-		glm::vec3 offset = pos_chunk - cam_chunk_pos;
-		float dist = glm::distance(cam_chunk_pos, pos_chunk);
-		if (dist < VIEW_DISTANCE && !chunk->is_meshed) {
-		    _chunkRemesh(pos_chunk);
-		}
-		// float dist = glm::max(glm::length(offset * glm::vec3(1,0,0)), glm::max(glm::length(offset * glm::vec3(0,1,0)), glm::length(offset * glm::vec3(0,0,1))));
-		if ((dist < VIEW_DISTANCE && dot > 0) || dist < 2) {
-			_chunks_visible.push_back(chunk);
-		}
+        glm::vec3 pos_chunk = loaded_chunk.second->getPosChunk();
+        float dot = glm::dot(dir, pos_chunk + glm::vec3(0.5) - cam_chunk_pos);
+        glm::vec3 offset = pos_chunk - cam_chunk_pos;
+        float dist = glm::distance(cam_chunk_pos, pos_chunk);
+        if (dist < VIEW_DISTANCE && !loaded_chunk.second->is_meshed) {
+            _chunkRemesh(pos_chunk);
+        }
+        if ((dist < VIEW_DISTANCE && dot > 0) || dist < 2) {
+            _chunks_visible.emplace_back(loaded_chunk.second);
+        }
 	}
 }
 
 void					ChunkManager::_unloadTooFar(glm::vec3 cam_pos_chunk) {
 	for (auto &loaded : _chunks_loaded) {
-		Chunk* chunk = loaded.second;
-		glm::vec3 pos_chunk = chunk->getPosChunk();
+		glm::vec3 pos_chunk = loaded.second->getPosChunk();
 		float dist = glm::distance(cam_pos_chunk, pos_chunk);
 		if (dist > VIEW_DISTANCE * 2) {
-			_chunks_to_unload.push_back(chunk->getPosChunk());
+			_chunks_to_unload.emplace_back(loaded.second->getPosChunk());
 		}
 	}
 }
@@ -131,7 +118,8 @@ void					ChunkManager::_detectChunkToLoad(glm::u32vec3 cam_chunk_pos) {
 	}
 }
 
-std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
+std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
+//    std::cout << "chunks loaded: " << _chunks_loaded.size() << std::endl;
 	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
 	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (ChunkManager::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
 
@@ -163,7 +151,7 @@ std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3
 		for (auto &pos : _chunks_to_load) {
 			if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
 				unsigned int index = _chunkIndex(pos);
-				_chunks_loaded[index] = new Chunk(_world, pos * Chunk::SIZE);
+				_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
 			}
 		}
 		_chunks_to_load.clear();
@@ -175,7 +163,6 @@ std::vector<Chunk*>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3
 void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 	unsigned int index = _chunkIndex(pos);
 	try {
-		delete _chunks_loaded.at(index);
 		_chunks_loaded.erase(index);
 	}
 	catch (std::out_of_range oor) {

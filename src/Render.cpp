@@ -5,17 +5,19 @@ Render::Render(unsigned int seed): _manager(seed) {
 	_win_h = 720;
 }
 
-void 	Render::drawChunks(std::vector<Chunk*>& chunks) {
+void 	Render::drawChunks(std::vector<std::weak_ptr<Chunk>>& chunks) {
 	glm::mat4 view = _cam.viewMat();
 	_shader.setMat4("view", view);
-	for (auto chunk : chunks)
+	for (auto chunk_ptr : chunks)
 	{
-		if (chunk->is_empty)
-			continue;
-		glm::mat4 model = glm::mat4(1.0f);
-		glm::translate(model, chunk->getPos());
-		_shader.setMat4("model", model);
-		chunk->draw();
+	    if (auto chunk = chunk_ptr.lock()) {
+            if (chunk->is_empty)
+                continue;
+            glm::mat4 model = glm::mat4(1.0f);
+            glm::translate(model, chunk->getPos());
+            _shader.setMat4("model", model);
+            chunk->draw();
+	    }
 	}
 }
 
@@ -180,7 +182,7 @@ void 	Render::gameLoop() {
 		_cam.update(time.deltaTime(), inputs);
 
 		_shader.use();
-		std::vector<Chunk*>& chunks = _manager.getChunksFromPos(_cam.position(), _cam.direction());
+		std::vector<std::weak_ptr<Chunk>>& chunks = _manager.getChunksFromPos(_cam.position(), _cam.direction());
 		drawChunks(chunks);
 
 		glDepthFunc(GL_LEQUAL);

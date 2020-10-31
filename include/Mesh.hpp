@@ -47,7 +47,7 @@ private:
 public:
 	Mesh() = default;
 	~Mesh();
-	void						init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos, std::array<Chunk*, 6> &);
+	void						init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos, std::array<std::shared_ptr<Chunk>, 6> &);
 	void						draw();
 	void 						clearBuffers();
 };
