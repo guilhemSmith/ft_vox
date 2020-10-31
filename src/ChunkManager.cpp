@@ -11,7 +11,7 @@ const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 
 const glm::u32vec3	ChunkManager::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
-const float			ChunkManager::VIEW_DISTANCE = 12;	
+const float			ChunkManager::VIEW_DISTANCE = 13;	
 const float			ChunkManager::LOAD_DISTANCE = 14;	
 
 ChunkManager::ChunkManager(unsigned int seed):
@@ -82,14 +82,10 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 		float dot = glm::dot(dir, pos_chunk + glm::vec3(0.5) - cam_chunk_pos);
 		glm::vec3 offset = pos_chunk - cam_chunk_pos;
 		float dist = glm::distance(cam_chunk_pos, pos_chunk);
-		// float dist = glm::max(offset.x * glm::sign(offset.x), glm::max(offset.y * glm::sign(offset.y), offset.z * glm::sign(offset.z)));
 		if (dist < VIEW_DISTANCE && !chunk->is_meshed) {
 		    	_chunkRemesh(pos_chunk);
 		}
 		if ((dist < VIEW_DISTANCE && dot > 0) || dist < 2) {
-			// if (!chunk->is_meshed) {
-		    // 	_chunkRemesh(pos_chunk);
-			// }
 			_chunks_visible.push_back(chunk);
 		}
 	}
