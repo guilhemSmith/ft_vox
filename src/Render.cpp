@@ -1,6 +1,6 @@
 #include "Render.hpp"
 
-Render::Render(unsigned int seed): _manager(seed) {
+Render::Render(unsigned int seed): _manager(seed), _cam(_manager) {
 	_win_w = 1080;
 	_win_h = 720;
 }

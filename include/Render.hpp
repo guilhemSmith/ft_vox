@@ -18,12 +18,12 @@ class Render {
 		unsigned int 				_win_w;
 		unsigned int 				_win_h;
 		Shader 						_shader;
+    	ChunkManager				_manager;
 		Camera						_cam;
 		void                        _loadCubeTextures(const char *);
 		void                        _loadSkyboxTextures();
 		void 						_setupCubeTextures();
 		void 						_initSkybox(glm::mat4 &);
-    	ChunkManager				_manager;
 		std::vector<GLuint>			_texture_ids;
 		unsigned int 				_skybox_id;
 		Skybox 						_skybox;

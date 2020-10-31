@@ -34,7 +34,7 @@ public:
 	ChunkManager(unsigned int seed);
 
 	std::vector<Chunk*>&					getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);
-	// Chunk*									getChunk(glm::u32vec3 pos);
+	glm::vec3								spawnPos(void) const;
 	void									removeChunk(glm::u32vec3 pos);
 
 	static const glm::u32vec3				SIZES_VOXELS;
