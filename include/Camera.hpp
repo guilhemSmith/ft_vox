@@ -5,6 +5,7 @@
 # include <ostream>
 # include <map>
 # include "Inputs.hpp"
+# include "ChunkManager.hpp"
 
 class Camera {
 private:
@@ -19,7 +20,7 @@ private:
 	static const glm::vec3			_WORLD_UP;
 
 public:
-	Camera(void);
+	Camera(ChunkManager& manager);
 
 	void							update(float delta_time, const Inputs& input);
 

@@ -23,6 +23,9 @@ ChunkManager::ChunkManager(unsigned int seed):
 	_loading_thread(&ChunkManager::_loadRoutine, this)
 {}
 
+glm::vec3			ChunkManager::spawnPos(void) const {
+	return glm::vec3(SIZES_VOXELS.x / 2, _world.heigthAt(SIZES_VOXELS.x / 2, SIZES_VOXELS.x / 2) + 2.5, SIZES_VOXELS.z / 2);
+}
 
 unsigned int		ChunkManager::_chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
