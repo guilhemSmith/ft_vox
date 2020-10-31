@@ -37,6 +37,8 @@ void 	Render::gameInit() {
         TTF_Quit();
         exit(0);
     }
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
 	_window = SDL_CreateWindow(
 			"ft_vox",
 			SDL_WINDOWPOS_UNDEFINED,
@@ -63,6 +65,7 @@ void 	Render::gameInit() {
     }
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	glEnable(GL_DEPTH_TEST);
+	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
 	glEnable(GL_MULTISAMPLE);
 	glViewport(0, 0 ,  _win_w, _win_h);
     glewExperimental = GL_TRUE;
