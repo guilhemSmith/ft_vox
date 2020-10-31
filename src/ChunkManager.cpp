@@ -8,7 +8,7 @@ const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 
 const glm::u32vec3	ChunkManager::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
-const float			ChunkManager::VIEW_DISTANCE = 12;	
+const float			ChunkManager::VIEW_DISTANCE = 13;	
 const float			ChunkManager::LOAD_DISTANCE = 14;	
 
 ChunkManager::ChunkManager(unsigned int seed):
