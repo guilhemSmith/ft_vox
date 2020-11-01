@@ -30,6 +30,8 @@ private:
 
 	void														_loadRoutine(void);
 
+	void									_loadRoutine(void);
+
 public:
 	ChunkManager(unsigned int seed);
 	~ChunkManager();
