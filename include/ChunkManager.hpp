@@ -32,6 +32,7 @@ private:
 
 public:
 	ChunkManager(unsigned int seed);
+	~ChunkManager();
 
 	std::vector<Chunk*>&					getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);
 	glm::vec3								spawnPos(void) const;
