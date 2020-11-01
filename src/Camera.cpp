@@ -6,8 +6,8 @@
 
 const glm::vec3			Camera::_WORLD_UP = {0.0f, 1.0f, 0.0f};
 
-Camera::Camera(void): 
-	_position(ChunkManager::SIZES_VOXELS),// / static_cast<unsigned int>(2)),
+Camera::Camera(ChunkManager& manager): 
+	_position(manager.spawnPos()),
 	_direction({0, 0, -1}),
 	_yaw(0.0f),
 	_pitch(0.0f)

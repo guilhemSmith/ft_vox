@@ -16,7 +16,7 @@ World::World(unsigned int seed): _seed(seed), _heightmap(NOISE_SIZE), _biomes(NO
 
 double				World::_setLayers(std::array<unsigned int, 3>& layers_voxel, unsigned int& mid_layer_size, unsigned int& top_layer_size, double amplitude, double biome) const {
 	double height = HEIGHT_MID;
-	double height_desert = amplitude * HEIGHT_AMPLITUDE / 8;
+	double height_desert = amplitude * HEIGHT_AMPLITUDE / 16;
 	double height_mountains = (amplitude + 1.0) * HEIGHT_AMPLITUDE * 4;
 	double height_hills = amplitude * HEIGHT_AMPLITUDE;
 	if (biome < -BIOME_STEP) {
@@ -82,4 +82,32 @@ bool				World::fillChunk(std::array<std::array<std::array<char, 32>, 32>, 32>& v
 		}
 	}
 	return empty;
+}
+
+float				World::heigthAt(unsigned int x, unsigned int z) const {
+	double amplitude = _heightmap.perlin2d(4, 1.0, 0.5, x / NOISE_STRETCH, z / NOISE_STRETCH);
+	double biome = _biomes.perlin2d(4, 1.0, 0.5, x / NOISE_STRETCH / 4, z / NOISE_STRETCH / 4);
+	double height = HEIGHT_MID;
+	double height_desert = amplitude * HEIGHT_AMPLITUDE / 16;
+	double height_mountains = (amplitude + 1.0) * HEIGHT_AMPLITUDE * 4;
+	double height_hills = amplitude * HEIGHT_AMPLITUDE;
+
+	if (biome < -BIOME_STEP) {
+		height += Noise::interpolateCosine(height_hills, height_desert, -biome);
+	}
+	else if (biome > BIOME_STEP) {
+		height += Noise::interpolateCosine(height_hills, height_mountains, biome);
+	}
+	else {
+		if (biome > 0.0) {
+			height += Noise::interpolateCosine(height_hills, height_mountains, biome);
+		}
+		else if (biome < 0.0) {
+			height += Noise::interpolateCosine(height_hills, height_desert, -biome);
+		}
+		else {
+			height += height_hills;
+		}
+	}
+	return height;
 }

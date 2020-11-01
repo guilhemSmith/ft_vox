@@ -8,16 +8,29 @@ const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 
 const glm::u32vec3	ChunkManager::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
-const float			ChunkManager::VIEW_DISTANCE = 8;	
+const float			ChunkManager::VIEW_DISTANCE = 13;	
+const float			ChunkManager::LOAD_DISTANCE = 14;	
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_world(seed),
 	_chunks_loaded(),
 	_chunks_visible(),
 	_chunks_to_load(),
-	_chunks_to_unload()
+	_chunks_to_unload(),
+	_last_cam_chunk(),
+	_mtx(),
+	_keep_loading(true),
+	_loading_thread(&ChunkManager::_loadRoutine, this)
 {}
 
+ChunkManager::~ChunkManager() {
+	_keep_loading = false;
+	// TODO free loaded chunks
+}
+
+glm::vec3			ChunkManager::spawnPos(void) const {
+	return glm::vec3(SIZES_VOXELS.x / 2, _world.heigthAt(SIZES_VOXELS.x / 2, SIZES_VOXELS.x / 2) + 2.5, SIZES_VOXELS.z / 2);
+}
 
 unsigned int		ChunkManager::_chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
@@ -67,6 +80,7 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 	glm::vec3		cam_chunk_pos = pos / static_cast<float>(Chunk::SIZE);
 
 	_chunks_visible.clear();
+	_mtx.lock();
 	for (auto &loaded_chunk : _chunks_loaded) {
         glm::vec3 pos_chunk = loaded_chunk.second->getPosChunk();
         float dot = glm::dot(dir, pos_chunk + glm::vec3(0.5) - cam_chunk_pos);
@@ -79,59 +93,65 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
             _chunks_visible.emplace_back(loaded_chunk.second);
         }
 	}
+	_mtx.unlock();
 }
 
 void					ChunkManager::_unloadTooFar(glm::vec3 cam_pos_chunk) {
+	_mtx.lock();
 	for (auto &loaded : _chunks_loaded) {
 		glm::vec3 pos_chunk = loaded.second->getPosChunk();
-		float dist = glm::distance(cam_pos_chunk, pos_chunk);
-		if (dist > VIEW_DISTANCE * 2) {
-			_chunks_to_unload.emplace_back(loaded.second->getPosChunk());
+		glm::vec3 offset = glm::abs(pos_chunk - cam_pos_chunk);
+		if (offset.x > LOAD_DISTANCE + 5 || offset.y > LOAD_DISTANCE + 5 || offset.z > LOAD_DISTANCE + 5) {
+			_chunks_to_unload.emplace(loaded.second->getPosChunk());
 		}
 	}
+	_mtx.unlock();
 }
 
 void					ChunkManager::_detectChunkToLoad(glm::u32vec3 cam_chunk_pos) {
-	glm::i32vec3	offset = cam_chunk_pos - _last_cam_chunk;	
-	
-	for (auto i = -VIEW_DISTANCE; i < VIEW_DISTANCE + 1; i++) {
-		for (auto j = -VIEW_DISTANCE; j < VIEW_DISTANCE + 1; j++) {
-			if (offset.x != 0) {
-				glm::u32vec3 chunk_pos = cam_chunk_pos + glm::u32vec3(VIEW_DISTANCE * offset.x, i, j);
-				if (_chunks_loaded.find(_chunkIndex(chunk_pos)) == _chunks_loaded.end()) {
-					_chunks_to_load.push_back(chunk_pos);
-				}
-			}
-			if (offset.y != 0) {
-				glm::u32vec3 chunk_pos = cam_chunk_pos + glm::u32vec3(i, VIEW_DISTANCE * offset.y, j);
-				if (_chunks_loaded.find(_chunkIndex(chunk_pos)) == _chunks_loaded.end()) {
-					_chunks_to_load.push_back(chunk_pos);
-				}
-			}
-			if (offset.z != 0) {
-				glm::u32vec3 chunk_pos = cam_chunk_pos + glm::u32vec3(i, j, VIEW_DISTANCE * offset.z);
-				if (_chunks_loaded.find(_chunkIndex(chunk_pos)) == _chunks_loaded.end()) {
-					_chunks_to_load.push_back(chunk_pos);
-				}
-			}
-		}
+	glm::i32vec3	offset = cam_chunk_pos - _last_cam_chunk;
+	glm::i32vec3	cam_pos_i = cam_chunk_pos;
+
+	if (offset.x != 0) {
+		int dir = glm::sign(offset.x); 
+		glm::u32vec3	start = glm::clamp(cam_pos_i + glm::i32vec3(LOAD_DISTANCE * dir, -LOAD_DISTANCE, -LOAD_DISTANCE), glm::i32vec3(0,0,0), glm::i32vec3(SIZES_CHUNKS));
+		glm::u32vec3	stop = glm::clamp(cam_pos_i + glm::i32vec3(LOAD_DISTANCE * dir, LOAD_DISTANCE, LOAD_DISTANCE), glm::i32vec3(0,0,0), glm::i32vec3(SIZES_CHUNKS));
+		_chunks_to_load.push({start, stop});
+	}
+	if (offset.y != 0) {
+		int dir = glm::sign(offset.y); 
+		glm::u32vec3	start = glm::clamp(cam_pos_i + glm::i32vec3(-LOAD_DISTANCE, LOAD_DISTANCE * dir, -LOAD_DISTANCE), glm::i32vec3(0,0,0), glm::i32vec3(SIZES_CHUNKS));
+		glm::u32vec3	stop = glm::clamp(cam_pos_i + glm::i32vec3(LOAD_DISTANCE, LOAD_DISTANCE * dir, LOAD_DISTANCE), glm::i32vec3(0,0,0), glm::i32vec3(SIZES_CHUNKS));
+		_chunks_to_load.push({start, stop});
+	}
+	if (offset.z != 0) {
+		int dir = glm::sign(offset.z); 
+		glm::u32vec3	start = glm::clamp(cam_pos_i + glm::i32vec3(-LOAD_DISTANCE, -LOAD_DISTANCE, LOAD_DISTANCE * dir), glm::i32vec3(0,0,0), glm::i32vec3(SIZES_CHUNKS));
+		glm::u32vec3	stop = glm::clamp(cam_pos_i + glm::i32vec3(LOAD_DISTANCE, LOAD_DISTANCE, LOAD_DISTANCE * dir), glm::i32vec3(0,0,0), glm::i32vec3(SIZES_CHUNKS));
+		_chunks_to_load.push({start, stop});
 	}
 }
 
 std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
-//    std::cout << "chunks loaded: " << _chunks_loaded.size() << std::endl;
 	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
 	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (ChunkManager::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
 
 	if (_chunks_loaded.size() == 0) {
-		for (auto x = -VIEW_DISTANCE - 1; x < VIEW_DISTANCE + 2; x++) {
-			for (auto y = -VIEW_DISTANCE - 1; y < VIEW_DISTANCE + 2; y++) {
-				for (auto z = -VIEW_DISTANCE - 1; z < VIEW_DISTANCE + 2; z++) {
-					glm::u32vec3 chunk_pos = cam_chunk_pos + glm::u32vec3(x, y, z);
-					_chunks_to_load.push_back(chunk_pos);
+		_mtx.lock();
+		for (auto x = -LOAD_DISTANCE; x < LOAD_DISTANCE + 1; x++) {
+			for (auto y = -LOAD_DISTANCE; y < LOAD_DISTANCE + 1; y++) {
+				for (auto z = -LOAD_DISTANCE; z < LOAD_DISTANCE + 1; z++) {
+					glm::u32vec3 pos = cam_chunk_pos + glm::u32vec3(x, y, z);
+					if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
+						unsigned int index = _chunkIndex(pos);
+						_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
+					}
 				}
 			}
 		}
+		_mtx.unlock();
+		
+		_last_cam_chunk = cam_chunk_pos;
 	}
 
 	if (cam_chunk_pos != _last_cam_chunk) {
@@ -140,21 +160,11 @@ std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_
 		_last_cam_chunk = cam_chunk_pos;
 	}
 	if (_chunks_to_unload.size() > 0) {
-		int count = 0;
-		for (auto &pos : _chunks_to_unload) {
+		while (_chunks_to_unload.size() > 0) {
+			glm::u32vec3 pos = _chunks_to_unload.front();
 			removeChunk(pos);
-			count++;
+			_chunks_to_unload.pop();
 		}
-		_chunks_to_unload.clear();
-	}
-	if (_chunks_to_load.size() > 0) {
-		for (auto &pos : _chunks_to_load) {
-			if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
-				unsigned int index = _chunkIndex(pos);
-				_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
-			}
-		}
-		_chunks_to_load.clear();
 	}
 	_detectVisibleChunks(cam_pos, cam_dir);
 	return _chunks_visible;
@@ -167,5 +177,29 @@ void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 	}
 	catch (std::out_of_range oor) {
 		//std::cout << "Trying to free unloaded chunk." << std::endl;
+	}
+}
+
+void				ChunkManager::_loadRoutine(void) {
+	while (_keep_loading) {
+		if (_chunks_to_load.size() > 0) {
+			_mtx.lock();
+			std::array<glm::u32vec3, 2> area = _chunks_to_load.front();
+			_chunks_to_load.pop();
+			_mtx.unlock();
+			for (unsigned int x = area[0].x; x < area[1].x + 1; x++) {
+				for (unsigned int y = area[0].y; y < area[1].y + 1; y++) {
+					for (unsigned int z = area[0].z; z < area[1].z + 1; z++) {
+						glm::u32vec3	pos(x, y, z);
+						if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
+							unsigned int index = _chunkIndex(pos);
+							if (_chunks_loaded.find(index) == _chunks_loaded.end()) {
+								_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }

@@ -14,7 +14,9 @@ bool 		Chunk::hasVoxelAt(int x, int y, int z) const {
 }
 
 Chunk::~Chunk() {
-	_mesh.clearBuffers();
+	if (is_meshed) {
+		_mesh.clearBuffers();
+	}
 }
 
 void 		Chunk::draw() {

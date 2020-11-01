@@ -16,6 +16,8 @@ private:
 public:
 	World(unsigned int seed);
 
+	float							heigthAt(unsigned int x, unsigned int z) const;
+
 	bool							fillChunk(std::array<std::array<std::array<char, 32>, 32>, 32>& voxels, glm::vec3 pos) const;
 
 	static const unsigned int		NOISE_STRETCH;
