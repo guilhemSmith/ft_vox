@@ -23,6 +23,11 @@ ChunkManager::ChunkManager(unsigned int seed):
 	_loading_thread(&ChunkManager::_loadRoutine, this)
 {}
 
+ChunkManager::~ChunkManager() {
+	_keep_loading = false;
+	// TODO free loaded chunks
+}
+
 glm::vec3			ChunkManager::spawnPos(void) const {
 	return glm::vec3(SIZES_VOXELS.x / 2, _world.heigthAt(SIZES_VOXELS.x / 2, SIZES_VOXELS.x / 2) + 2.5, SIZES_VOXELS.z / 2);
 }
@@ -92,13 +97,15 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 }
 
 void					ChunkManager::_unloadTooFar(glm::vec3 cam_pos_chunk) {
+	_mtx.lock();
 	for (auto &loaded : _chunks_loaded) {
 		glm::vec3 pos_chunk = loaded.second->getPosChunk();
-		float dist = glm::distance(cam_pos_chunk, pos_chunk);
-		if (dist > VIEW_DISTANCE * 2) {
+		glm::vec3 offset = glm::abs(pos_chunk - cam_pos_chunk);
+		if (offset.x > LOAD_DISTANCE + 5 || offset.y > LOAD_DISTANCE + 5 || offset.z > LOAD_DISTANCE + 5) {
 			_chunks_to_unload.emplace(loaded.second->getPosChunk());
 		}
 	}
+	_mtx.unlock();
 }
 
 void					ChunkManager::_detectChunkToLoad(glm::u32vec3 cam_chunk_pos) {
