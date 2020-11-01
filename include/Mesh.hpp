@@ -5,6 +5,7 @@
 # include <glm/glm.hpp>
 # include <ostream>
 # include <array>
+# include <memory>
 
 class Chunk;
 

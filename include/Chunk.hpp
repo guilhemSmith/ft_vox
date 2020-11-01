@@ -4,9 +4,7 @@
 #include "ft_vox.hpp"
 #include "Mesh.hpp"
 # include "World.hpp"
-
-
-// class Mesh;
+# include <memory>
 
 class Chunk {
 	private:
