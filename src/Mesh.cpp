@@ -115,7 +115,7 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 }
 
 
-void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos, std::array<Chunk*, 6> &neighbours) {
+void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos, std::array<std::shared_ptr<Chunk>, 6> &neighbours) {
 	for (int z = 0; z < Chunk::SIZE; z++) {
 		for (int y = 0; y < Chunk::SIZE; y++) {
 			for (int x = 0; x < Chunk::SIZE; x++) {

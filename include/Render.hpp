@@ -33,7 +33,7 @@ class Render {
 		void 	gameInit();
 		void 	gameLoop();
 		static void 	gameQuit();
-		void 	drawChunks(std::vector<Chunk*>&);
+		void 	drawChunks(std::vector<std::weak_ptr<Chunk>>&);
 };
 
 #endif
