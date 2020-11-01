@@ -25,6 +25,8 @@ public:
 	static const unsigned int		HEIGHT_MID;
 	static const unsigned int		HEIGHT_AMPLITUDE;
 	static const double				BIOME_STEP;
+	static const unsigned int		CAVERN_COUNT;
+	static const unsigned int		CAVERN_SIZE;
 };
 
 #endif

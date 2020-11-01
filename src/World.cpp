@@ -12,12 +12,15 @@ const unsigned int	World::HEIGHT_AMPLITUDE = ChunkManager::SIZES_VOXELS.y / 16;
 
 const double		World::BIOME_STEP = 0.25;
 
-World::World(unsigned int seed): _seed(seed), _heightmap(NOISE_SIZE), _biomes(NOISE_SIZE / 16), _caverns(NOISE_SIZE) {}
+const unsigned int	World::CAVERN_COUNT = 256;
+const unsigned int	World::CAVERN_SIZE = 64;
+
+World::World(unsigned int seed): _seed(seed), _heightmap(NOISE_SIZE), _biomes(NOISE_SIZE / 16), _caverns(CAVERN_COUNT * CAVERN_SIZE) {}
 
 double				World::_setLayers(std::array<unsigned int, 3>& layers_voxel, unsigned int& mid_layer_size, unsigned int& top_layer_size, double amplitude, double biome) const {
 	double height = HEIGHT_MID;
 	double height_desert = amplitude * HEIGHT_AMPLITUDE / 16;
-	double height_mountains = (amplitude + 1.0) * HEIGHT_AMPLITUDE * 4;
+	double height_mountains = glm::abs((amplitude + 1.0) * HEIGHT_AMPLITUDE * 4);
 	double height_hills = amplitude * HEIGHT_AMPLITUDE;
 	if (biome < -BIOME_STEP) {
 		layers_voxel = {Chunk::Voxel::Rock, Chunk::Voxel::Dirt, Chunk::Voxel::Sand};
@@ -89,7 +92,7 @@ float				World::heigthAt(unsigned int x, unsigned int z) const {
 	double biome = _biomes.perlin2d(4, 1.0, 0.5, x / NOISE_STRETCH / 4, z / NOISE_STRETCH / 4);
 	double height = HEIGHT_MID;
 	double height_desert = amplitude * HEIGHT_AMPLITUDE / 16;
-	double height_mountains = (amplitude + 1.0) * HEIGHT_AMPLITUDE * 4;
+	double height_mountains = glm::abs((amplitude + 1.0) * HEIGHT_AMPLITUDE * 4);
 	double height_hills = amplitude * HEIGHT_AMPLITUDE;
 
 	if (biome < -BIOME_STEP) {

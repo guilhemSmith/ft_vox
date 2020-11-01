@@ -16,6 +16,10 @@ double				Noise::_rand(unsigned int i) const {
 	return _values[i % _values.size()];
 }
 
+double				Noise::_noise1d(unsigned int t) const {
+	return _rand(t) * _SCALE;
+}
+
 double				Noise::_noise2d(unsigned int x, unsigned int y) const {
 	unsigned int tmp = _rand(x) * _SCALE;
 	return _rand(tmp + y);
@@ -43,6 +47,16 @@ double				Noise::_interpolateCubic(double before_a, double a, double b, double a
     double a0 = a;
 
 	return (a3 * t * t * t) + (a2 * t * t) + (a1 * t) + a0;
+}
+
+double				Noise::noise1dSmoothLinear(double t) const {
+	int		integer_t = static_cast<int>(t);
+	double	fractional_t = t - integer_t;
+
+	double a = _noise1d(integer_t);
+	double b = _noise1d(integer_t + 1);
+
+	return interpolateLinear(a, b, fractional_t);
 }
 
 double				Noise::noise2dSmoothLinear(double x, double y) const {

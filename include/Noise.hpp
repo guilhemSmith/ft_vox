@@ -11,6 +11,7 @@ private:
 
 	double						_rand(unsigned int i) const;
 
+	double						_noise1d(unsigned int t) const;
 	double						_noise2d(unsigned int x, unsigned int y) const;
 	double						_noise3d(unsigned int x, unsigned int y, unsigned int z) const;
 
@@ -18,6 +19,8 @@ private:
 
 public:
 	Noise(unsigned int size);
+
+	double						noise1dSmoothLinear(double t) const;
 
 	double						noise2dSmoothLinear(double x, double y) const;
 	double						noise2dSmoothCosine(double x, double y) const;
