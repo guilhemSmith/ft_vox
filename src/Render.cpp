@@ -200,6 +200,8 @@ void 	Render::gameLoop() {
 			std::cout << time.fps() << "fps; " << chunks.size() << " chunks; " << _cam << std::endl;
 		}
 	}
+	glDeleteTextures(_texture_ids.size(), _texture_ids.data());
+	glDeleteTextures(1, &_skybox_id);
 	_shader.delete_prog();
 }
 
