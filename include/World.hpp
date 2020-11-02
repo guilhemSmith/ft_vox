@@ -11,6 +11,7 @@ private:
 	Noise							_heightmap;
 	Noise							_biomes;
 	Noise							_caverns;
+	std::vector<glm::vec3>			_holes;
 
 	double							_setLayers(std::array<unsigned int, 3>& layers_voxel, unsigned int& mid_layer_size, unsigned int& top_layer_size, double amplitude, double biome) const;
 public:
@@ -27,6 +28,7 @@ public:
 	static const double				BIOME_STEP;
 	static const unsigned int		CAVERN_COUNT;
 	static const unsigned int		CAVERN_SIZE;
+	static const float				CAVERN_STEP;
 };
 
 #endif
