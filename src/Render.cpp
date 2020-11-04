@@ -178,6 +178,7 @@ void 	Render::gameLoop() {
 			(float)_win_w / (float)_win_h, 0.3f, 600.0f);
 	_shader.setMat4("projection", projection);
 	_initSkybox(projection);	
+	_manager.loadInitialChunks(_cam.position());
 
 	while (!inputs.shouldQuit()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

@@ -36,44 +36,73 @@ unsigned int		ChunkManager::_chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
 }
 
-void                    ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
+bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
     glm::u32vec3 pos(pos_chunk);
     unsigned int index = _chunkIndex(pos_chunk);
     std::array<std::shared_ptr<Chunk>, 6> neighbors;
-    auto x_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(-1, 0, 0)));
-    if (x_p != _chunks_loaded.end())
-        neighbors[0] = x_p->second;
-    else
-        neighbors[0] = nullptr;
+	if (pos.x > 0.0) {
+		auto x_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(-1, 0, 0)));
+		if (x_p != _chunks_loaded.end())
+			neighbors[0] = x_p->second;
+		else 
+			return false;
+	}
+	else
+		neighbors[0] = nullptr;
 
-    auto x_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(1, 0, 0)));
-    if (x_n != _chunks_loaded.end())
-        neighbors[1] = x_n->second;
-    else
+	if (pos.x < SIZES_CHUNKS.x) {
+		auto x_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(1, 0, 0)));
+		if (x_n != _chunks_loaded.end())
+			neighbors[1] = x_n->second;
+		else
+			return false;
+	}
+	else
         neighbors[1] = nullptr;
 
-    auto y_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, -1, 0)));
-    if (y_p != _chunks_loaded.end())
-        neighbors[2] = y_p->second;
-    else
+	if (pos.y > 0.0) {
+		auto y_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, -1, 0)));
+		if (y_p != _chunks_loaded.end())
+			neighbors[2] = y_p->second;
+		else
+			return false;
+	}
+	else
         neighbors[2] = nullptr;
-    auto y_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 1, 0)));
-    if (y_n != _chunks_loaded.end())
-        neighbors[3] = y_n->second;
-    else
+
+	if (pos.y < SIZES_CHUNKS.y) {
+		auto y_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 1, 0)));
+		if (y_n != _chunks_loaded.end())
+			neighbors[3] = y_n->second;
+		else
+			return false;
+	}
+	else
         neighbors[3] = nullptr;
 
-    auto z_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, -1)));
-    if (z_p != _chunks_loaded.end())
-        neighbors[4] = z_p->second;
-    else
+
+	if (pos.z > 0.0) {
+		auto z_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, -1)));
+		if (z_p != _chunks_loaded.end())
+			neighbors[4] = z_p->second;
+		else
+			return false;
+	}
+	else
         neighbors[4] = nullptr;
-    auto z_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, 1)));
-    if (z_n != _chunks_loaded.end())
-        neighbors[5] = z_n->second;
-    else
+
+	if (pos.z < SIZES_CHUNKS.z) {
+		auto z_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, 1)));
+		if (z_n != _chunks_loaded.end())
+			neighbors[5] = z_n->second;
+		else
+			return false;
+	}
+	else
         neighbors[5] = nullptr;
+	
     _chunks_loaded[index]->remesh(neighbors);
+	return true;
 }
 
 void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
@@ -88,7 +117,9 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
         float dist = glm::distance(cam_chunk_pos, pos_chunk);
 		// float dist = glm::max(offset.x, glm::max(offset.y, offset.z));
         if (dist < VIEW_DISTANCE && !loaded_chunk.second->is_meshed) {
-            _chunkRemesh(pos_chunk);
+            if (!_chunkRemesh(pos_chunk)) {
+				continue;
+			}
         }
         if ((dist < VIEW_DISTANCE && dot > 0) || dist < 2) {
             _chunks_visible.emplace_back(loaded_chunk.second);
@@ -133,31 +164,27 @@ void					ChunkManager::_detectChunkToLoad(glm::u32vec3 cam_chunk_pos) {
 	}
 }
 
+void								ChunkManager::loadInitialChunks(glm::vec3 cam_pos) {
+	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
+	glm::i32vec3		cam_pos_i = cam_chunk_pos;
+
+	glm::u32vec3		start = glm::clamp(
+		cam_pos_i + glm::i32vec3(-LOAD_DISTANCE, -LOAD_DISTANCE, -LOAD_DISTANCE),
+		glm::i32vec3(0,0,0),
+		glm::i32vec3(SIZES_CHUNKS)
+	);
+	glm::u32vec3		stop = glm::clamp(
+		cam_pos_i + glm::i32vec3(LOAD_DISTANCE, LOAD_DISTANCE, LOAD_DISTANCE),
+		glm::i32vec3(0,0,0),
+		glm::i32vec3(SIZES_CHUNKS)
+	);
+	_chunks_to_load.push({start, stop});
+	_last_cam_chunk = cam_chunk_pos;
+}
+
 std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
 	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
 	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (ChunkManager::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
-
-	if (_chunks_loaded.size() == 0) {
-		_mtx.lock();
-		for (auto x = -LOAD_DISTANCE; x < LOAD_DISTANCE + 1; x++) {
-			for (auto z = -LOAD_DISTANCE; z < LOAD_DISTANCE + 1; z++) {
-				unsigned int posx = cam_chunk_pos.x + x;
-				unsigned int posz = cam_chunk_pos.z + z;
-				_world.cacheAmplitudeAt(posx, posz);
-				_world.cacheBiomeAt(posx, posz);
-				for (auto y = -LOAD_DISTANCE; y < LOAD_DISTANCE + 1; y++) {
-					glm::u32vec3 pos = cam_chunk_pos + glm::u32vec3(x, y, z);
-					if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
-						unsigned int index = _chunkIndex(pos);
-						_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
-					}
-				}
-			}
-		}
-		_mtx.unlock();
-		
-		_last_cam_chunk = cam_chunk_pos;
-	}
 
 	if (cam_chunk_pos != _last_cam_chunk) {
 		_detectChunkToLoad(cam_chunk_pos);
