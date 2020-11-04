@@ -88,7 +88,7 @@ function mac_setup() {
 }
 
 function linux_setup() {
-	sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libfreetype6-dev libglew-dev libglm-dev libfreetype-dev;
+	sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libfreetype6-dev libglew-dev libglm-dev;
 }
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
