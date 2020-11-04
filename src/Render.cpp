@@ -76,8 +76,11 @@ void 	Render::gameInit() {
 	_skybox.computeShaders();
 	
 	 glEnable(GL_CULL_FACE);
-	 glCullFace(GL_BACK);
-	// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+     glCullFace(GL_BACK);
+     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+     glEnable(GL_BLEND);
+     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void 	Render::_loadSkyboxTextures() {
@@ -205,7 +208,7 @@ void 	Render::gameLoop() {
 		glDepthFunc(GL_LESS);
 
 		//draw text
-        text.draw("fps: " + fps, 25.0f, 25.0f, 1.0f, glm::vec3(0.5, 0.8f, 0.2f));
+        text.draw("fps: " + fps, 25.0f, _win_h - 50.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
         if (time.update()){
             fps = time.fps();
 //			std::cout << time.fps() << "fps; " << chunks.size() << " chunks; " << _cam << std::endl;
