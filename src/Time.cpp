@@ -26,6 +26,6 @@ float			Time::deltaTime(void) {
 	return seconds;
 }
 
-unsigned int	Time::fps(void) {
-	return _fps;
+std::string	Time::fps(void) {
+	return std::to_string(_fps);
 }

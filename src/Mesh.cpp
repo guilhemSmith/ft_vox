@@ -160,7 +160,6 @@ void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cube
 void 	Mesh::draw() {
 	glBindVertexArray(_vao);
 	glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, nullptr);
-	// glBindVertexArray(0);
 }
 
 void 	Mesh::_setupBuffers() {

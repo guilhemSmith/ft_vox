@@ -13,6 +13,7 @@ find_package(SDL2_ttf REQUIRED)
 find_package(glm REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
+find_package(FREETYPE REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 include_directories(${SDL2_TTF_INCLUDE_DIRS})
@@ -60,6 +61,7 @@ file(GLOB SOURCES
 	"${PROJECT_SOURCE_DIR}/src/Skybox.cpp"
 	"${PROJECT_SOURCE_DIR}/src/ChunkManager.cpp"
 	"${PROJECT_SOURCE_DIR}/src/World.cpp"
+	"${PROJECT_SOURCE_DIR}/src/Text.cpp"
 )
 
 add_executable(ft_vox ${SOURCES})
@@ -68,6 +70,7 @@ target_link_libraries(ft_vox
 	${SDL2_IMAGE_LIBRARIES}
 	${SDL2_TTF_LIBRARIES}
 	${GLM_LIBRARIES}
+		Freetype::Freetype
         GLEW::GLEW
 	${OPENGL_LIBRARIES}
 )

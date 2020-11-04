@@ -35,7 +35,8 @@ void 		Shader::computeShaders() {
 	int success;
 	char info_log[512];
 
-	_parseShaders("../Shaders/vertex_shader.glsl", "../Shaders/fragment_shader.glsl");
+	_parseShaders("../Shaders/cubes_vertex_shader.glsl",
+               "../Shaders/cubes_fragment_shader.glsl");
 	const char* v_shader_code = _vertex_shader_src.c_str();
 	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertex_shader, 1, &v_shader_code, nullptr);
