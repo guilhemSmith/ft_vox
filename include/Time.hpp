@@ -1,6 +1,8 @@
 #ifndef TIME_HPP
 # define TIME_HPP
 
+#include <string>
+
 class Time
 {
 private:
@@ -17,7 +19,7 @@ public:
 	bool			update(void);
 
 	float			deltaTime(void);
-	unsigned int	fps(void);
+	std::string	    fps(void);
 };
 
 #endif

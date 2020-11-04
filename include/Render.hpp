@@ -9,12 +9,12 @@
 #include "Inputs.hpp"
 #include "Skybox.hpp"
 #include "ChunkManager.hpp"
+#include "Text.hpp"
 
 class Render {
 	private:
 		SDL_Window 					*_window;
 		SDL_GLContext				_context;
-		std::vector<SDL_Surface *> 	_textures;
 		unsigned int 				_win_w;
 		unsigned int 				_win_h;
 		Shader 						_shader;
@@ -24,6 +24,7 @@ class Render {
 		void                        _loadSkyboxTextures();
 		void 						_setupCubeTextures();
 		void 						_initSkybox(glm::mat4 &);
+        void 						_initText(Text &);
 		std::vector<GLuint>			_texture_ids;
 		unsigned int 				_skybox_id;
 		Skybox 						_skybox;
