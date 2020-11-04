@@ -20,7 +20,7 @@ World::World(unsigned int seed):
 	_seed(seed),
 	_heightmap(NOISE_SIZE),
 	_biomes(NOISE_SIZE / 16),
-	_caverns(CAVERN_COUNT * CAVERN_SIZE),
+	_caverns(NOISE_SIZE),
 	_holes()
 {
 	for (int w = 0; w < CAVERN_COUNT; w++) {
@@ -121,8 +121,8 @@ bool				World::fillChunk(std::array<std::array<std::array<char, 32>, 32>, 32>& v
 			unsigned int mid_layer_size = 10;
 			unsigned int top_layer_size = 0;
 
-			double amplitude = _heightmap.perlin2d(4, 1.0, 0.5, (x + pos.x) / NOISE_STRETCH, (z + pos.z) / NOISE_STRETCH);
-			double biome = _biomes.perlin2d(4, 1.0, 0.5, (x + pos.x) / NOISE_STRETCH / 4, (z + pos.z) / NOISE_STRETCH / 4);
+			double amplitude = _cached_amplitude[x][z];
+			double biome = _cached_biome[x][z];
 
 			double height = _setLayers(layers_voxel, mid_layer_size, top_layer_size, amplitude, biome);
 			for (int y = 0; y < Chunk::SIZE; y++) {
@@ -184,3 +184,24 @@ float				World::heigthAt(unsigned int x, unsigned int z) const {
 	}
 	return height;
 }
+
+void			World::cacheAmplitudeAt(float x, float z) {
+	for (int i = 0; i < Chunk::SIZE; i++) {
+		for (int  j = 0; j < Chunk::SIZE; j++) {
+			_cached_amplitude[i][j] = _heightmap.perlin2d(4, 1.0, 0.5,
+				(i + Chunk::SIZE * x) / NOISE_STRETCH,
+				(j + Chunk::SIZE * z) / NOISE_STRETCH);
+		}
+	}
+}
+
+void			World::cacheBiomeAt(float x, float z) {
+	for (int i = 0; i < Chunk::SIZE; i++) {
+		for ( int  j = 0; j < Chunk::SIZE; j++) {
+			_cached_biome[i][j] = _biomes.perlin2d(4, 1.0, 0.5,
+				(i + Chunk::SIZE * x) / NOISE_STRETCH / 4,
+				(j + Chunk::SIZE * z) / NOISE_STRETCH / 4);
+		}
+	}
+}
+

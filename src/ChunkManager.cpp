@@ -8,8 +8,8 @@ const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 
 const glm::u32vec3	ChunkManager::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
-const float			ChunkManager::VIEW_DISTANCE = 7;	
-const float			ChunkManager::LOAD_DISTANCE = 9;	
+const float			ChunkManager::VIEW_DISTANCE = 9;	
+const float			ChunkManager::LOAD_DISTANCE = 11;	
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_world(seed),
@@ -85,8 +85,8 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
         glm::vec3 pos_chunk = loaded_chunk.second->getPosChunk();
         float dot = glm::dot(dir, pos_chunk + glm::vec3(0.5) - cam_chunk_pos);
         glm::vec3 offset = glm::abs(pos_chunk - cam_chunk_pos);
-        // float dist = glm::distance(cam_chunk_pos, pos_chunk);
-		float dist = glm::min(offset.x, glm::min(offset.y, offset.z));
+        float dist = glm::distance(cam_chunk_pos, pos_chunk);
+		// float dist = glm::max(offset.x, glm::max(offset.y, offset.z));
         if (dist < VIEW_DISTANCE && !loaded_chunk.second->is_meshed) {
             _chunkRemesh(pos_chunk);
         }
@@ -140,8 +140,12 @@ std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_
 	if (_chunks_loaded.size() == 0) {
 		_mtx.lock();
 		for (auto x = -LOAD_DISTANCE; x < LOAD_DISTANCE + 1; x++) {
-			for (auto y = -LOAD_DISTANCE; y < LOAD_DISTANCE + 1; y++) {
-				for (auto z = -LOAD_DISTANCE; z < LOAD_DISTANCE + 1; z++) {
+			for (auto z = -LOAD_DISTANCE; z < LOAD_DISTANCE + 1; z++) {
+				unsigned int posx = cam_chunk_pos.x + x;
+				unsigned int posz = cam_chunk_pos.z + z;
+				_world.cacheAmplitudeAt(posx, posz);
+				_world.cacheBiomeAt(posx, posz);
+				for (auto y = -LOAD_DISTANCE; y < LOAD_DISTANCE + 1; y++) {
 					glm::u32vec3 pos = cam_chunk_pos + glm::u32vec3(x, y, z);
 					if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
 						unsigned int index = _chunkIndex(pos);
@@ -189,13 +193,17 @@ void				ChunkManager::_loadRoutine(void) {
 			_chunks_to_load.pop();
 			_mtx.unlock();
 			for (unsigned int x = area[0].x; x < area[1].x + 1; x++) {
-				for (unsigned int y = area[0].y; y < area[1].y + 1; y++) {
-					for (unsigned int z = area[0].z; z < area[1].z + 1; z++) {
-						glm::u32vec3	pos(x, y, z);
-						if (pos.x < SIZES_CHUNKS.x && pos.y < SIZES_CHUNKS.y && pos.z < SIZES_CHUNKS.z) {
-							unsigned int index = _chunkIndex(pos);
-							if (_chunks_loaded.find(index) == _chunks_loaded.end()) {
-								_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
+				for (unsigned int z = area[0].z; z < area[1].z + 1; z++) {
+					if (x < SIZES_CHUNKS.x && z < SIZES_CHUNKS.z) {
+						_world.cacheAmplitudeAt(x, z);
+						_world.cacheBiomeAt(x, z);
+						for (unsigned int y = area[0].y; y < area[1].y + 1; y++) {
+							if (y < SIZES_CHUNKS.y) {
+								glm::u32vec3	pos(x, y, z);
+								unsigned int index = _chunkIndex(pos);
+								if (_chunks_loaded.find(index) == _chunks_loaded.end()) {
+									_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
+								}
 							}
 						}
 					}
@@ -203,4 +211,5 @@ void				ChunkManager::_loadRoutine(void) {
 			}
 		}
 	}
+
 }
