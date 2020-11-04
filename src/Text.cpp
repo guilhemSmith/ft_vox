@@ -6,53 +6,36 @@
 #include FT_FREETYPE_H
 
 Text::Text(unsigned int font_size) {
-    FT_Library ft;
+    FT_Library  ft;
+    FT_Face     face;
+
     if (FT_Init_FreeType(&ft))
     {
-        std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+        std::cout << "ERROR::FREETYPE Could not init FreeType Library" << std::endl;
         Render::gameQuit();
     }
-
-    FT_Face face;
     if (FT_New_Face(ft, "../fonts/Roboto-Regular.ttf", 0, &face))
     {
         std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
         Render::gameQuit();
     }
     FT_Set_Pixel_Sizes(face, 0, font_size);
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     for (unsigned char c = 0; c < 128; c++)
     {
-        // load character glyph
         if (FT_Load_Char(face, c, FT_LOAD_RENDER))
         {
             std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
             continue;
         }
-        // generate texture
         unsigned int texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(
-                GL_TEXTURE_2D,
-                0,
-                GL_RED,
-                face->glyph->bitmap.width,
-                face->glyph->bitmap.rows,
-                0,
-                GL_RED,
-                GL_UNSIGNED_BYTE,
-                face->glyph->bitmap.buffer
-        );
-        // set texture options
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RED, face->glyph->bitmap.width, face->glyph->bitmap.rows,
+                0, GL_RED, GL_UNSIGNED_BYTE, face->glyph->bitmap.buffer );
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // now store character for later use
         Character character = {
                 texture,
                 glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
@@ -76,8 +59,6 @@ void        Text::setupBuffers() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
-
-
 
 void 		Text::use() const {
 	glUseProgram(_shader_program);
@@ -163,17 +144,14 @@ void        Text::draw(std::string text, float x, float y, float scale, glm::vec
     glUniform3f(glGetUniformLocation(_shader_program, "textColor"), color.x, color.y, color.z);
     glActiveTexture(GL_TEXTURE0);
     glBindVertexArray(_vao);
-    std::string::const_iterator c;
-    for (c = text.begin(); c != text.end(); c++)
+    for (auto &c : text)
     {
-        Character ch = _characters[*c];
+        Character ch = _characters[c];
 
         float xpos = x + ch.bearing.x * scale;
         float ypos = y - (ch.size.y - ch.bearing.y) * scale;
-
         float w = ch.size.x * scale;
         float h = ch.size.y * scale;
-        // update VBO for each character
         float vertices[6][4] = {
                 { xpos,     ypos + h,   0.0f, 0.0f },
                 { xpos,     ypos,       0.0f, 1.0f },
@@ -183,15 +161,11 @@ void        Text::draw(std::string text, float x, float y, float scale, glm::vec
                 { xpos + w, ypos,       1.0f, 1.0f },
                 { xpos + w, ypos + h,   1.0f, 0.0f }
         };
-        // render glyph texture over quad
         glBindTexture(GL_TEXTURE_2D, ch.tex_id);
-        // update content of VBO memory
         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-        // render quad
         glDrawArrays(GL_TRIANGLES, 0, 6);
-        // now advance cursors for next glyph (note that advance is number of 1/64 pixels)
         x += (ch.advance >> 6) * scale; // bitshift by 6 to get value in pixels (2^6 = 64)
     }
     glBindVertexArray(0);
@@ -199,6 +173,9 @@ void        Text::draw(std::string text, float x, float y, float scale, glm::vec
 }
 
 Text::~Text() {
+    for (auto &pair : _characters) {
+        glDeleteTextures(1, &pair.second.tex_id);
+    }
     glDeleteVertexArrays(1, &_vao);
     glDeleteBuffers(1, &_vbo);
     glDeleteProgram(_shader_program);
