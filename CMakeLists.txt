@@ -13,12 +13,13 @@ find_package(SDL2_ttf REQUIRED)
 find_package(glm REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
-find_package(FREETYPE REQUIRED)
+find_package(Freetype REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
 include_directories(${SDL2_TTF_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
+include_directories(${FREETYPE_INCLUDE_DIRS})
 include_directories(${OPENGL_INCLUDE_DIRS})
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
@@ -70,7 +71,7 @@ target_link_libraries(ft_vox
 	${SDL2_IMAGE_LIBRARIES}
 	${SDL2_TTF_LIBRARIES}
 	${GLM_LIBRARIES}
-		Freetype::Freetype
+	Freetype::Freetype
         GLEW::GLEW
 	${OPENGL_LIBRARIES}
 )
