@@ -168,6 +168,7 @@ void								ChunkManager::loadInitialChunks(glm::vec3 cam_pos) {
 	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
 	glm::i32vec3		cam_pos_i = cam_chunk_pos;
 
+	_world.cacheCavernsAround(cam_chunk_pos.x, cam_chunk_pos.z);
 	glm::u32vec3		start = glm::clamp(
 		cam_pos_i + glm::i32vec3(-LOAD_DISTANCE, -LOAD_DISTANCE, -LOAD_DISTANCE),
 		glm::i32vec3(0,0,0),
@@ -187,6 +188,7 @@ std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_
 	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (ChunkManager::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
 
 	if (cam_chunk_pos != _last_cam_chunk) {
+		_world.cacheCavernsAround(cam_chunk_pos.x, cam_chunk_pos.z);
 		_detectChunkToLoad(cam_chunk_pos);
 		_unloadTooFar(cam_chunk_pos);
 		_last_cam_chunk = cam_chunk_pos;
@@ -224,6 +226,7 @@ void				ChunkManager::_loadRoutine(void) {
 					if (x < SIZES_CHUNKS.x && z < SIZES_CHUNKS.z) {
 						_world.cacheAmplitudeAt(x, z);
 						_world.cacheBiomeAt(x, z);
+						_world.cacheHolesNear(x, z);
 						for (unsigned int y = area[0].y; y < area[1].y + 1; y++) {
 							if (y < SIZES_CHUNKS.y) {
 								glm::u32vec3	pos(x, y, z);
