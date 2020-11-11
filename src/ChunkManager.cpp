@@ -25,7 +25,7 @@ ChunkManager::ChunkManager(unsigned int seed):
 
 ChunkManager::~ChunkManager() {
 	_keep_loading = false;
-	// TODO free loaded chunks
+	_chunks_loaded.clear();
 }
 
 glm::vec3			ChunkManager::spawnPos(void) const {

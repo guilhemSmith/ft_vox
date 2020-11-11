@@ -4,7 +4,7 @@
 const unsigned int	Cavern::SIZE = 64;
 const float			Cavern::STEP = 0.5;
 const float			Cavern::HOLE_SIZE = 3;
-const unsigned int	Cavern::DISTANCE_CHUNK_MAX = 3;
+const unsigned int	Cavern::DISTANCE_CHUNK_MAX = 2;
 
 Cavern::Cavern(Noise& noise, glm::u32vec2 chunk_pos, glm::vec3 pos, float w): _chunk_pos(chunk_pos), _pos(pos), _holes() {
 	float			chunk_size = static_cast<float>(Chunk::SIZE);
@@ -35,19 +35,19 @@ Cavern::Cavern(Noise& noise, glm::u32vec2 chunk_pos, glm::vec3 pos, float w): _c
 				pitch += Noise::interpolateLinear(-30.0, 0.0, 1 - amplitude / 0.5);
 			}
 		}
-		pitch = glm::clamp(pitch, -10.0f, -170.0f);
+		pitch = glm::clamp(pitch, -20.0f, -160.0f);
 		glm::vec3 dir = {
 			glm::cos(glm::radians(yaw)) * glm::cos(glm::radians(pitch)),
 			glm::sin(glm::radians(pitch)),
 			glm::sin(glm::radians(yaw)) * glm::cos(glm::radians(pitch))
 		};
-		// glm::u32vec3 hole_chunk = pos / chunk_size;
-		// glm::vec3 dist = glm::abs(hole_chunk - start_chunk);
-		// if (dist.x + HOLE_SIZE / chunk_size > DISTANCE_CHUNK_MAX
-		// 	|| dist.z + HOLE_SIZE / chunk_size > DISTANCE_CHUNK_MAX) {
-		// 	break;
-		// }
-		pos = pos + glm::normalize(dir) * HOLE_SIZE;
+		glm::u32vec3 hole_chunk = pos / chunk_size;
+		glm::vec3 dist = glm::abs(hole_chunk - start_chunk);
+		if (dist.x + HOLE_SIZE / chunk_size > DISTANCE_CHUNK_MAX
+			|| dist.z + HOLE_SIZE / chunk_size > DISTANCE_CHUNK_MAX) {
+			break;
+		}
+		pos = pos + glm::normalize(dir) * (HOLE_SIZE / 2);
 		_holes.emplace_back(pos);
 	}
 }

@@ -64,10 +64,17 @@ bool				World::fillChunk(std::array<std::array<std::array<char, 32>, 32>, 32>& v
 	bool	empty = true;
 	std::vector<glm::vec3> holes = std::vector<glm::vec3>();
 	
-	for (auto &pos_hole : _cached_holes_xz) {
-		if (pos_hole.y + Cavern::HOLE_SIZE >= pos.y && pos_hole.y - Cavern::HOLE_SIZE <= pos.y + Chunk::SIZE) {
-			holes.emplace_back(pos);
+	if (_cached_holes_xz.size() > 0) {
+		// std::cout << _cached_holes_xz.size() << " holes cached" << std::endl;
+		for (auto &pos_hole : _cached_holes_xz) {
+			if (pos_hole.y + Cavern::HOLE_SIZE >= pos.y && pos_hole.y - Cavern::HOLE_SIZE <= pos.y + Chunk::SIZE) {
+				holes.emplace_back(pos_hole);
+			}
 		}
+		// std::cout << holes.size() << " holes kept" << std::endl;
+	}
+	else {
+		// std::cout << "no hole cached" << std::endl;
 	}
 	for (int z = 0; z < Chunk::SIZE; z++) {
 		for (int x = 0; x < Chunk::SIZE; x++) {
@@ -105,6 +112,15 @@ bool				World::fillChunk(std::array<std::array<std::array<char, 32>, 32>, 32>& v
 						}
 					}
 				}
+				// else {
+				// 	glm::vec3 pos_voxel(pos.x + x, pos.y + y, pos.z + z);
+				// 	for (auto &hole : holes) {
+				// 		if (glm::distance(hole, pos_voxel) <= Cavern::HOLE_SIZE) {
+				// 			voxels[x][y][z] = Chunk::Voxel::Sand;
+				// 			break;
+				// 		}
+				// 	}
+				// }
 				if (y < Chunk::SIZE - 1 && voxels[x][y][z] == Chunk::Voxel::Dirt && voxels[x][y + 1][z] == Chunk::Voxel::Empty) {
 					voxels[x][y][z] = Chunk::Voxel::Grass;
 				}
@@ -178,13 +194,12 @@ void			World::cacheCavernsAround(float x, float z) {
 	
 	for (int i = x - ChunkManager::LOAD_DISTANCE - Cavern::DISTANCE_CHUNK_MAX; i <= x + ChunkManager::LOAD_DISTANCE + Cavern::DISTANCE_CHUNK_MAX; i++) {
 		for (int j = z - ChunkManager::LOAD_DISTANCE - Cavern::DISTANCE_CHUNK_MAX; j <= z + ChunkManager::LOAD_DISTANCE + Cavern::DISTANCE_CHUNK_MAX; j++) {
-			float w = _caverns.noise1dSmoothCosine(x + z * NOISE_STRETCH);
-			float global_x = (x + 0.5) * Chunk::SIZE;
-			float global_z = (z + 0.5) * Chunk::SIZE;
-			glm::vec3	pos = {global_x, heigthAt(global_x, global_z) + w * 10, global_z};
+			float w = _caverns.noise1dSmoothCosine(i + j * NOISE_STRETCH);
+			float global_x = (i + 0.5) * Chunk::SIZE;
+			float global_z = (j + 0.5) * Chunk::SIZE;
+			glm::vec3	pos = {global_x, heigthAt(global_x, global_z) + 5, global_z};
 			new_cache.emplace_back(_caverns, glm::u32vec2(i, j), pos, w);
 		}
 	}
 	_cached_cavern = new_cache;
-
 }
