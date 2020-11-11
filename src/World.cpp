@@ -64,18 +64,6 @@ bool				World::fillChunk(std::array<std::array<std::array<char, 32>, 32>, 32>& v
 	bool	empty = true;
 	std::vector<glm::vec3> holes = std::vector<glm::vec3>();
 	
-	if (_cached_holes_xz.size() > 0) {
-		// std::cout << _cached_holes_xz.size() << " holes cached" << std::endl;
-		for (auto &pos_hole : _cached_holes_xz) {
-			if (pos_hole.y + Cavern::HOLE_SIZE >= pos.y && pos_hole.y - Cavern::HOLE_SIZE <= pos.y + Chunk::SIZE) {
-				holes.emplace_back(pos_hole);
-			}
-		}
-		// std::cout << holes.size() << " holes kept" << std::endl;
-	}
-	else {
-		// std::cout << "no hole cached" << std::endl;
-	}
 	for (int z = 0; z < Chunk::SIZE; z++) {
 		for (int x = 0; x < Chunk::SIZE; x++) {
 			std::array<unsigned int, 3> layers_voxel;
@@ -103,26 +91,38 @@ bool				World::fillChunk(std::array<std::array<std::array<char, 32>, 32>, 32>& v
 					voxels[x][y][z] = layers_voxel[2];
 					empty = false;
 				}
-				if (voxels[x][y][z] != Chunk::Voxel::Empty) {
-					glm::vec3 pos_voxel(pos.x + x, pos.y + y, pos.z + z);
-					for (auto &hole : holes) {
-						if (glm::distance(hole, pos_voxel) <= Cavern::HOLE_SIZE) {
-							voxels[x][y][z] = Chunk::Voxel::Empty;
-							break;
+			}
+		}
+	}
+
+	for (auto &pos_hole : _cached_holes_xz) {
+		if (pos_hole.y + Cavern::HOLE_SIZE >= pos.y && pos_hole.y - Cavern::HOLE_SIZE <= pos.y + Chunk::SIZE) {
+			for (int x = pos_hole.x - Cavern::HOLE_SIZE; x <= pos_hole.x + Cavern::HOLE_SIZE; x++) {
+				glm::vec3 voxel_pos = glm::ivec3();
+				int chunk_x = x - pos.x;
+				if (chunk_x < 0 || chunk_x >= Chunk::SIZE) {
+					continue;
+				}
+				voxel_pos.x = chunk_x;
+				for (int z = pos_hole.z - Cavern::HOLE_SIZE; z <= pos_hole.z + Cavern::HOLE_SIZE; z++) {
+					int chunk_z = z - pos.z;
+					if (chunk_z < 0 || chunk_z >= Chunk::SIZE) {
+						continue;
+					}
+					voxel_pos.z = chunk_z;
+					for (int y = pos_hole.y - Cavern::HOLE_SIZE; y <= pos_hole.y + Cavern::HOLE_SIZE; y++) {
+						int chunk_y = y - pos.y;
+						if (chunk_y < 0 || chunk_y >= Chunk::SIZE) {
+							continue;
+						}
+						voxel_pos.y = chunk_y;
+						if (glm::distance(voxel_pos + pos, pos_hole) < Cavern::HOLE_SIZE) {
+							voxels[voxel_pos.x][voxel_pos.y][voxel_pos.z] = Chunk::Voxel::Empty;
+							if (voxel_pos.y > 0 && voxels[voxel_pos.x][voxel_pos.y - 1][voxel_pos.z] == Chunk::Voxel::Dirt) {
+								voxels[voxel_pos.x][voxel_pos.y - 1][voxel_pos.z] = Chunk::Voxel::Grass;
+							}
 						}
 					}
-				}
-				// else {
-				// 	glm::vec3 pos_voxel(pos.x + x, pos.y + y, pos.z + z);
-				// 	for (auto &hole : holes) {
-				// 		if (glm::distance(hole, pos_voxel) <= Cavern::HOLE_SIZE) {
-				// 			voxels[x][y][z] = Chunk::Voxel::Sand;
-				// 			break;
-				// 		}
-				// 	}
-				// }
-				if (y < Chunk::SIZE - 1 && voxels[x][y][z] == Chunk::Voxel::Dirt && voxels[x][y + 1][z] == Chunk::Voxel::Empty) {
-					voxels[x][y][z] = Chunk::Voxel::Grass;
 				}
 			}
 		}
