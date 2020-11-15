@@ -26,7 +26,7 @@ private:
 	void									                    _detectVisibleChunks(glm::vec3 pos, glm::vec3 dir);
 	void									                    _unloadTooFar(glm::vec3 cam_pos_chunk);
 	void									                    _detectChunkToLoad(glm::u32vec3 cam_chunk_pos);
-	void                                                        _chunkRemesh(glm::vec3);
+	bool                                                        _chunkRemesh(glm::vec3);
 
 	void														_loadRoutine(void);
 
@@ -34,6 +34,7 @@ public:
 	ChunkManager(unsigned int seed);
 	~ChunkManager();
 
+	void														loadInitialChunks(glm::vec3 cam_pos);
 	std::vector<std::weak_ptr<Chunk>>&							getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);
 	glm::vec3													spawnPos(void) const;
 	void														removeChunk(glm::u32vec3 pos);

@@ -21,6 +21,7 @@ public:
 	Noise(unsigned int size);
 
 	double						noise1dSmoothLinear(double t) const;
+	double						noise1dSmoothCosine(double t) const;
 
 	double						noise2dSmoothLinear(double x, double y) const;
 	double						noise2dSmoothCosine(double x, double y) const;
@@ -28,6 +29,7 @@ public:
 	double						noise3dSmoothLinear(double x, double y, double z) const;
 	double						noise3dSmoothCosine(double x, double y, double z) const;
 
+	double						perlin1d(int octaves, double frequency, double persistence, double x) const;
 	double						perlin2d(int octaves, double frequency, double persistence, double x, double y) const;
 	double						perlin3d(int octaves, double frequency, double persistence, double x, double y, double z) const;
 

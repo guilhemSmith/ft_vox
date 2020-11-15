@@ -62,6 +62,7 @@ file(GLOB SOURCES
 	"${PROJECT_SOURCE_DIR}/src/Skybox.cpp"
 	"${PROJECT_SOURCE_DIR}/src/ChunkManager.cpp"
 	"${PROJECT_SOURCE_DIR}/src/World.cpp"
+	"${PROJECT_SOURCE_DIR}/src/Cavern.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Text.cpp"
 )
 

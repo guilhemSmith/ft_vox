@@ -182,9 +182,10 @@ void 	Render::gameLoop() {
 	_shader.use();
 	_setupCubeTextures();
 	glm::mat4 projection = glm::perspective(glm::radians(80.0f),
-			(float)_win_w / (float)_win_h, 0.3f, 224.0f);
+			(float)_win_w / (float)_win_h, 0.3f, 600.0f);
 	_shader.setMat4("projection", projection);
-	_initSkybox(projection);
+	_initSkybox(projection);	
+	_manager.loadInitialChunks(_cam.position());
 	_initText(text);
 
     std::string     fps;

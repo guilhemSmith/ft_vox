@@ -17,7 +17,7 @@ double				Noise::_rand(unsigned int i) const {
 }
 
 double				Noise::_noise1d(unsigned int t) const {
-	return _rand(t) * _SCALE;
+	return _rand(t);
 }
 
 double				Noise::_noise2d(unsigned int x, unsigned int y) const {
@@ -57,6 +57,16 @@ double				Noise::noise1dSmoothLinear(double t) const {
 	double b = _noise1d(integer_t + 1);
 
 	return interpolateLinear(a, b, fractional_t);
+}
+
+double				Noise::noise1dSmoothCosine(double t) const {
+	int		integer_t = static_cast<int>(t);
+	double	fractional_t = t - integer_t;
+
+	double a = _noise1d(integer_t);
+	double b = _noise1d(integer_t + 1);
+
+	return interpolateCosine(a, b, fractional_t);
 }
 
 double				Noise::noise2dSmoothLinear(double x, double y) const {
@@ -155,6 +165,22 @@ double				Noise::noise3dSmoothCosine(double x, double y, double z) const {
 	return interpolateCosine(v, w, fractional_z);
 }
 
+double				Noise::perlin1d(int octaves, double frequency, double persistence, double x) const {
+	double r = 0.0;
+	double f = frequency;
+	double amplitude = 1.0;
+
+	for (auto i = 0; i < octaves; i++) {
+		int t = i * 4096;
+		r += noise1dSmoothCosine(x * f + t) * amplitude;
+		amplitude *= persistence;
+		f *= 2;
+	}
+
+	double geo_lim = (1 - persistence) / (1 - amplitude);
+	return r * geo_lim;
+}
+
 double				Noise::perlin2d(int octaves, double frequency, double persistence, double x, double y) const {
 	double r = 0.0;
 	double f = frequency;
@@ -184,5 +210,5 @@ double				Noise::perlin3d(int octaves, double frequency, double persistence, dou
 	}
 
 	double geo_lim = (1 - persistence) / (1 - amplitude);
-	return glm::clamp(r * geo_lim, -1.0, 1.0);
+	return r * geo_lim;
 }
