@@ -147,11 +147,17 @@ void 	Render::_setupCubeTextures() {
 	_loadCubeTextures("../textures/dirt.png");
 	_loadCubeTextures("../textures/cobblestone.png");
 	_loadCubeTextures("../textures/sand.png");
+	_loadCubeTextures("../textures/snow.png");
+	_loadCubeTextures("../textures/snow_block_side.png");
+	_loadCubeTextures("../textures/stone.png");
 	_shader.setTexture("grass", 0);
 	_shader.setTexture("grass_side", 1);
 	_shader.setTexture("dirt", 2);
 	_shader.setTexture("rock", 3);
 	_shader.setTexture("sand", 4);
+	_shader.setTexture("snow", 5);
+	_shader.setTexture("snow_side", 6);
+	_shader.setTexture("stone", 7);
 	for (int i = 0; i < _texture_ids.size(); i++) {
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, _texture_ids[i]);

@@ -19,7 +19,9 @@ class Chunk {
 			Rock = 1,
 			Dirt = 2,
 			Grass = 3,
-			Sand = 4
+			Sand = 4,
+			Snow = 5,
+			Stone = 6
 		};
 
 		Chunk(const World& world, glm::vec3 pos);
