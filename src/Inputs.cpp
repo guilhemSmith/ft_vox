@@ -11,6 +11,7 @@ const SDL_Scancode		Inputs::_QUIT = SDL_SCANCODE_ESCAPE;
 
 Inputs::Inputs(void):
 	_should_quit(false),
+	_mouse_click(false),
 	_mouse_rel(),
 	_keys({
 		{_FORWARD, false},
@@ -23,10 +24,25 @@ Inputs::Inputs(void):
 	_handle_event({
 		{SDL_WINDOWEVENT, &Inputs::_pollWindowEvent},
 		{SDL_MOUSEMOTION, &Inputs::_pollMousemotionEvent},
+        {SDL_MOUSEBUTTONDOWN, &Inputs::_pollMouseClickDown},
+        {SDL_MOUSEBUTTONUP, &Inputs::_pollMouseClickUp},
 		{SDL_KEYDOWN, &Inputs::_pollKeydownEvent},
 		{SDL_KEYUP, &Inputs::_pollKeyupEvent},
 	})
 {}
+
+
+bool            Inputs::mouseDown() const {
+    return _mouse_click;
+}
+void            Inputs::_pollMouseClickDown(SDL_Event& event) {
+    if (event.type == SDL_MOUSEBUTTONDOWN)
+        _mouse_click = true;
+}
+void            Inputs::_pollMouseClickUp(SDL_Event& event) {
+    if (event.type == SDL_MOUSEBUTTONUP)
+        _mouse_click = false;
+}
 
 void			Inputs::_pollWindowEvent(SDL_Event& event) {
 	if (event.window.event == SDL_WindowEventID::SDL_WINDOWEVENT_CLOSE) {

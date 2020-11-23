@@ -22,7 +22,6 @@ private:
 	bool														_keep_loading;
 	std::thread													_loading_thread;
 
-	unsigned int							                    _chunkIndex(glm::u32vec3 pos) const;
 	void									                    _detectVisibleChunks(glm::vec3 pos, glm::vec3 dir);
 	void									                    _unloadTooFar(glm::vec3 cam_pos_chunk);
 	void									                    _detectChunkToLoad(glm::u32vec3 cam_chunk_pos);
@@ -34,6 +33,8 @@ public:
 	ChunkManager(unsigned int seed);
 	~ChunkManager();
 
+	bool                                                        tryDeleteVoxel(glm::vec3 pos);
+    unsigned int							                    chunkIndex(glm::u32vec3 pos) const;
 	void														loadInitialChunks(glm::vec3 cam_pos);
 	std::vector<std::weak_ptr<Chunk>>&							getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);
 	glm::vec3													spawnPos(void) const;

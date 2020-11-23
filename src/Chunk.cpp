@@ -13,6 +13,11 @@ bool 		Chunk::hasVoxelAt(int x, int y, int z) const {
 	return _cubes[x][y][z] != Voxel::Empty;
 }
 
+
+void        Chunk::deleteVoxel(glm::vec3 pos) {
+    _cubes[pos.x][pos.y][pos.z] = Voxel::Empty;
+}
+
 Chunk::~Chunk() {
 	if (is_meshed) {
 		_mesh.clearBuffers();

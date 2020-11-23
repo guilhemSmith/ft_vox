@@ -199,6 +199,8 @@ void 	Render::gameLoop() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
+		_cam.deleteVoxel(40.0, inputs);
+//		std::cout << inputs.mouseDown() << std::endl;
 
 		//draw cubes
 		_shader.use();

@@ -28,20 +28,39 @@ ChunkManager::~ChunkManager() {
 	_chunks_loaded.clear();
 }
 
+//could be better
+bool                ChunkManager::tryDeleteVoxel(glm::vec3 pos) {
+    //get chunk from world pos
+    std::cout << "pos: " << pos.x << " " << pos.y  << " " << pos.z << std::endl;
+    auto chunk = _chunks_loaded.find(chunkIndex(pos));
+    if (chunk == _chunks_loaded.end()) {
+        std::cout << "chunk not loaded" << std::endl;
+        return false;
+    }
+    //check chunk for voxel
+    if (chunk->second->hasVoxelAt(pos.x, pos.y, pos.z)) {
+        chunk->second->deleteVoxel(pos);
+        std::cout << "voxel deleted" << std::endl;
+        return true;
+    }
+    std::cout << "voxel already empty" << std::endl;
+    return false;
+}
+
 glm::vec3			ChunkManager::spawnPos(void) const {
 	return glm::vec3(SIZES_VOXELS.x / 2, _world.heigthAt(SIZES_VOXELS.x / 2, SIZES_VOXELS.x / 2) + 2.5, SIZES_VOXELS.z / 2);
 }
 
-unsigned int		ChunkManager::_chunkIndex(glm::u32vec3 pos) const {
+unsigned int		ChunkManager::chunkIndex(glm::u32vec3 pos) const {
 	return pos.x + pos.y * SIZES_CHUNKS.x + pos.z * SIZES_CHUNKS.x * SIZES_CHUNKS.y;
 }
 
 bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
     glm::u32vec3 pos(pos_chunk);
-    unsigned int index = _chunkIndex(pos_chunk);
+    unsigned int index = chunkIndex(pos_chunk);
     std::array<std::shared_ptr<Chunk>, 6> neighbors;
 	if (pos.x > 0.0) {
-		auto x_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(-1, 0, 0)));
+		auto x_p = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(-1, 0, 0)));
 		if (x_p != _chunks_loaded.end())
 			neighbors[0] = x_p->second;
 		else 
@@ -51,7 +70,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
 		neighbors[0] = nullptr;
 
 	if (pos.x < SIZES_CHUNKS.x) {
-		auto x_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(1, 0, 0)));
+		auto x_n = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(1, 0, 0)));
 		if (x_n != _chunks_loaded.end())
 			neighbors[1] = x_n->second;
 		else
@@ -61,7 +80,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
         neighbors[1] = nullptr;
 
 	if (pos.y > 0.0) {
-		auto y_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, -1, 0)));
+		auto y_p = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(0, -1, 0)));
 		if (y_p != _chunks_loaded.end())
 			neighbors[2] = y_p->second;
 		else
@@ -71,7 +90,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
         neighbors[2] = nullptr;
 
 	if (pos.y < SIZES_CHUNKS.y) {
-		auto y_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 1, 0)));
+		auto y_n = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(0, 1, 0)));
 		if (y_n != _chunks_loaded.end())
 			neighbors[3] = y_n->second;
 		else
@@ -82,7 +101,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
 
 
 	if (pos.z > 0.0) {
-		auto z_p = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, -1)));
+		auto z_p = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(0, 0, -1)));
 		if (z_p != _chunks_loaded.end())
 			neighbors[4] = z_p->second;
 		else
@@ -92,7 +111,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
         neighbors[4] = nullptr;
 
 	if (pos.z < SIZES_CHUNKS.z) {
-		auto z_n = _chunks_loaded.find(_chunkIndex(pos + glm::u32vec3(0, 0, 1)));
+		auto z_n = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(0, 0, 1)));
 		if (z_n != _chunks_loaded.end())
 			neighbors[5] = z_n->second;
 		else
@@ -205,7 +224,7 @@ std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_
 }
 
 void				ChunkManager::removeChunk(glm::u32vec3 pos) {
-	unsigned int index = _chunkIndex(pos);
+	unsigned int index = chunkIndex(pos);
 	try {
 		_chunks_loaded.erase(index);
 	}
@@ -230,7 +249,7 @@ void				ChunkManager::_loadRoutine(void) {
 						for (unsigned int y = area[0].y; y < area[1].y + 1; y++) {
 							if (y < SIZES_CHUNKS.y) {
 								glm::u32vec3	pos(x, y, z);
-								unsigned int index = _chunkIndex(pos);
+								unsigned int index = chunkIndex(pos);
 								if (_chunks_loaded.find(index) == _chunks_loaded.end()) {
 									_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
 								}
