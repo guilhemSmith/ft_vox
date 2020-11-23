@@ -33,7 +33,10 @@ public:
 	ChunkManager(unsigned int seed);
 	~ChunkManager();
 
-	bool                                                        tryDeleteVoxel(glm::vec3 pos);
+	bool                                                        tryDeleteVoxel(glm::u32vec3 pos);
+
+    bool				                                        accessVoxel(glm::u32vec3 pos);
+
     unsigned int							                    chunkIndex(glm::u32vec3 pos) const;
 	void														loadInitialChunks(glm::vec3 cam_pos);
 	std::vector<std::weak_ptr<Chunk>>&							getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);

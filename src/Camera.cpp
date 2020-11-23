@@ -11,7 +11,8 @@ Camera::Camera(ChunkManager& manager):
 	_direction({0, 0, -1}),
 	_yaw(0.0f),
 	_pitch(0.0f),
-	_chunk_manager_ref(manager)
+	_chunk_manager_ref(manager),
+	_is_casting(false)
 {}
 
 void			Camera::_updateDir(const Inputs& input) {
@@ -54,6 +55,8 @@ void			Camera::_updatePos(float delta_time, const Inputs& input) {
 void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
     if (!input.mouseDown())
         return ;
+    if (_is_casting)
+        return ;
     float dir_length = glm::length(_direction);
 
     std::cout << "RAYCAST!" << std::endl;
@@ -62,6 +65,7 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
         return ;
     }
 
+    _is_casting = true;
     glm::vec3 normalized_dir = glm::normalize(_direction);
 
     float running_distance = 0.0f;
@@ -94,6 +98,7 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
         bool   hit = _chunk_manager_ref.tryDeleteVoxel(glm::u32vec3(start_x, start_y, start_z));
         if (hit) {
             std::cout << "hit found" << std::endl;
+            _is_casting = false;
             return;
         }
 
@@ -119,6 +124,7 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
             }
         }
     }
+    _is_casting =false;
 
 }
 

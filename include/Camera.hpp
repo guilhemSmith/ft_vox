@@ -19,6 +19,7 @@ private:
 
 	static const glm::vec3			_WORLD_UP;
 	ChunkManager&                   _chunk_manager_ref;
+	bool                            _is_casting;
 
 public:
 	Camera(ChunkManager& manager);

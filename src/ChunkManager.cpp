@@ -28,21 +28,48 @@ ChunkManager::~ChunkManager() {
 	_chunks_loaded.clear();
 }
 
+
+
+//bool				ChunkManager::accessVoxel(glm::u32vec3 pos) {
+//    glm::u32vec3			chunk_pos = pos / Chunk::SIZE;
+//    glm::u32vec3			voxel_pos = pos % Chunk::SIZE;
+//    /*
+//    glm::u32vec3			zero_pos = chunk_pos * Chunk::SIZE;
+//    glm::u32vec3			voxel_pos = pos - zero_pos;
+//    */
+//    unsigned int			index = _chunkIndex(chunk_pos);
+//    try {
+//        std::shared_ptr<Chunk>	chunk = _chunks_loaded.at(index);
+//        return chunk->hasVoxelAt(voxel_pos.x, voxel_pos.y, voxel_pos.z);
+//    }
+//    catch (std::out_of_range oor) {
+//        return false;
+//    }
+//}
+
 //could be better
-bool                ChunkManager::tryDeleteVoxel(glm::vec3 pos) {
-    //get chunk from world pos
-    std::cout << "pos: " << pos.x << " " << pos.y  << " " << pos.z << std::endl;
-    auto chunk = _chunks_loaded.find(chunkIndex(pos));
-    if (chunk == _chunks_loaded.end()) {
-        std::cout << "chunk not loaded" << std::endl;
+bool                ChunkManager::tryDeleteVoxel(glm::u32vec3 pos) {
+    glm::u32vec3			chunk_pos = pos / Chunk::SIZE;
+    glm::u32vec3			voxel_pos = pos % Chunk::SIZE;
+    /*
+    glm::u32vec3			zero_pos = chunk_pos * Chunk::SIZE;
+    glm::u32vec3			voxel_pos = pos - zero_pos;
+    */
+    unsigned int			index = chunkIndex(chunk_pos);
+    try {
+        std::shared_ptr<Chunk> chunk = _chunks_loaded.at(index);
+        if (chunk->hasVoxelAt(voxel_pos.x, voxel_pos.y, voxel_pos.z)) {
+            chunk->deleteVoxel(voxel_pos);
+            _chunkRemesh(chunk_pos);
+            std::cout << "voxel deleted" << std::endl;
+            return true;
+        }
+    }
+    catch (std::out_of_range oor) {
         return false;
     }
-    //check chunk for voxel
-    if (chunk->second->hasVoxelAt(pos.x, pos.y, pos.z)) {
-        chunk->second->deleteVoxel(pos);
-        std::cout << "voxel deleted" << std::endl;
-        return true;
-    }
+    //get chunk from world pos
+
     std::cout << "voxel already empty" << std::endl;
     return false;
 }
@@ -232,6 +259,7 @@ void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 		//std::cout << "Trying to free unloaded chunk." << std::endl;
 	}
 }
+
 
 void				ChunkManager::_loadRoutine(void) {
 	while (_keep_loading) {
