@@ -1,3 +1,4 @@
+#include "OS.hpp"
 #include "Text.hpp"
 #include "Render.hpp"
 #include <fstream>
@@ -74,7 +75,8 @@ void        Text::_parseShaders(const char *vertex_shader_path, const char *frag
     f_shader_file.open(frag_shader_path);
     if (!v_shader_file.is_open() || !f_shader_file.is_open())
     {
-        std::cout << "couln't open shaders" << std::endl;
+        std::cout << "couln't open text shaders" << std::endl << vertex_shader_path << std::endl \
+			<< frag_shader_path << std::endl;
         Render::gameQuit();
     }
     v_shader_stream << v_shader_file.rdbuf();
@@ -90,9 +92,10 @@ void 		Text::computeShaders() {
 	unsigned int fragment_shader;
 	int success;
 	char info_log[512];
+    std::string vertex_shader_path = std::string(SRC_PATH) + "/Shaders/text_vertex_shader.glsl";
+    std::string fragment_shader_path = std::string(SRC_PATH) + "/Shaders/text_fragment_shader.glsl";
 
-	_parseShaders("../Shaders/text_vertex_shader.glsl",
-        "../Shaders/text_fragment_shader.glsl");
+	_parseShaders(vertex_shader_path.c_str(), fragment_shader_path.c_str());
 	const char* v_shader_code = _vertex_shader_src.c_str();
 	vertex_shader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertex_shader, 1, &v_shader_code, nullptr);

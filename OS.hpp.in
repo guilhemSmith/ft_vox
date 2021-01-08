@@ -3,4 +3,6 @@
 
 # define @PLATFORM@
 
+# define SRC_PATH @SRC_PATH@
+
 #endif

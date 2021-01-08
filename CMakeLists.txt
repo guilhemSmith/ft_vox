@@ -44,6 +44,11 @@ if(WIN32)
 	)
 endif()
 
+set(
+	SRC_PATH
+	"\"${CMAKE_SOURCE_DIR}\""
+)
+
 configure_file(
 	OS.hpp.in
 	OS.hpp
