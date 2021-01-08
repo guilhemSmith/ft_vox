@@ -1,3 +1,4 @@
+#include "OS.hpp"
 #include "Render.hpp"
 
 Render::Render(unsigned int seed): _manager(seed), _cam(_manager) {
@@ -85,12 +86,14 @@ void 	Render::gameInit() {
 
 void 	Render::_loadSkyboxTextures() {
 	std::vector<std::string> textures;
-	textures.push_back("../textures/skybox/right.png");
-	textures.push_back("../textures/skybox/left.png");
-	textures.push_back("../textures/skybox/top.png");
-	textures.push_back("../textures/skybox/bot.png");
-	textures.push_back("../textures/skybox/front.png");
-	textures.push_back("../textures/skybox/back.png");
+	std::string					src = std::string(SRC_PATH);
+
+	textures.push_back((src + "/textures/skybox/right.png").c_str());
+	textures.push_back((src + "/textures/skybox/left.png").c_str());
+	textures.push_back((src + "/textures/skybox/top.png").c_str());
+	textures.push_back((src + "/textures/skybox/bot.png").c_str());
+	textures.push_back((src + "/textures/skybox/front.png").c_str());
+	textures.push_back((src + "/textures/skybox/back.png").c_str());
 	glGenTextures(1, &_skybox_id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_id);
 
@@ -98,7 +101,8 @@ void 	Render::_loadSkyboxTextures() {
 	{
 		SDL_Surface *surface = IMG_Load(textures[i].c_str());
 		if (!surface) {
-        	std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
+        	std::cout << "Failed to load skybox texture: " << std::endl << textures[i] \
+				<< std::endl << IMG_GetError() << std::endl;
 			gameQuit();
 		}
 		int mode = GL_RGB;
@@ -119,7 +123,8 @@ void 	Render::_loadSkyboxTextures() {
 void    Render::_loadCubeTextures(const char *file) {
     SDL_Surface *surface = IMG_Load(file);
     if (!surface) {
-        std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
+        std::cout << "Failed to load cube texture: " << std::endl << file << std::endl \
+			<< IMG_GetError() << std::endl;
 		gameQuit();
 	}
 
@@ -142,14 +147,16 @@ void    Render::_loadCubeTextures(const char *file) {
 }
 
 void 	Render::_setupCubeTextures() {
-	_loadCubeTextures("../textures/grass.png");
-	_loadCubeTextures("../textures/grass_block_side.png");
-	_loadCubeTextures("../textures/dirt.png");
-	_loadCubeTextures("../textures/cobblestone.png");
-	_loadCubeTextures("../textures/sand.png");
-	_loadCubeTextures("../textures/snow.png");
-	_loadCubeTextures("../textures/snow_block_side.png");
-	_loadCubeTextures("../textures/stone.png");
+	std::string					src = std::string(SRC_PATH);
+	
+	_loadCubeTextures((src + "/textures/grass.png").c_str());
+	_loadCubeTextures((src + "/textures/grass_block_side.png").c_str());
+	_loadCubeTextures((src + "/textures/dirt.png").c_str());
+	_loadCubeTextures((src + "/textures/cobblestone.png").c_str());
+	_loadCubeTextures((src + "/textures/sand.png").c_str());
+	_loadCubeTextures((src + "/textures/snow.png").c_str());
+	_loadCubeTextures((src + "/textures/snow_block_side.png").c_str());
+	_loadCubeTextures((src + "/textures/stone.png").c_str());
 	_shader.setTexture("grass", 0);
 	_shader.setTexture("grass_side", 1);
 	_shader.setTexture("dirt", 2);
