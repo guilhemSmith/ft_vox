@@ -21,7 +21,8 @@ To move them somewhere else on your system, always keep the binary and the resou
 
 ## Usage  
 ### Launch
-`./ft_vox` will launch the demo with a random seed and display that seed in the terminal.  
+`./ft_vox` will launch the demo with a random seed.  
+The seed used is always printed in the terminal.  
 
 _You can also give ft_vox a seed that you like_     
 `./ft_vox your_seed`   
@@ -29,6 +30,13 @@ _example: `./ft_vox 1603917848`_
 
 ### controls
 On qwerty keyboard: 
-* Move the camera with <kbd>w</kbd>,<kbd>a</kbd>,<kbd>s</kbd>,<kbd>d</kbd>.  
-* Speed-up deplacements with <kbd>shift</kbd>.  
-* Quit demo with <kbd>esc</kbd>.
+| key              | effect        |
+| ---------------- | ------------- |
+| <kbd>w</kbd>     | move forward  |
+| <kbd>a</kbd>     | move backward |
+| <kbd>s</kbd>     | move left     |
+| <kbd>d</kbd>     | move right    |
+| <kbd>space</kbd> | move up       |
+| <kbd>ctrl</kbd>  | move down     |
+| <kbd>shift</kbd> | sprint        |
+| <kbd>esc</kbd>   | quit demo     |
