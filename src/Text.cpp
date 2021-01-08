@@ -9,15 +9,22 @@
 Text::Text(unsigned int font_size) {
     FT_Library  ft;
     FT_Face     face;
+    std::string font_path = std::string(SRC_PATH) + "/fonts/Roboto-Regular.ttf";
 
     if (FT_Init_FreeType(&ft))
     {
         std::cout << "ERROR::FREETYPE Could not init FreeType Library" << std::endl;
         Render::gameQuit();
     }
-    if (FT_New_Face(ft, "../fonts/Roboto-Regular.ttf", 0, &face))
+    FT_Error error = FT_New_Face(ft, font_path.c_str(), 0, &face);
+    if (error == FT_Err_Unknown_File_Format) {
+        std::cout << "ERROR::FREETYPE: Failed to load font at:" << std::endl << font_path \
+            << std::endl << "Unsupported file format." << std::endl;
+        Render::gameQuit();
+    }
+    else if (error)
     {
-        std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
+        std::cout << "ERROR::FREETYPE: Failed to load font at: " << font_path << std::endl;
         Render::gameQuit();
     }
     FT_Set_Pixel_Sizes(face, 0, font_size);
