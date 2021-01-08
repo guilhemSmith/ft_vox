@@ -3,6 +3,18 @@
 
 # define @PLATFORM@
 
-# define SRC_PATH @SRC_PATH@
+# define RES_PATH @RES_PATH@
+
+# ifdef WINDOWS
+#  include <direct.h>
+#  define GET_CWD _getcwd
+# else
+#  include <unistd.h>
+#  define GET_CWD getcwd
+# endif
+
+# include <string>
+
+std::string getRessourceDir(void);
 
 #endif

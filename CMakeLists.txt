@@ -45,8 +45,8 @@ if(WIN32)
 endif()
 
 set(
-	SRC_PATH
-	"\"${CMAKE_SOURCE_DIR}\""
+	RES_PATH
+	"\"${CMAKE_BINARY_DIR}/resources\""
 )
 
 configure_file(
@@ -54,7 +54,9 @@ configure_file(
 	OS.hpp
 )
 
-file(GLOB SOURCES
+file(
+	GLOB
+	SOURCES
     "${PROJECT_SOURCE_DIR}/src/ft_vox.cpp"
     "${PROJECT_SOURCE_DIR}/src/Camera.cpp"
     "${PROJECT_SOURCE_DIR}/src/Inputs.cpp"
@@ -69,6 +71,16 @@ file(GLOB SOURCES
 	"${PROJECT_SOURCE_DIR}/src/World.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Cavern.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Text.cpp"
+	"${PROJECT_SOURCE_DIR}/src/OS.cpp"
+)
+
+file(
+	COPY
+	"${PROJECT_SOURCE_DIR}/textures"
+	"${PROJECT_SOURCE_DIR}/fonts"
+	"${PROJECT_SOURCE_DIR}/Shaders"
+	DESTINATION
+	"${CMAKE_BINARY_DIR}/resources"
 )
 
 add_executable(ft_vox ${SOURCES})

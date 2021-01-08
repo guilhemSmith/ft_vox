@@ -86,7 +86,7 @@ void 	Render::gameInit() {
 
 void 	Render::_loadSkyboxTextures() {
 	std::vector<std::string> textures;
-	std::string					src = std::string(SRC_PATH);
+	std::string					src = getRessourceDir();
 
 	textures.push_back((src + "/textures/skybox/right.png").c_str());
 	textures.push_back((src + "/textures/skybox/left.png").c_str());
@@ -147,7 +147,7 @@ void    Render::_loadCubeTextures(const char *file) {
 }
 
 void 	Render::_setupCubeTextures() {
-	std::string					src = std::string(SRC_PATH);
+	std::string					src = getRessourceDir();
 	
 	_loadCubeTextures((src + "/textures/grass.png").c_str());
 	_loadCubeTextures((src + "/textures/grass_block_side.png").c_str());
