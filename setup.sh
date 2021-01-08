@@ -1,9 +1,9 @@
 #! /bin/bash
 
-prefix="\033[2;37m[libsdl2.so/setup] - \033[0m"
+prefix="\033[2;37m[ft_vox/setup] - \033[0m"
 
 function mac_setup() {
-	list=`brew list`;
+	list=`brew list --formulae`;
 	if [ $? -ne 0 ]
 	then
 		printf "$prefix brew is missing.\n";
@@ -13,7 +13,7 @@ function mac_setup() {
 			&& source $HOME/.zshrc \
 			&& brew update;
 		printf "$prefix brew installed.\n";
-		list=`brew list`;
+		list=`brew list --formulae`;
 		if [ $? -ne 0 ]
 		then
 			printf "$prefix\033[2;31mbrew installation failed.\n\033[0m";
@@ -84,6 +84,19 @@ function mac_setup() {
 			exit 1;
 		fi
 		printf "$prefix glm installed.\n"
+	fi
+
+	freetype=`echo $list | grep freetype`
+	if [ $? -ne 0 ]
+	then
+		printf "$prefix freetype is missing.\n"
+		brew install freetype
+		if [ $? -ne 0 ]
+		then
+			printf "$prefix\033[2;31mfreetype installation failed.\n\033[0m";
+			exit 1;
+		fi
+		printf "$prefix freetype installed.\n"
 	fi
 }
 
