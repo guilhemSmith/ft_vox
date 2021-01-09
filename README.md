@@ -17,7 +17,7 @@ Make sure it is installed before cloning.
 
 When the build is done, the executable file `ft_vox` and its `resources` folder should be located in the build folder.  
 To move them somewhere else on your system, always keep the binary and the resources folder together in the same dir.  
-**example:** `cp -R ft_vox resources ~/mygamefolder/voxdemo`
+_example: `cp -R ft_vox resources ~/mygamefolder/voxdemo`_
 
 ## Usage  
 ### Launch
