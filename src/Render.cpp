@@ -35,8 +35,12 @@ void 	Render::gameInit() {
         TTF_Quit();
         exit(0);
     }
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
+	SDL_DisplayMode mode;
+	SDL_GetCurrentDisplayMode(0, &mode);
+	_win_w = mode.w;
+	_win_h = mode.h;
+	// SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+	// SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
 	_window = SDL_CreateWindow(
 			"ft_vox",
 			SDL_WINDOWPOS_UNDEFINED,
@@ -44,7 +48,7 @@ void 	Render::gameInit() {
 			_win_w,
 			_win_h,
 			SDL_WINDOW_OPENGL
-			// | SDL_WINDOW_FULLSCREEN_DESKTOP
+			| SDL_WINDOW_FULLSCREEN_DESKTOP
 			);
 	if (_window == NULL) {
         std::cout << "failed to create window" << std::endl;
@@ -63,8 +67,8 @@ void 	Render::gameInit() {
     }
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
-	glEnable(GL_MULTISAMPLE);
+	// SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
+	// glEnable(GL_MULTISAMPLE);
 	glViewport(0, 0 ,  _win_w, _win_h);
     glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
@@ -187,6 +191,29 @@ void    Render::_initText(Text &text) {
     text.setMat4("projection", text_proj);
 }
 
+void	Render::_switchScreenMode(Text &text) {
+	SDL_DisplayMode mode;
+	SDL_GetCurrentDisplayMode(0, &mode);
+
+	if (mode.w == _win_w && mode.h == _win_h) {
+		_win_w = 1080;
+		_win_h = 720;
+
+		SDL_SetWindowFullscreen(_window, 0);
+		SDL_SetWindowSize(_window, _win_w, _win_h);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+	}
+	else {
+		_win_w = mode.w;
+		_win_h = mode.h;
+
+		SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowSize(_window, _win_w, _win_h);
+	}
+	glViewport(0, 0 ,  _win_w, _win_h);
+	_initText(text);
+}
+
 void 	Render::gameLoop() {
 	Time				time = Time();
 	Inputs				inputs = Inputs();
@@ -202,10 +229,16 @@ void 	Render::gameLoop() {
 	_initText(text);
 
     std::string     fps;
+	bool			fullscreen_prev = false;
 	while (!inputs.shouldQuit()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
+		bool	fullscreen_curr = inputs.keyState(Inputs::_FULLSCREEN);
+		if (fullscreen_prev && !fullscreen_curr) {
+			_switchScreenMode(text);
+		}
+		fullscreen_prev = fullscreen_curr;
 
 		//draw cubes
 		_shader.use();
@@ -225,7 +258,6 @@ void 	Render::gameLoop() {
         text.draw("fps: " + fps, 25.0f, _win_h - 50.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
         if (time.update()){
             fps = time.fps();
-//			std::cout << time.fps() << "fps; " << chunks.size() << " chunks; " << _cam << std::endl;
 		}
         SDL_GL_SwapWindow(_window);
 	}

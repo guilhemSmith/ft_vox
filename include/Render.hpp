@@ -25,6 +25,7 @@ class Render {
 		void 						_setupCubeTextures();
 		void 						_initSkybox(glm::mat4 &);
         void 						_initText(Text &);
+		void						_switchScreenMode(Text &);
 		std::vector<GLuint>			_texture_ids;
 		unsigned int 				_skybox_id;
 		Skybox 						_skybox;

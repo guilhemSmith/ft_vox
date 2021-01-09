@@ -8,15 +8,15 @@ bool			Time::update(void) {
 	_delta_time = _frame - _last_frame;
 	_last_frame = _frame;
 
-	if (_delta_sum + _delta_time > 1000) {
+	_delta_sum += _delta_time;
+	if (_delta_sum >= 1000) {
 		_fps = _frames_count;
 		_frames_count = 1;
-		_delta_sum = _delta_sum + _delta_time - 1000;
+		_delta_sum -= 1000;
 		return true;
 	}
 	else {
 		_frames_count++;
-		_delta_sum += _delta_time;
 		return false;
 	}
 }

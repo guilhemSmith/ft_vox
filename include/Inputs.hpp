@@ -37,6 +37,7 @@ public:
 	static const SDL_Scancode		_DOWN;
 	static const SDL_Scancode		_SPRINT;
 	static const SDL_Scancode		_QUIT;
+	static const SDL_Scancode		_FULLSCREEN;
 };
 
 #endif

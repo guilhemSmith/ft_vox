@@ -39,4 +39,5 @@ On qwerty keyboard:
 | <kbd>space</kbd> | move up       |
 | <kbd>ctrl</kbd>  | move down     |
 | <kbd>shift</kbd> | sprint        |
+| <kbd>f</kbd>     | screen mode   |
 | <kbd>esc</kbd>   | quit demo     |
