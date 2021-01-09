@@ -20,6 +20,7 @@ ChunkManager::ChunkManager(unsigned int seed):
 	_last_cam_chunk(),
 	_mtx(),
 	_keep_loading(true),
+	_is_loading(true),
 	_loading_thread(&ChunkManager::_loadRoutine, this)
 {}
 
@@ -217,6 +218,7 @@ void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 void				ChunkManager::_loadRoutine(void) {
 	while (_keep_loading) {
 		if (_chunks_to_load.size() > 0) {
+			_is_loading = true;
 			_mtx.lock();
 			std::array<glm::u32vec3, 2> area = _chunks_to_load.front();
 			_chunks_to_load.pop();
@@ -240,6 +242,12 @@ void				ChunkManager::_loadRoutine(void) {
 				}
 			}
 		}
+		else {
+			_is_loading = false;
+		}
 	}
+}
 
+bool				ChunkManager::isLoading(void) const {
+	return _is_loading;
 }

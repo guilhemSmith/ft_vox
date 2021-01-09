@@ -230,6 +230,27 @@ void 	Render::gameLoop() {
 
     std::string     fps;
 	bool			fullscreen_prev = false;
+	std::string		dots = ".";
+	while (!inputs.shouldQuit() && _manager.isLoading()) {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		inputs.update();
+		bool	fullscreen_curr = inputs.keyState(Inputs::_FULLSCREEN);
+		if (fullscreen_prev && !fullscreen_curr) {
+			_switchScreenMode(text);
+		}
+		fullscreen_prev = fullscreen_curr;
+        text.draw("Loading" + dots, 25.0f, _win_h - 50.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
+        if (time.update()){
+			if (dots.length() < 3) {
+				dots += ".";
+			}
+			else {
+				dots = ".";
+			}
+            fps = time.fps();
+		}
+        SDL_GL_SwapWindow(_window);
+	}
 	while (!inputs.shouldQuit()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
