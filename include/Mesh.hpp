@@ -2,6 +2,7 @@
 # define MESH_HPP
 
 # include <vector>
+# include <queue>
 # include <glm/glm.hpp>
 # include <ostream>
 # include <array>
@@ -38,6 +39,7 @@ private:
 	unsigned int 				_vao{};
 	unsigned int 				_vbo{};
 	unsigned int 				_ebo{};
+	bool						_is_ready;
 
 	std::vector<Mesh::Vertex>	_vertices;
 	std::vector<unsigned int>	_indices;
@@ -45,12 +47,16 @@ private:
 	void 						_setupBuffers();
     void 	                    _createCube(Mesh::CubeData &);
 
+	static std::queue<std::array<unsigned int, 3>>	_BUFFER_POOL;
+
 public:
-	Mesh() = default;
+	Mesh();
 	~Mesh();
+
 	void						init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos, std::array<std::shared_ptr<Chunk>, 6> &);
 	void						draw();
 	void 						clearBuffers();
+	static void					clearBufferPool();
 };
 
 #endif
