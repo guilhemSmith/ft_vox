@@ -32,7 +32,6 @@ void 	Render::gameInit() {
     if ((init & img_flags) != img_flags) {
         std::cout << "couln't init IMG" << std::endl;
         SDL_Quit();
-        TTF_Quit();
         exit(0);
     }
 	SDL_DisplayMode mode;
@@ -114,6 +113,7 @@ void 	Render::_loadSkyboxTextures() {
         	mode = GL_RGBA;
     	}
     	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
+		SDL_FreeSurface(surface);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

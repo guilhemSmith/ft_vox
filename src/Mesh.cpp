@@ -193,6 +193,4 @@ void    Mesh::clearBuffers() {
     glDeleteBuffers(1, &_ebo);
 }
 
-Mesh::~Mesh() {
-    // std::cout << "Mesh destructor called" << std::endl;
-}
+Mesh::~Mesh() {}

@@ -130,15 +130,17 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 }
 
 void					ChunkManager::_unloadTooFar(glm::vec3 cam_pos_chunk) {
-	_mtx.lock();
-	for (auto &loaded : _chunks_loaded) {
-		glm::vec3 pos_chunk = loaded.second->getPosChunk();
-		glm::vec3 offset = glm::abs(pos_chunk - cam_pos_chunk);
-		if (offset.x > LOAD_DISTANCE + 5 || offset.y > LOAD_DISTANCE + 5 || offset.z > LOAD_DISTANCE + 5) {
-			_chunks_to_unload.emplace(loaded.second->getPosChunk());
+	if (_chunks_to_unload.size() == 0) {
+		_mtx.lock();
+		for (auto &loaded : _chunks_loaded) {
+			glm::vec3 pos_chunk = loaded.second->getPosChunk();
+			glm::vec3 offset = glm::abs(pos_chunk - cam_pos_chunk);
+			if (offset.x > LOAD_DISTANCE + 2 || offset.y > LOAD_DISTANCE + 2 || offset.z > LOAD_DISTANCE + 2) {
+				_chunks_to_unload.emplace(loaded.second->getPosChunk());
+			}
 		}
+		_mtx.unlock();
 	}
-	_mtx.unlock();
 }
 
 void					ChunkManager::_detectChunkToLoad(glm::u32vec3 cam_chunk_pos) {
@@ -208,7 +210,9 @@ std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_
 void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 	unsigned int index = _chunkIndex(pos);
 	try {
+		_mtx.lock();
 		_chunks_loaded.erase(index);
+		_mtx.unlock();
 	}
 	catch (std::out_of_range oor) {
 		//std::cout << "Trying to free unloaded chunk." << std::endl;

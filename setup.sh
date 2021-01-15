@@ -47,19 +47,6 @@ function mac_setup() {
 		printf "$prefix sdl2_image installed.\n"
 	fi
 
-	sdl2_ttf=`echo $list | grep sdl2_ttf`
-	if [ $? -ne 0 ]
-	then
-		printf "$prefix sdl2_ttf is missing.\n"
-		brew install sdl2_ttf
-		if [ $? -ne 0 ]
-		then
-			printf "$prefix\033[2;31msdl2_ttf installation failed.\n\033[0m";
-			exit 1;
-		fi
-		printf "$prefix sdl2_ttf installed.\n"
-	fi
-
 	glew=`echo $list | grep glew`
 	if [ $? -ne 0 ]
 	then
@@ -101,7 +88,7 @@ function mac_setup() {
 }
 
 function linux_setup() {
-	sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev libfreetype6-dev libglew-dev libglm-dev;
+	sudo apt install libsdl2-dev libsdl2-image-dev libfreetype6-dev libglew-dev libglm-dev;
 }
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
