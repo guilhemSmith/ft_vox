@@ -8,8 +8,8 @@ const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 
 const glm::u32vec3	ChunkManager::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
-const float			ChunkManager::VIEW_DISTANCE = 9;	
-const float			ChunkManager::LOAD_DISTANCE = 11;	
+const float			ChunkManager::VIEW_DISTANCE = 1;	
+const float			ChunkManager::LOAD_DISTANCE = 2;	
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_world(seed),
@@ -28,25 +28,6 @@ ChunkManager::~ChunkManager() {
 	_chunks_loaded.clear();
 }
 
-
-
-//bool				ChunkManager::accessVoxel(glm::u32vec3 pos) {
-//    glm::u32vec3			chunk_pos = pos / Chunk::SIZE;
-//    glm::u32vec3			voxel_pos = pos % Chunk::SIZE;
-//    /*
-//    glm::u32vec3			zero_pos = chunk_pos * Chunk::SIZE;
-//    glm::u32vec3			voxel_pos = pos - zero_pos;
-//    */
-//    unsigned int			index = _chunkIndex(chunk_pos);
-//    try {
-//        std::shared_ptr<Chunk>	chunk = _chunks_loaded.at(index);
-//        return chunk->hasVoxelAt(voxel_pos.x, voxel_pos.y, voxel_pos.z);
-//    }
-//    catch (std::out_of_range oor) {
-//        return false;
-//    }
-//}
-
 //could be better
 bool                ChunkManager::tryDeleteVoxel(glm::u32vec3 pos) {
     glm::u32vec3			chunk_pos = pos / Chunk::SIZE;
@@ -60,8 +41,8 @@ bool                ChunkManager::tryDeleteVoxel(glm::u32vec3 pos) {
         std::shared_ptr<Chunk> chunk = _chunks_loaded.at(index);
         if (chunk->hasVoxelAt(voxel_pos.x, voxel_pos.y, voxel_pos.z)) {
             chunk->deleteVoxel(voxel_pos);
+//            chunk->clearMeshBuffers();
             _chunkRemesh(chunk_pos);
-            std::cout << "voxel deleted" << std::endl;
             return true;
         }
     }
@@ -70,7 +51,6 @@ bool                ChunkManager::tryDeleteVoxel(glm::u32vec3 pos) {
     }
     //get chunk from world pos
 
-    std::cout << "voxel already empty" << std::endl;
     return false;
 }
 

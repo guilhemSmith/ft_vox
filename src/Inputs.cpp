@@ -36,11 +36,9 @@ bool            Inputs::mouseDown() const {
     return _mouse_click;
 }
 void            Inputs::_pollMouseClickDown(SDL_Event& event) {
-    if (event.type == SDL_MOUSEBUTTONDOWN)
         _mouse_click = true;
 }
 void            Inputs::_pollMouseClickUp(SDL_Event& event) {
-    if (event.type == SDL_MOUSEBUTTONUP)
         _mouse_click = false;
 }
 

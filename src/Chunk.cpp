@@ -1,5 +1,4 @@
 #include "Chunk.hpp"
-#include "ChunkManager.hpp"
 #include <glm/glm.hpp>
 
 const unsigned int			Chunk::SIZE = 32;
@@ -14,6 +13,7 @@ bool 		Chunk::hasVoxelAt(int x, int y, int z) const {
 }
 
 
+//means the others see it as empty but not himself
 void        Chunk::deleteVoxel(glm::vec3 pos) {
     _cubes[pos.x][pos.y][pos.z] = Voxel::Empty;
 }
@@ -24,15 +24,22 @@ Chunk::~Chunk() {
 	}
 }
 
+void        Chunk::clearMeshBuffers() {
+    _mesh.clearBuffers();
+}
+
 void 		Chunk::draw() {
 	_mesh.draw();
 }
 
 void 		Chunk::remesh(std::array<std::shared_ptr<Chunk>, 6> &neighbors) {
+	bool redraw= false;
 	if (is_meshed) {
+	    std::cout << "cleared buffers" << std::endl;
 		_mesh.clearBuffers();
+		redraw = true;
 	}
-	_mesh.init(_cubes, _pos, neighbors);
+	_mesh.init(_cubes, _pos, neighbors, redraw);
 	is_meshed = true;
 }
 

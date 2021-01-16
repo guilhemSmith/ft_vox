@@ -7,13 +7,16 @@
 const glm::vec3			Camera::_WORLD_UP = {0.0f, 1.0f, 0.0f};
 
 Camera::Camera(ChunkManager& manager): 
-	_position(manager.spawnPos()),
+	//_position(manager.spawnPos()),
+	_position(-1 , -1 , -1),
 	_direction({0, 0, -1}),
 	_yaw(0.0f),
 	_pitch(0.0f),
 	_chunk_manager_ref(manager),
-	_is_casting(false)
+	_is_casting(false),
+	_can_raycast(true)
 {}
+
 
 void			Camera::_updateDir(const Inputs& input) {
 	const glm::vec2&	mouse_rel = input.mouseRel();
@@ -52,20 +55,22 @@ void			Camera::_updatePos(float delta_time, const Inputs& input) {
 
 }
 
+
 void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
-    if (!input.mouseDown())
-        return ;
-    if (_is_casting)
-        return ;
+    if (!input.mouseDown() && !_is_casting)
+        _can_raycast = true;
+    if(!_can_raycast || !input.mouseDown())
+        return;
+    _is_casting = true;
+    _can_raycast = false;
     float dir_length = glm::length(_direction);
 
-    std::cout << "RAYCAST!" << std::endl;
     if (dir_length < 0.01) {
         std::cout << "dir length too small" << std::endl;
+        _is_casting = false;
         return ;
     }
 
-    _is_casting = true;
     glm::vec3 normalized_dir = glm::normalize(_direction);
 
     float running_distance = 0.0f;
@@ -74,6 +79,7 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
     int start_y = floor(_position.y);
     int start_z = floor(_position.z);
 
+    std::cout << "RAYCAST!on pos: " << start_x << " " << start_y << " " << start_z << std::endl;
     int step_x = (normalized_dir.x > 0 ) ? 1 : -1;
     int step_y = (normalized_dir.y > 0 ) ? 1 : -1;
     int step_z = (normalized_dir.z > 0 ) ? 1 : -1;
@@ -97,8 +103,8 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
     {
         bool   hit = _chunk_manager_ref.tryDeleteVoxel(glm::u32vec3(start_x, start_y, start_z));
         if (hit) {
-            std::cout << "hit found" << std::endl;
-            _is_casting = false;
+            std::cout << "hit found on voxel: " << start_x << " " << start_y << " " << start_z <<std::endl;
+            _is_casting =false;
             return;
         }
 
@@ -113,7 +119,7 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
                 rd_z_max += rd_z_delta;
             }
         } else {
-            if (rd_y_max < rd_y_max) {
+            if (rd_y_max < rd_z_max) {
                 start_y += step_y;
                 running_distance = rd_y_max;
                 rd_y_max += rd_y_delta;
@@ -125,7 +131,6 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
         }
     }
     _is_casting =false;
-
 }
 
 void			Camera::update(float delta_time, const Inputs& input) {
