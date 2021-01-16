@@ -2,7 +2,7 @@
 #include "Render.hpp"
 
 Render::Render(unsigned int seed): _manager(seed), _cam(_manager) {
-	_win_w = 1080;
+	_win_w = 1280;
 	_win_h = 720;
 }
 
@@ -192,7 +192,7 @@ void	Render::_switchScreenMode(Text &text) {
 	SDL_GetCurrentDisplayMode(0, &mode);
 
 	if (mode.w == _win_w && mode.h == _win_h) {
-		_win_w = 1080;
+		_win_w = 1280;
 		_win_h = 720;
 
 		SDL_SetWindowFullscreen(_window, 0);
