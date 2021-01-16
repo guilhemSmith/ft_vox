@@ -152,7 +152,6 @@ void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cube
                 if (cube_data.l_neighbor && cube_data.r_neighbor && cube_data.t_neighbor && cube_data.bo_neighbor && cube_data.f_neighbor && cube_data.ba_neighbor)
                     continue;
                 _createCube(cube_data);
-
 			}
 		}
 	}
@@ -203,6 +202,7 @@ void    Mesh::clearBuffers() {
     if (_is_ready) {
         _vertices.clear();
         _indices.clear();
+        _next_index = 0;
         std::array<unsigned int, 3> buffer_set = { _vao, _vbo, _ebo };
         _BUFFER_POOL.push(buffer_set);
         _vao = 0;

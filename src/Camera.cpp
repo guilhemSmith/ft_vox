@@ -10,8 +10,12 @@ Camera::Camera(ChunkManager& manager):
 	_position(manager.spawnPos()),
 	_direction({0, 0, -1}),
 	_yaw(0.0f),
-	_pitch(0.0f)
+	_pitch(0.0f),
+	_chunk_manager_ref(manager),
+	_is_casting(false),
+	_can_raycast(true)
 {}
+
 
 void			Camera::_updateDir(const Inputs& input) {
 	const glm::vec2&	mouse_rel = input.mouseRel();
@@ -53,6 +57,81 @@ void			Camera::_updatePos(float delta_time, const Inputs& input) {
 		input_dir = glm::normalize(input_dir);
 		_position += input_dir * offset;
 	}
+
+}
+
+
+void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
+    if (!input.mouseDown() && !_is_casting)
+        _can_raycast = true;
+    if(!_can_raycast || !input.mouseDown())
+        return;
+    _is_casting = true;
+    _can_raycast = false;
+    float dir_length = glm::length(_direction);
+
+    if (dir_length < 0.01) {
+        std::cout << "dir length too small" << std::endl;
+        _is_casting = false;
+        return ;
+    }
+
+    glm::vec3 normalized_dir = glm::normalize(_direction);
+
+    float running_distance = 0.0f;
+
+    int start_x = floor(_position.x);
+    int start_y = floor(_position.y);
+    int start_z = floor(_position.z);
+
+    int step_x = (normalized_dir.x > 0 ) ? 1 : -1;
+    int step_y = (normalized_dir.y > 0 ) ? 1 : -1;
+    int step_z = (normalized_dir.z > 0 ) ? 1 : -1;
+
+    float rd_x_delta = abs(1 / normalized_dir.x);
+    float rd_y_delta = abs(1 / normalized_dir.y);
+    float rd_z_delta = abs(1 / normalized_dir.z);
+
+    float x_dist = (step_x > 0) ? (start_x + 1 - _position.x) : (_position.x - start_x);
+    float y_dist = (step_y > 0) ? (start_y + 1 - _position.y) : (_position.y - start_y);
+    float z_dist = (step_z > 0) ? (start_z + 1 - _position.z) : (_position.z - start_z);
+
+    float rd_x_max = (rd_x_delta < 40000) ? rd_x_delta * x_dist : 40000;
+    float rd_y_max = (rd_y_delta < 40000) ? rd_y_delta * y_dist : 40000;
+    float rd_z_max = (rd_z_delta < 40000) ? rd_z_delta * z_dist : 40000;
+
+    while (running_distance <= max_dist)
+    {
+        bool   hit = _chunk_manager_ref.tryDeleteVoxel(glm::u32vec3(start_x, start_y, start_z));
+        if (hit) {
+            _chunk_manager_ref.procNeightborsReload(glm::u32vec3(start_x, start_y, start_z));
+            _is_casting =false;
+            return;
+        }
+
+        if (rd_x_max < rd_y_max) {
+            if (rd_x_max < rd_z_max) {
+                start_x += step_x;
+                running_distance = rd_x_max;
+                rd_x_max += rd_x_delta;
+            } else {
+                start_z += step_z;
+                running_distance = rd_z_max;
+                rd_z_max += rd_z_delta;
+            }
+        } else {
+            if (rd_y_max < rd_z_max) {
+                start_y += step_y;
+                running_distance = rd_y_max;
+                rd_y_max += rd_y_delta;
+            } else {
+                start_z += step_z;
+                running_distance = rd_z_max;
+                rd_z_max += rd_z_delta;
+            }
+        }
+    }
+    _is_casting =false;
 }
 
 void			Camera::update(float delta_time, const Inputs& input) {

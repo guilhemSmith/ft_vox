@@ -16,8 +16,9 @@ void 	Render::drawChunks(std::vector<std::weak_ptr<Chunk>>& chunks) {
 	for (auto chunk_ptr : chunks)
 	{
 	    if (auto chunk = chunk_ptr.lock()) {
-            if (chunk->is_empty)
+            if (chunk->is_empty) {
                 continue;
+			}
             glm::mat4 model = glm::mat4(1.0f);
             glm::translate(model, chunk->getPos());
             _shader.setMat4("model", model);
@@ -79,7 +80,7 @@ void 	Render::gameInit() {
      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
      glEnable(GL_BLEND);
      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void 	Render::_loadSkyboxTextures() {
@@ -250,6 +251,7 @@ void 	Render::gameLoop() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
+    _cam.deleteVoxel(16.0, inputs);
 		bool	fullscreen_curr = inputs.keyState(Inputs::_FULLSCREEN);
 		if (fullscreen_prev && !fullscreen_curr) {
 			_switchScreenMode(text);
@@ -272,6 +274,7 @@ void 	Render::gameLoop() {
 
 		//draw text
         text.draw("fps: " + fps, 25.0f, _win_h - 50.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
+        text.draw(".", _win_w * 0.5 - 2.0, _win_h * 0.5 - 2.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
         if (time.update()){
             fps = time.fps();
 		}

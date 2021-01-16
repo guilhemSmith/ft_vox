@@ -88,5 +88,6 @@ target_link_libraries(ft_vox
 	${GLM_LIBRARIES}
 	Freetype::Freetype
         GLEW::GLEW
-	${OPENGL_LIBRARIES}
+#	${OPENGL_LIBRARIES}
+		OpenGL::GL
 )
