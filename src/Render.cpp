@@ -6,6 +6,10 @@ Render::Render(unsigned int seed): _manager(seed), _cam(_manager) {
 	_win_h = 720;
 }
 
+Render::~Render() {
+	Mesh::clearBufferPool();
+}
+
 void 	Render::drawChunks(std::vector<std::weak_ptr<Chunk>>& chunks) {
 	glm::mat4 view = _cam.viewMat();
 	_shader.setMat4("view", view);

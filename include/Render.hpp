@@ -32,6 +32,7 @@ class Render {
 
 	public:
 		Render(unsigned int seed);
+		~Render();
 		void 	gameInit();
 		void 	gameLoop();
 		static void 	gameQuit();

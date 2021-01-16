@@ -166,39 +166,50 @@ void 	Mesh::draw() {
 
 void 	Mesh::_setupBuffers() {
     if (_BUFFER_POOL.size() > 0) {
-        // TODO: use buffer from pool.
+        std::array<unsigned int, 3> buffer_set = _BUFFER_POOL.front();
+        _BUFFER_POOL.pop();
+        _vao = buffer_set[0];
+        _vbo = buffer_set[1];
+        _ebo = buffer_set[2];
     }
     else {
         glGenVertexArrays(1, &_vao);
         glGenBuffers(1, &_vbo);
         glGenBuffers(1, &_ebo);
-
-        glBindVertexArray(_vao);
-        glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-
-        glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(Mesh::Vertex), &_vertices[0], GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)nullptr);
-        glEnableVertexAttribArray(1);	
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, normal));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, tex_coords));
-        glEnableVertexAttribArray(3);
-        glVertexAttribIPointer(3, 1, GL_INT, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, texture));
-
-        glBindVertexArray(0);
     }
+
+    glBindVertexArray(_vao);
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
+
+    glBufferData(GL_ARRAY_BUFFER, _vertices.size() * sizeof(Mesh::Vertex), &_vertices[0], GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, _indices.size() * sizeof(unsigned int), &_indices[0], GL_STATIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)nullptr);
+    glEnableVertexAttribArray(1);	
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, normal));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, tex_coords));
+    glEnableVertexAttribArray(3);
+    glVertexAttribIPointer(3, 1, GL_INT, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, texture));
+    glBindVertexArray(0);
+
     _is_ready = true;
 }
 
 void    Mesh::clearBuffers() {
-    glDeleteVertexArrays(1, &_vao);
-    glDeleteBuffers(1, &_vbo);
-    glDeleteBuffers(1, &_ebo);
+    if (_is_ready) {
+        _vertices.clear();
+        _indices.clear();
+        std::array<unsigned int, 3> buffer_set = { _vao, _vbo, _ebo };
+        _BUFFER_POOL.push(buffer_set);
+        _vao = 0;
+        _vbo = 0;
+        _ebo = 0;
+        _is_ready = false;
+    }
 }
 
 void    Mesh::clearBufferPool() {
@@ -213,7 +224,5 @@ void    Mesh::clearBufferPool() {
 Mesh::Mesh(): _vao(0), _vbo(0), _ebo(0), _is_ready(false) {}
 
 Mesh::~Mesh() {
-    if (_is_ready) {
-        // TODO: clear buffer value and put them back in pool.
-    }
+    clearBuffers();
 }
