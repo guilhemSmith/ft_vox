@@ -78,7 +78,6 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
     int start_y = floor(_position.y);
     int start_z = floor(_position.z);
 
-    //std::cout << "RAYCAST!on pos: " << start_x << " " << start_y << " " << start_z << std::endl;
     int step_x = (normalized_dir.x > 0 ) ? 1 : -1;
     int step_y = (normalized_dir.y > 0 ) ? 1 : -1;
     int step_z = (normalized_dir.z > 0 ) ? 1 : -1;
@@ -91,9 +90,6 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
     float y_dist = (step_y > 0) ? (start_y + 1 - _position.y) : (_position.y - start_y);
     float z_dist = (step_z > 0) ? (start_z + 1 - _position.z) : (_position.z - start_z);
 
-//    float rd_x_max = (tx_delta < ChunkManager::SIZES_VOXELS.x) ? tx_delta * x_dist : ChunkManager::SIZES_VOXELS.x;
-//    float rd_y_max = (ty_delta < ChunkManager::SIZES_VOXELS.x) ? ty_delta * y_dist : ChunkManager::SIZES_VOXELS.y;
-//    float rd_z_max = (tz_delta < ChunkManager::SIZES_VOXELS.z) ? tz_delta * z_dist : ChunkManager::SIZES_VOXELS.z;
     float rd_x_max = (rd_x_delta < 40000) ? rd_x_delta * x_dist : 40000;
     float rd_y_max = (rd_y_delta < 40000) ? rd_y_delta * y_dist : 40000;
     float rd_z_max = (rd_z_delta < 40000) ? rd_z_delta * z_dist : 40000;
@@ -103,7 +99,6 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
         bool   hit = _chunk_manager_ref.tryDeleteVoxel(glm::u32vec3(start_x, start_y, start_z));
         if (hit) {
             _chunk_manager_ref.procNeightborsReload(glm::u32vec3(start_x, start_y, start_z));
-            //std::cout << "hit found on voxel: " << start_x << " " << start_y << " " << start_z <<std::endl;
             _is_casting =false;
             return;
         }

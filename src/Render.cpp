@@ -200,8 +200,7 @@ void 	Render::gameLoop() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
-		_cam.deleteVoxel(40.0, inputs);
-//		std::cout << inputs.mouseDown() << std::endl;
+		_cam.deleteVoxel(16.0, inputs);
 
 		//draw cubes
 		_shader.use();
@@ -219,6 +218,7 @@ void 	Render::gameLoop() {
 
 		//draw text
         text.draw("fps: " + fps, 25.0f, _win_h - 50.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
+        text.draw(".", _win_w * 0.5 - 2.0, _win_h * 0.5 - 2.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
         if (time.update()){
             fps = time.fps();
 //			std::cout << time.fps() << "fps; " << chunks.size() << " chunks; " << _cam << std::endl;
