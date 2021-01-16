@@ -238,7 +238,9 @@ void				ChunkManager::_loadRoutine(void) {
 								glm::u32vec3	pos(x, y, z);
 								unsigned int index = _chunkIndex(pos);
 								if (_chunks_loaded.find(index) == _chunks_loaded.end()) {
+									_mtx.lock();
 									_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
+									_mtx.unlock();
 								}
 							}
 						}
