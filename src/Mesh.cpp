@@ -118,6 +118,7 @@ void 		Mesh::_createCube(Mesh::CubeData &data) {
 
 
 void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cubes, glm::vec3 &pos, std::array<std::shared_ptr<Chunk>, 6> &neighbours) {
+    _is_ready = false;
 	for (int z = 0; z < Chunk::SIZE; z++) {
 		for (int y = 0; y < Chunk::SIZE; y++) {
 			for (int x = 0; x < Chunk::SIZE; x++) {
@@ -155,7 +156,9 @@ void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cube
 			}
 		}
 	}
-	_setupBuffers();
+    if (_next_index > 0) {
+	    _setupBuffers();
+    }
 }
 
 void 	Mesh::draw() {
@@ -210,6 +213,10 @@ void    Mesh::clearBuffers() {
         _ebo = 0;
         _is_ready = false;
     }
+}
+
+bool    Mesh::isReady() const {
+    return _is_ready;
 }
 
 void    Mesh::clearBufferPool() {

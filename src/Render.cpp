@@ -16,7 +16,7 @@ void 	Render::drawChunks(std::vector<std::weak_ptr<Chunk>>& chunks) {
 	for (auto chunk_ptr : chunks)
 	{
 	    if (auto chunk = chunk_ptr.lock()) {
-            if (chunk->is_empty) {
+            if (!chunk->has_mesh()) {
                 continue;
 			}
             glm::mat4 model = glm::mat4(1.0f);
@@ -251,7 +251,7 @@ void 	Render::gameLoop() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
-    _cam.deleteVoxel(16.0, inputs);
+    	_cam.deleteVoxel(16.0, inputs);
 		bool	fullscreen_curr = inputs.keyState(Inputs::_FULLSCREEN);
 		if (fullscreen_prev && !fullscreen_curr) {
 			_switchScreenMode(text);
@@ -272,8 +272,9 @@ void 	Render::gameLoop() {
 		_skybox.draw();
 		glDepthFunc(GL_LESS);
 
-		//draw text
+		//draw fps
         text.draw("fps: " + fps, 25.0f, _win_h - 50.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
+		//draw cursor
         text.draw(".", _win_w * 0.5 - 2.0, _win_h * 0.5 - 2.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
         if (time.update()){
             fps = time.fps();

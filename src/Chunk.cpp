@@ -30,6 +30,10 @@ void 		Chunk::draw() {
 	_mesh.draw();
 }
 
+bool		Chunk::has_mesh() const {
+	return !is_empty && _mesh.isReady();
+}
+
 void 		Chunk::remesh(std::array<std::shared_ptr<Chunk>, 6> &neighbors) {
 	if (is_meshed) {
 		_mesh.clearBuffers();

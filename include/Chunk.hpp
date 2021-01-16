@@ -29,6 +29,7 @@ class Chunk {
 		bool 				is_empty;
 		bool                is_meshed;
 		void 				draw();
+		bool				has_mesh() const;
 		void 				remesh(std::array<std::shared_ptr<Chunk>, 6>&);
 		glm::vec3 			getPos();
 		glm::u32vec3		getPosChunk();
