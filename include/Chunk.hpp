@@ -33,6 +33,8 @@ class Chunk {
 		glm::vec3 			getPos();
 		glm::u32vec3		getPosChunk();
 		bool 				hasVoxelAt(int x, int y, int z) const;
+        void 				deleteVoxel(glm::vec3 pos);
+        void                clearMeshBuffers();
 
 		static const unsigned int SIZE;
 };

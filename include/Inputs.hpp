@@ -9,6 +9,7 @@ class Inputs {
 private:
 	bool							_should_quit;
 	glm::vec2						_mouse_rel;
+    bool                            _mouse_click;
 	std::map<SDL_Scancode, bool>	_keys;
 
 	void							_pollWindowEvent(SDL_Event& event);
@@ -16,6 +17,8 @@ private:
 	void							_pollKeydownEvent(SDL_Event& event);
 	void							_pollKeyupEvent(SDL_Event& event);
 	void							_pollKeyEvent(SDL_Event& event, bool is_down);
+    void                            _pollMouseClickUp(SDL_Event& event);
+    void                            _pollMouseClickDown(SDL_Event& event);
 
 	typedef void	(Inputs::*_polled_event)(SDL_Event&);
 	const std::map<Uint32, _polled_event> _handle_event;
@@ -28,6 +31,7 @@ public:
 	bool							shouldQuit(void) const;
 	const glm::vec2&				mouseRel(void) const;
 	bool							keyState(SDL_Scancode key) const;
+	bool                            mouseDown() const;
 
 	static const SDL_Scancode		_FORWARD;
 	static const SDL_Scancode		_BACKWARD;

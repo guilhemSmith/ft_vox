@@ -18,6 +18,9 @@ private:
 	void							_updatePos(float delta_time, const Inputs& input);
 
 	static const glm::vec3			_WORLD_UP;
+	ChunkManager&                   _chunk_manager_ref;
+	bool                            _is_casting;
+	bool                            _can_raycast;
 
 public:
 	Camera(ChunkManager& manager);
@@ -27,6 +30,7 @@ public:
 	glm::vec3						position(void) const;
 	glm::vec3						direction(void) const;
 	glm::mat4						viewMat(void) const;
+	void 							deleteVoxel(float max_dist, const Inputs&);
 };
 
 std::ostream&	operator<<(std::ostream& os, Camera& cam);

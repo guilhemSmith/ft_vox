@@ -150,7 +150,6 @@ void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cube
                 if (cube_data.l_neighbor && cube_data.r_neighbor && cube_data.t_neighbor && cube_data.bo_neighbor && cube_data.f_neighbor && cube_data.ba_neighbor)
                     continue;
                 _createCube(cube_data);
-
 			}
 		}
 	}
@@ -188,11 +187,13 @@ void 	Mesh::_setupBuffers() {
 }
 
 void    Mesh::clearBuffers() {
+    _indices.clear();
+    _vertices.clear();
+    _next_index = 0;
     glDeleteVertexArrays(1, &_vao);
     glDeleteBuffers(1, &_vbo);
     glDeleteBuffers(1, &_ebo);
 }
 
 Mesh::~Mesh() {
-    // std::cout << "Mesh destructor called" << std::endl;
 }
