@@ -1,8 +1,13 @@
+#include "OS.hpp"
 #include "Render.hpp"
 
 Render::Render(unsigned int seed): _manager(seed), _cam(_manager) {
 	_win_w = 1080;
 	_win_h = 720;
+}
+
+Render::~Render() {
+	Mesh::clearBufferPool();
 }
 
 void 	Render::drawChunks(std::vector<std::weak_ptr<Chunk>>& chunks) {
@@ -32,11 +37,8 @@ void 	Render::gameInit() {
     if ((init & img_flags) != img_flags) {
         std::cout << "couln't init IMG" << std::endl;
         SDL_Quit();
-        TTF_Quit();
         exit(0);
     }
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
 	_window = SDL_CreateWindow(
 			"ft_vox",
 			SDL_WINDOWPOS_UNDEFINED,
@@ -44,7 +46,6 @@ void 	Render::gameInit() {
 			_win_w,
 			_win_h,
 			SDL_WINDOW_OPENGL
-			// | SDL_WINDOW_FULLSCREEN_DESKTOP
 			);
 	if (_window == NULL) {
         std::cout << "failed to create window" << std::endl;
@@ -63,8 +64,6 @@ void 	Render::gameInit() {
     }
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
-	glEnable(GL_MULTISAMPLE);
 	glViewport(0, 0 ,  _win_w, _win_h);
     glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
@@ -86,12 +85,14 @@ void 	Render::gameInit() {
 
 void 	Render::_loadSkyboxTextures() {
 	std::vector<std::string> textures;
-	textures.push_back("../textures/skybox/right.png");
-	textures.push_back("../textures/skybox/left.png");
-	textures.push_back("../textures/skybox/top.png");
-	textures.push_back("../textures/skybox/bot.png");
-	textures.push_back("../textures/skybox/front.png");
-	textures.push_back("../textures/skybox/back.png");
+	std::string					src = getRessourceDir();
+
+	textures.push_back((src + "/textures/skybox/right.png").c_str());
+	textures.push_back((src + "/textures/skybox/left.png").c_str());
+	textures.push_back((src + "/textures/skybox/top.png").c_str());
+	textures.push_back((src + "/textures/skybox/bot.png").c_str());
+	textures.push_back((src + "/textures/skybox/front.png").c_str());
+	textures.push_back((src + "/textures/skybox/back.png").c_str());
 	glGenTextures(1, &_skybox_id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_id);
 
@@ -99,7 +100,8 @@ void 	Render::_loadSkyboxTextures() {
 	{
 		SDL_Surface *surface = IMG_Load(textures[i].c_str());
 		if (!surface) {
-        	std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
+        	std::cout << "Failed to load skybox texture: " << std::endl << textures[i] \
+				<< std::endl << IMG_GetError() << std::endl;
 			gameQuit();
 		}
 		int mode = GL_RGB;
@@ -107,6 +109,7 @@ void 	Render::_loadSkyboxTextures() {
         	mode = GL_RGBA;
     	}
     	glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, mode, surface->w, surface->h, 0, mode, GL_UNSIGNED_BYTE, surface->pixels);
+		SDL_FreeSurface(surface);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -120,7 +123,8 @@ void 	Render::_loadSkyboxTextures() {
 void    Render::_loadCubeTextures(const char *file) {
     SDL_Surface *surface = IMG_Load(file);
     if (!surface) {
-        std::cout << "IMG_Load: " << IMG_GetError() << std::endl;
+        std::cout << "Failed to load cube texture: " << std::endl << file << std::endl \
+			<< IMG_GetError() << std::endl;
 		gameQuit();
 	}
 
@@ -143,14 +147,16 @@ void    Render::_loadCubeTextures(const char *file) {
 }
 
 void 	Render::_setupCubeTextures() {
-	_loadCubeTextures("../textures/grass.png");
-	_loadCubeTextures("../textures/grass_block_side.png");
-	_loadCubeTextures("../textures/dirt.png");
-	_loadCubeTextures("../textures/cobblestone.png");
-	_loadCubeTextures("../textures/sand.png");
-	_loadCubeTextures("../textures/snow.png");
-	_loadCubeTextures("../textures/snow_block_side.png");
-	_loadCubeTextures("../textures/stone.png");
+	std::string					src = getRessourceDir();
+	
+	_loadCubeTextures((src + "/textures/grass.png").c_str());
+	_loadCubeTextures((src + "/textures/grass_block_side.png").c_str());
+	_loadCubeTextures((src + "/textures/dirt.png").c_str());
+	_loadCubeTextures((src + "/textures/cobblestone.png").c_str());
+	_loadCubeTextures((src + "/textures/sand.png").c_str());
+	_loadCubeTextures((src + "/textures/snow.png").c_str());
+	_loadCubeTextures((src + "/textures/snow_block_side.png").c_str());
+	_loadCubeTextures((src + "/textures/stone.png").c_str());
 	_shader.setTexture("grass", 0);
 	_shader.setTexture("grass_side", 1);
 	_shader.setTexture("dirt", 2);
@@ -181,6 +187,29 @@ void    Render::_initText(Text &text) {
     text.setMat4("projection", text_proj);
 }
 
+void	Render::_switchScreenMode(Text &text) {
+	SDL_DisplayMode mode;
+	SDL_GetCurrentDisplayMode(0, &mode);
+
+	if (mode.w == _win_w && mode.h == _win_h) {
+		_win_w = 1080;
+		_win_h = 720;
+
+		SDL_SetWindowFullscreen(_window, 0);
+		SDL_SetWindowSize(_window, _win_w, _win_h);
+		SDL_SetRelativeMouseMode(SDL_TRUE);
+	}
+	else {
+		_win_w = mode.w;
+		_win_h = mode.h;
+
+		SDL_SetWindowFullscreen(_window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+		SDL_SetWindowSize(_window, _win_w, _win_h);
+	}
+	glViewport(0, 0 ,  _win_w, _win_h);
+	_initText(text);
+}
+
 void 	Render::gameLoop() {
 	Time				time = Time();
 	Inputs				inputs = Inputs();
@@ -196,11 +225,38 @@ void 	Render::gameLoop() {
 	_initText(text);
 
     std::string     fps;
+	bool			fullscreen_prev = false;
+	std::string		dots = ".";
+	while (!inputs.shouldQuit() && _manager.isLoading()) {
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		inputs.update();
+		bool	fullscreen_curr = inputs.keyState(Inputs::_FULLSCREEN);
+		if (fullscreen_prev && !fullscreen_curr) {
+			_switchScreenMode(text);
+		}
+		fullscreen_prev = fullscreen_curr;
+        text.draw("Loading" + dots, 25.0f, _win_h - 50.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
+        if (time.update()){
+			if (dots.length() < 3) {
+				dots += ".";
+			}
+			else {
+				dots = ".";
+			}
+            fps = time.fps();
+		}
+        SDL_GL_SwapWindow(_window);
+	}
 	while (!inputs.shouldQuit()) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		inputs.update();
 		_cam.update(time.deltaTime(), inputs);
-		_cam.deleteVoxel(16.0, inputs);
+    _cam.deleteVoxel(16.0, inputs);
+		bool	fullscreen_curr = inputs.keyState(Inputs::_FULLSCREEN);
+		if (fullscreen_prev && !fullscreen_curr) {
+			_switchScreenMode(text);
+		}
+		fullscreen_prev = fullscreen_curr;
 
 		//draw cubes
 		_shader.use();
@@ -221,7 +277,6 @@ void 	Render::gameLoop() {
         text.draw(".", _win_w * 0.5 - 2.0, _win_h * 0.5 - 2.0f, 1.0f, glm::vec3(1.0, 1.0f, 1.0f));
         if (time.update()){
             fps = time.fps();
-//			std::cout << time.fps() << "fps; " << chunks.size() << " chunks; " << _cam << std::endl;
 		}
         SDL_GL_SwapWindow(_window);
 	}

@@ -3,6 +3,8 @@
 #include <ft_vox.hpp>
 #include <cstddef>
 
+std::queue<std::array<unsigned int, 3>>	Mesh::_BUFFER_POOL = std::queue<std::array<unsigned int, 3>>();
+
 void 		Mesh::_createCube(Mesh::CubeData &data) {
 	const glm::vec3 p1 = glm::vec3(data.pos.x , data.pos.y , data.pos.z + 1.0f);
 	const glm::vec3 p2 = glm::vec3(data.pos.x + 1.0f, data.pos.y , data.pos.z + 1.0f);
@@ -162,9 +164,18 @@ void 	Mesh::draw() {
 }
 
 void 	Mesh::_setupBuffers() {
-	glGenVertexArrays(1, &_vao);
-    glGenBuffers(1, &_vbo);
-    glGenBuffers(1, &_ebo);
+    if (_BUFFER_POOL.size() > 0) {
+        std::array<unsigned int, 3> buffer_set = _BUFFER_POOL.front();
+        _BUFFER_POOL.pop();
+        _vao = buffer_set[0];
+        _vbo = buffer_set[1];
+        _ebo = buffer_set[2];
+    }
+    else {
+        glGenVertexArrays(1, &_vao);
+        glGenBuffers(1, &_vbo);
+        glGenBuffers(1, &_ebo);
+    }
 
     glBindVertexArray(_vao);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
@@ -182,18 +193,36 @@ void 	Mesh::_setupBuffers() {
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, tex_coords));
     glEnableVertexAttribArray(3);
     glVertexAttribIPointer(3, 1, GL_INT, sizeof(Mesh::Vertex), (void*)offsetof(Mesh::Vertex, texture));
-
     glBindVertexArray(0);
+
+    _is_ready = true;
 }
 
 void    Mesh::clearBuffers() {
-    _indices.clear();
-    _vertices.clear();
-    _next_index = 0;
-    glDeleteVertexArrays(1, &_vao);
-    glDeleteBuffers(1, &_vbo);
-    glDeleteBuffers(1, &_ebo);
+    if (_is_ready) {
+        _vertices.clear();
+        _indices.clear();
+        _next_index = 0;
+        std::array<unsigned int, 3> buffer_set = { _vao, _vbo, _ebo };
+        _BUFFER_POOL.push(buffer_set);
+        _vao = 0;
+        _vbo = 0;
+        _ebo = 0;
+        _is_ready = false;
+    }
 }
 
+void    Mesh::clearBufferPool() {
+    while (_BUFFER_POOL.size() > 0) {
+        std::array<unsigned int, 3> buffer_set = _BUFFER_POOL.front();
+        _BUFFER_POOL.pop();
+        glDeleteVertexArrays(1, &buffer_set[0]);
+        glDeleteBuffers(2, &buffer_set[1]);
+    }
+}
+
+Mesh::Mesh(): _vao(0), _vbo(0), _ebo(0), _is_ready(false) {}
+
 Mesh::~Mesh() {
+    clearBuffers();
 }

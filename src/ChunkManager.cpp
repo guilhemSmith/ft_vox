@@ -8,8 +8,8 @@ const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 
 const glm::u32vec3	ChunkManager::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
-const float			ChunkManager::VIEW_DISTANCE = 9;	
-const float			ChunkManager::LOAD_DISTANCE = 11;	
+const float			ChunkManager::VIEW_DISTANCE = 9;
+const float			ChunkManager::LOAD_DISTANCE = 11;
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_world(seed),
@@ -20,6 +20,7 @@ ChunkManager::ChunkManager(unsigned int seed):
 	_last_cam_chunk(),
 	_mtx(),
 	_keep_loading(true),
+	_is_loading(true),
 	_loading_thread(&ChunkManager::_loadRoutine, this)
 {}
 
@@ -189,15 +190,17 @@ void					ChunkManager::_detectVisibleChunks(glm::vec3 pos, glm::vec3 dir) {
 }
 
 void					ChunkManager::_unloadTooFar(glm::vec3 cam_pos_chunk) {
-	_mtx.lock();
-	for (auto &loaded : _chunks_loaded) {
-		glm::vec3 pos_chunk = loaded.second->getPosChunk();
-		glm::vec3 offset = glm::abs(pos_chunk - cam_pos_chunk);
-		if (offset.x > LOAD_DISTANCE + 5 || offset.y > LOAD_DISTANCE + 5 || offset.z > LOAD_DISTANCE + 5) {
-			_chunks_to_unload.emplace(loaded.second->getPosChunk());
+	if (_chunks_to_unload.size() == 0) {
+		_mtx.lock();
+		for (auto &loaded : _chunks_loaded) {
+			glm::vec3 pos_chunk = loaded.second->getPosChunk();
+			glm::vec3 offset = glm::abs(pos_chunk - cam_pos_chunk);
+			if (offset.x > LOAD_DISTANCE + 2 || offset.y > LOAD_DISTANCE + 2 || offset.z > LOAD_DISTANCE + 2) {
+				_chunks_to_unload.emplace(loaded.second->getPosChunk());
+			}
 		}
+		_mtx.unlock();
 	}
-	_mtx.unlock();
 }
 
 void					ChunkManager::_detectChunkToLoad(glm::u32vec3 cam_chunk_pos) {
@@ -244,14 +247,15 @@ void								ChunkManager::loadInitialChunks(glm::vec3 cam_pos) {
 }
 
 std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
-	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
-	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (ChunkManager::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
+	glm::i32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
+	glm::i32vec3		inbound_cam_chunk_pos_signed = clamp(cam_chunk_pos, {0, 0, 0}, (glm::i32vec3(SIZES_CHUNKS) - glm::i32vec3(1, 1, 1)));
+	glm::u32vec3		inbound_cam_chunk_pos = inbound_cam_chunk_pos_signed;
 
-	if (cam_chunk_pos != _last_cam_chunk) {
-		_world.cacheCavernsAround(cam_chunk_pos.x, cam_chunk_pos.z);
-		_detectChunkToLoad(cam_chunk_pos);
-		_unloadTooFar(cam_chunk_pos);
-		_last_cam_chunk = cam_chunk_pos;
+	if (inbound_cam_chunk_pos != _last_cam_chunk) {
+		_world.cacheCavernsAround(inbound_cam_chunk_pos.x, inbound_cam_chunk_pos.z);
+		_detectChunkToLoad(inbound_cam_chunk_pos);
+		_unloadTooFar(inbound_cam_chunk_pos);
+		_last_cam_chunk = inbound_cam_chunk_pos;
 	}
 	if (_chunks_to_unload.size() > 0) {
 		while (_chunks_to_unload.size() > 0) {
@@ -267,7 +271,9 @@ std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_
 void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 	unsigned int index = chunkIndex(pos);
 	try {
+		_mtx.lock();
 		_chunks_loaded.erase(index);
+		_mtx.unlock();
 	}
 	catch (std::out_of_range oor) {
 		//std::cout << "Trying to free unloaded chunk." << std::endl;
@@ -278,6 +284,7 @@ void				ChunkManager::removeChunk(glm::u32vec3 pos) {
 void				ChunkManager::_loadRoutine(void) {
 	while (_keep_loading) {
 		if (_chunks_to_load.size() > 0) {
+			_is_loading = true;
 			_mtx.lock();
 			std::array<glm::u32vec3, 2> area = _chunks_to_load.front();
 			_chunks_to_load.pop();
@@ -293,7 +300,9 @@ void				ChunkManager::_loadRoutine(void) {
 								glm::u32vec3	pos(x, y, z);
 								unsigned int index = chunkIndex(pos);
 								if (_chunks_loaded.find(index) == _chunks_loaded.end()) {
+									_mtx.lock();
 									_chunks_loaded[index] = std::make_shared<Chunk>(_world, pos * Chunk::SIZE);
+									_mtx.unlock();
 								}
 							}
 						}
@@ -301,6 +310,12 @@ void				ChunkManager::_loadRoutine(void) {
 				}
 			}
 		}
+		else {
+			_is_loading = false;
+		}
 	}
+}
 
+bool				ChunkManager::isLoading(void) const {
+	return _is_loading;
 }

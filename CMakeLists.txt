@@ -9,14 +9,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
-find_package(SDL2_ttf REQUIRED)
 find_package(glm REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(OpenGL REQUIRED)
 find_package(Freetype REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 include_directories(${SDL2_IMAGE_INCLUDE_DIRS})
-include_directories(${SDL2_TTF_INCLUDE_DIRS})
 include_directories(${GLM_INCLUDE_DIRS})
 include_directories(${GLEW_INCLUDE_DIRS})
 include_directories(${FREETYPE_INCLUDE_DIRS})
@@ -44,12 +42,19 @@ if(WIN32)
 	)
 endif()
 
+set(
+	RES_PATH
+	"\"${CMAKE_BINARY_DIR}/resources\""
+)
+
 configure_file(
 	OS.hpp.in
 	OS.hpp
 )
 
-file(GLOB SOURCES
+file(
+	GLOB
+	SOURCES
     "${PROJECT_SOURCE_DIR}/src/ft_vox.cpp"
     "${PROJECT_SOURCE_DIR}/src/Camera.cpp"
     "${PROJECT_SOURCE_DIR}/src/Inputs.cpp"
@@ -64,13 +69,22 @@ file(GLOB SOURCES
 	"${PROJECT_SOURCE_DIR}/src/World.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Cavern.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Text.cpp"
+	"${PROJECT_SOURCE_DIR}/src/OS.cpp"
+)
+
+file(
+	COPY
+	"${PROJECT_SOURCE_DIR}/textures"
+	"${PROJECT_SOURCE_DIR}/fonts"
+	"${PROJECT_SOURCE_DIR}/Shaders"
+	DESTINATION
+	"${CMAKE_BINARY_DIR}/resources"
 )
 
 add_executable(ft_vox ${SOURCES})
 target_link_libraries(ft_vox
 	${SDL2_LIBRARIES}
 	${SDL2_IMAGE_LIBRARIES}
-	${SDL2_TTF_LIBRARIES}
 	${GLM_LIBRARIES}
 	Freetype::Freetype
         GLEW::GLEW

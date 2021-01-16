@@ -37,8 +37,11 @@ public:
 	static const SDL_Scancode		_BACKWARD;
 	static const SDL_Scancode		_LEFT;
 	static const SDL_Scancode		_RIGHT;
+	static const SDL_Scancode		_UP;
+	static const SDL_Scancode		_DOWN;
 	static const SDL_Scancode		_SPRINT;
 	static const SDL_Scancode		_QUIT;
+	static const SDL_Scancode		_FULLSCREEN;
 };
 
 #endif

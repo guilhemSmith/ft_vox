@@ -28,22 +28,22 @@ double				World::_setLayers(std::array<unsigned int, 3>& layers_voxel, unsigned 
 	double height_mountains = glm::abs((amplitude + 1.0) * HEIGHT_AMPLITUDE * 4);
 	double height_hills = amplitude * HEIGHT_AMPLITUDE;
 	if (biome < -BIOME_STEP) {
-		layers_voxel = {Chunk::Voxel::Rock, Chunk::Voxel::Dirt, Chunk::Voxel::Sand};
+		layers_voxel = {Chunk::Voxel::Stone, Chunk::Voxel::Dirt, Chunk::Voxel::Sand};
 		double intensity_biome = -((biome + BIOME_STEP) / (1 - BIOME_STEP));
 		height += Noise::interpolateCosine(height_hills, height_desert, -biome);
 		mid_layer_size = Noise::interpolateCosine(10, 30, intensity_biome);
 		top_layer_size = Noise::interpolateCosine(0, 40, intensity_biome);
 	}
 	else if (biome > BIOME_STEP) {
-		layers_voxel = {Chunk::Voxel::Rock, Chunk::Voxel::Rock, Chunk::Voxel::Grass};
+		layers_voxel = {Chunk::Voxel::Stone, Chunk::Voxel::Stone, Chunk::Voxel::Grass};
 		double intensity_biome = (biome - BIOME_STEP) / (1 - BIOME_STEP);
 		height += Noise::interpolateCosine(height_hills, height_mountains, biome);
 		if (height > 180) {
-			layers_voxel[2] = Chunk::Voxel::Rock;
+			layers_voxel[2] = Chunk::Voxel::Snow;
 		}
 	}
 	else {
-		layers_voxel = {Chunk::Voxel::Rock, Chunk::Voxel::Dirt, Chunk::Voxel::Grass};
+		layers_voxel = {Chunk::Voxel::Stone, Chunk::Voxel::Dirt, Chunk::Voxel::Grass};
 		if (biome > 0.0) {
 			double intensity_biome = biome / BIOME_STEP;
 			height += Noise::interpolateCosine(height_hills, height_mountains, biome);

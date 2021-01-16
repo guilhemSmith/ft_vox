@@ -20,6 +20,7 @@ private:
 	glm::u32vec3												_last_cam_chunk;
 	std::mutex													_mtx;
 	bool														_keep_loading;
+	bool														_is_loading;
 	std::thread													_loading_thread;
 
 	void									                    _detectVisibleChunks(glm::vec3 pos, glm::vec3 dir);
@@ -43,6 +44,7 @@ public:
 	std::vector<std::weak_ptr<Chunk>>&							getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir);
 	glm::vec3													spawnPos(void) const;
 	void														removeChunk(glm::u32vec3 pos);
+	bool														isLoading(void) const;
 
 	static const glm::u32vec3									SIZES_VOXELS;
 	static const glm::u32vec3									SIZES_CHUNKS;
