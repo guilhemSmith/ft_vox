@@ -38,12 +38,6 @@ void 	Render::gameInit() {
         SDL_Quit();
         exit(0);
     }
-	SDL_DisplayMode mode;
-	SDL_GetCurrentDisplayMode(0, &mode);
-	_win_w = mode.w;
-	_win_h = mode.h;
-	// SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-	// SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 16);
 	_window = SDL_CreateWindow(
 			"ft_vox",
 			SDL_WINDOWPOS_UNDEFINED,
@@ -51,7 +45,6 @@ void 	Render::gameInit() {
 			_win_w,
 			_win_h,
 			SDL_WINDOW_OPENGL
-			| SDL_WINDOW_FULLSCREEN_DESKTOP
 			);
 	if (_window == NULL) {
         std::cout << "failed to create window" << std::endl;
@@ -70,8 +63,6 @@ void 	Render::gameInit() {
     }
 	SDL_SetRelativeMouseMode(SDL_TRUE);
 	glEnable(GL_DEPTH_TEST);
-	// SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" );
-	// glEnable(GL_MULTISAMPLE);
 	glViewport(0, 0 ,  _win_w, _win_h);
     glewExperimental = GL_TRUE;
 	GLenum err = glewInit();
