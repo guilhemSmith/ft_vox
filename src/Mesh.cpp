@@ -120,10 +120,7 @@ void	Mesh::init(const std::array<std::array<std::array<char, 32>, 32>, 32> &cube
 		for (int y = 0; y < Chunk::SIZE; y++) {
 			for (int x = 0; x < Chunk::SIZE; x++) {
                 if (cubes[x][y][z] == Chunk::Voxel::Empty)
-                {
-                    std::cout << "empty voxel on: " << x << " " << y << " " << z << std::endl;
                     continue;
-                }
                 Mesh::CubeData cube_data = Mesh::CubeData(glm::vec3(x + pos.x, y + pos.y, z + pos.z), cubes[x][y][z]);
                 if (x == 0 && (neighbours[0] != nullptr && neighbours[0]->hasVoxelAt(Chunk::SIZE - 1, y, z)))
                     cube_data.r_neighbor = true;
@@ -190,6 +187,9 @@ void 	Mesh::_setupBuffers() {
 }
 
 void    Mesh::clearBuffers() {
+    _indices.clear();
+    _vertices.clear();
+    _next_index = 0;
     glDeleteVertexArrays(1, &_vao);
     glDeleteBuffers(1, &_vbo);
     glDeleteBuffers(1, &_ebo);

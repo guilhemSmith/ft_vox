@@ -12,8 +12,6 @@ bool 		Chunk::hasVoxelAt(int x, int y, int z) const {
 	return _cubes[x][y][z] != Voxel::Empty;
 }
 
-
-//means the others see it as empty but not himself
 void        Chunk::deleteVoxel(glm::vec3 pos) {
     _cubes[pos.x][pos.y][pos.z] = Voxel::Empty;
 }
@@ -33,13 +31,10 @@ void 		Chunk::draw() {
 }
 
 void 		Chunk::remesh(std::array<std::shared_ptr<Chunk>, 6> &neighbors) {
-	bool redraw= false;
 	if (is_meshed) {
-	    std::cout << "cleared buffers" << std::endl;
 		_mesh.clearBuffers();
-		redraw = true;
 	}
-	_mesh.init(_cubes, _pos, neighbors, redraw);
+	_mesh.init(_cubes, _pos, neighbors);
 	is_meshed = true;
 }
 

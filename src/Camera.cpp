@@ -7,8 +7,7 @@
 const glm::vec3			Camera::_WORLD_UP = {0.0f, 1.0f, 0.0f};
 
 Camera::Camera(ChunkManager& manager): 
-	//_position(manager.spawnPos()),
-	_position(-1 , -1 , -1),
+	_position(manager.spawnPos()),
 	_direction({0, 0, -1}),
 	_yaw(0.0f),
 	_pitch(0.0f),
@@ -79,7 +78,7 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
     int start_y = floor(_position.y);
     int start_z = floor(_position.z);
 
-    std::cout << "RAYCAST!on pos: " << start_x << " " << start_y << " " << start_z << std::endl;
+    //std::cout << "RAYCAST!on pos: " << start_x << " " << start_y << " " << start_z << std::endl;
     int step_x = (normalized_dir.x > 0 ) ? 1 : -1;
     int step_y = (normalized_dir.y > 0 ) ? 1 : -1;
     int step_z = (normalized_dir.z > 0 ) ? 1 : -1;
@@ -103,7 +102,8 @@ void 			Camera::deleteVoxel(float max_dist, const Inputs& input) {
     {
         bool   hit = _chunk_manager_ref.tryDeleteVoxel(glm::u32vec3(start_x, start_y, start_z));
         if (hit) {
-            std::cout << "hit found on voxel: " << start_x << " " << start_y << " " << start_z <<std::endl;
+            _chunk_manager_ref.procNeightborsReload(glm::u32vec3(start_x, start_y, start_z));
+            //std::cout << "hit found on voxel: " << start_x << " " << start_y << " " << start_z <<std::endl;
             _is_casting =false;
             return;
         }

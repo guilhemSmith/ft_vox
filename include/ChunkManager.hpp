@@ -34,6 +34,7 @@ public:
 	~ChunkManager();
 
 	bool                                                        tryDeleteVoxel(glm::u32vec3 pos);
+	void 														procNeightborsReload(glm::u32vec3 hit);
 
     bool				                                        accessVoxel(glm::u32vec3 pos);
 

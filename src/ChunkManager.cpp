@@ -8,8 +8,8 @@ const glm::u32vec3	ChunkManager::SIZES_VOXELS = {
 
 const glm::u32vec3	ChunkManager::SIZES_CHUNKS = SIZES_VOXELS / Chunk::SIZE;
 
-const float			ChunkManager::VIEW_DISTANCE = 1;	
-const float			ChunkManager::LOAD_DISTANCE = 2;	
+const float			ChunkManager::VIEW_DISTANCE = 9;	
+const float			ChunkManager::LOAD_DISTANCE = 11;	
 
 ChunkManager::ChunkManager(unsigned int seed):
 	_world(seed),
@@ -28,20 +28,55 @@ ChunkManager::~ChunkManager() {
 	_chunks_loaded.clear();
 }
 
-//could be better
+void 				ChunkManager::procNeightborsReload(glm::u32vec3 hit) {
+    glm::i32vec3			chunk_pos = hit / Chunk::SIZE;
+    glm::i32vec3			voxel_pos = hit % Chunk::SIZE;
+	if (voxel_pos.x == 0) {
+		glm::u32vec3 n_pos = chunk_pos + glm::i32vec3(-1, 0, 0);
+		auto ptr = _chunks_loaded.find(chunkIndex(n_pos));
+		if (ptr != _chunks_loaded.end())
+			_chunkRemesh(n_pos);
+	}
+	if (voxel_pos.x == Chunk::SIZE - 1) {
+		glm::u32vec3 n_pos = chunk_pos + glm::i32vec3(1, 0, 0);
+		auto ptr = _chunks_loaded.find(chunkIndex(n_pos));
+		if (ptr != _chunks_loaded.end())
+			_chunkRemesh(n_pos);
+	}
+	if (voxel_pos.y == 0) {
+		glm::u32vec3 n_pos = chunk_pos + glm::i32vec3(0, -1, 0);
+		auto ptr = _chunks_loaded.find(chunkIndex(n_pos));
+		if (ptr != _chunks_loaded.end())
+			_chunkRemesh(n_pos);
+	}
+	if (voxel_pos.y == Chunk::SIZE - 1) {
+		glm::u32vec3 n_pos = chunk_pos + glm::i32vec3(0, 1, 0);
+		auto ptr = _chunks_loaded.find(chunkIndex(n_pos));
+		if (ptr != _chunks_loaded.end())
+			_chunkRemesh(n_pos);
+	}
+	if (voxel_pos.z == 0) {
+		glm::u32vec3 n_pos = chunk_pos + glm::i32vec3(0, 0, -1);
+		auto ptr = _chunks_loaded.find(chunkIndex(n_pos));
+		if (ptr != _chunks_loaded.end())
+			_chunkRemesh(n_pos);
+	}
+	if (voxel_pos.z == Chunk::SIZE - 1) {
+		glm::u32vec3 n_pos = chunk_pos + glm::i32vec3(0, 0, 1);
+		auto ptr = _chunks_loaded.find(chunkIndex(n_pos));
+		if (ptr != _chunks_loaded.end())
+			_chunkRemesh(n_pos);
+	}
+}
+
 bool                ChunkManager::tryDeleteVoxel(glm::u32vec3 pos) {
     glm::u32vec3			chunk_pos = pos / Chunk::SIZE;
     glm::u32vec3			voxel_pos = pos % Chunk::SIZE;
-    /*
-    glm::u32vec3			zero_pos = chunk_pos * Chunk::SIZE;
-    glm::u32vec3			voxel_pos = pos - zero_pos;
-    */
     unsigned int			index = chunkIndex(chunk_pos);
     try {
         std::shared_ptr<Chunk> chunk = _chunks_loaded.at(index);
         if (chunk->hasVoxelAt(voxel_pos.x, voxel_pos.y, voxel_pos.z)) {
             chunk->deleteVoxel(voxel_pos);
-//            chunk->clearMeshBuffers();
             _chunkRemesh(chunk_pos);
             return true;
         }
@@ -49,7 +84,6 @@ bool                ChunkManager::tryDeleteVoxel(glm::u32vec3 pos) {
     catch (std::out_of_range oor) {
         return false;
     }
-    //get chunk from world pos
 
     return false;
 }
@@ -63,11 +97,11 @@ unsigned int		ChunkManager::chunkIndex(glm::u32vec3 pos) const {
 }
 
 bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
-    glm::u32vec3 pos(pos_chunk);
+    glm::i32vec3 pos(pos_chunk);
     unsigned int index = chunkIndex(pos_chunk);
     std::array<std::shared_ptr<Chunk>, 6> neighbors;
 	if (pos.x > 0.0) {
-		auto x_p = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(-1, 0, 0)));
+		auto x_p = _chunks_loaded.find(chunkIndex(pos + glm::i32vec3(-1, 0, 0)));
 		if (x_p != _chunks_loaded.end())
 			neighbors[0] = x_p->second;
 		else 
@@ -77,7 +111,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
 		neighbors[0] = nullptr;
 
 	if (pos.x < SIZES_CHUNKS.x) {
-		auto x_n = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(1, 0, 0)));
+		auto x_n = _chunks_loaded.find(chunkIndex(pos + glm::i32vec3(1, 0, 0)));
 		if (x_n != _chunks_loaded.end())
 			neighbors[1] = x_n->second;
 		else
@@ -87,7 +121,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
         neighbors[1] = nullptr;
 
 	if (pos.y > 0.0) {
-		auto y_p = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(0, -1, 0)));
+		auto y_p = _chunks_loaded.find(chunkIndex(pos + glm::i32vec3(0, -1, 0)));
 		if (y_p != _chunks_loaded.end())
 			neighbors[2] = y_p->second;
 		else
@@ -97,7 +131,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
         neighbors[2] = nullptr;
 
 	if (pos.y < SIZES_CHUNKS.y) {
-		auto y_n = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(0, 1, 0)));
+		auto y_n = _chunks_loaded.find(chunkIndex(pos + glm::i32vec3(0, 1, 0)));
 		if (y_n != _chunks_loaded.end())
 			neighbors[3] = y_n->second;
 		else
@@ -108,7 +142,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
 
 
 	if (pos.z > 0.0) {
-		auto z_p = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(0, 0, -1)));
+		auto z_p = _chunks_loaded.find(chunkIndex(pos + glm::i32vec3(0, 0, -1)));
 		if (z_p != _chunks_loaded.end())
 			neighbors[4] = z_p->second;
 		else
@@ -118,7 +152,7 @@ bool				ChunkManager::_chunkRemesh(glm::vec3 pos_chunk) {
         neighbors[4] = nullptr;
 
 	if (pos.z < SIZES_CHUNKS.z) {
-		auto z_n = _chunks_loaded.find(chunkIndex(pos + glm::u32vec3(0, 0, 1)));
+		auto z_n = _chunks_loaded.find(chunkIndex(pos + glm::i32vec3(0, 0, 1)));
 		if (z_n != _chunks_loaded.end())
 			neighbors[5] = z_n->second;
 		else

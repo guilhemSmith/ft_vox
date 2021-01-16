@@ -11,8 +11,9 @@ void 	Render::drawChunks(std::vector<std::weak_ptr<Chunk>>& chunks) {
 	for (auto chunk_ptr : chunks)
 	{
 	    if (auto chunk = chunk_ptr.lock()) {
-            if (chunk->is_empty)
+            if (chunk->is_empty) {
                 continue;
+			}
             glm::mat4 model = glm::mat4(1.0f);
             glm::translate(model, chunk->getPos());
             _shader.setMat4("model", model);
@@ -80,7 +81,7 @@ void 	Render::gameInit() {
      glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
      glEnable(GL_BLEND);
      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-     // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void 	Render::_loadSkyboxTextures() {
