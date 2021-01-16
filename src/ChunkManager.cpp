@@ -187,14 +187,15 @@ void								ChunkManager::loadInitialChunks(glm::vec3 cam_pos) {
 }
 
 std::vector<std::weak_ptr<Chunk>>&	ChunkManager::getChunksFromPos(glm::vec3 cam_pos, glm::vec3 cam_dir) {
-	glm::u32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
-	glm::u32vec3		inbound_cam_chunk_pos = clamp(cam_chunk_pos, {0, 0, 0}, (ChunkManager::SIZES_CHUNKS - glm::u32vec3(1, 1, 1)));
+	glm::i32vec3		cam_chunk_pos = cam_pos / static_cast<float>(Chunk::SIZE);
+	glm::i32vec3		inbound_cam_chunk_pos_signed = clamp(cam_chunk_pos, {0, 0, 0}, (glm::i32vec3(SIZES_CHUNKS) - glm::i32vec3(1, 1, 1)));
+	glm::u32vec3		inbound_cam_chunk_pos = inbound_cam_chunk_pos_signed;
 
-	if (cam_chunk_pos != _last_cam_chunk) {
-		_world.cacheCavernsAround(cam_chunk_pos.x, cam_chunk_pos.z);
-		_detectChunkToLoad(cam_chunk_pos);
-		_unloadTooFar(cam_chunk_pos);
-		_last_cam_chunk = cam_chunk_pos;
+	if (inbound_cam_chunk_pos != _last_cam_chunk) {
+		_world.cacheCavernsAround(inbound_cam_chunk_pos.x, inbound_cam_chunk_pos.z);
+		_detectChunkToLoad(inbound_cam_chunk_pos);
+		_unloadTooFar(inbound_cam_chunk_pos);
+		_last_cam_chunk = inbound_cam_chunk_pos;
 	}
 	if (_chunks_to_unload.size() > 0) {
 		while (_chunks_to_unload.size() > 0) {
