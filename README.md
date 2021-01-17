@@ -2,7 +2,7 @@
 
 ft_vox is a simple Voxel demo written in C++ using OpenGL made by [baudiber](https://github.com/baudiber) and [gsmith](https://github.com/guilhemSmith).
 
-![travel](screenshots/travel1.gif)
+![travel](media/travel.gif)
 
 ## Compilation from sources
 ### git-lfs
@@ -41,3 +41,5 @@ On qwerty keyboard:
 | <kbd>shift</kbd>      | sprint          |
 | <kbd>f</kbd>          | fullscreen mode |
 | <kbd>esc</kbd>        | quit demo       |
+
+![panorama](media/panorama.gif)
