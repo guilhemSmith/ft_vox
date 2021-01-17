@@ -1,11 +1,14 @@
 #include "ft_vox.hpp"
 #include "Render.hpp"
 #include "OS.hpp"
+#include "Resources.hpp"
 #include <time.h>
 #include <stdlib.h>
 
 unsigned int		parseArg(int argc, char *argv[]) {
 	unsigned int	seed = time(NULL);
+
+	Resources::setPath(argv[0]);
 	if (argc > 1) {
 		seed = std::atoi(argv[1]);
 	}

@@ -1,6 +1,7 @@
 #include "OS.hpp"
 #include "Text.hpp"
 #include "Render.hpp"
+#include "Resources.hpp"
 #include <fstream>
 #include <sstream>
 #include <ft2build.h>
@@ -9,7 +10,7 @@
 Text::Text(unsigned int font_size) {
     FT_Library  ft;
     FT_Face     face;
-    std::string font_path = getRessourceDir() + "/fonts/Roboto-Regular.ttf";
+    std::string font_path = Resources::getPath("fonts/Roboto-Regular.ttf");
 
     if (FT_Init_FreeType(&ft))
     {
@@ -99,8 +100,8 @@ void 		Text::computeShaders() {
 	unsigned int fragment_shader;
 	int success;
 	char info_log[512];
-    std::string vertex_shader_path = getRessourceDir() + "/Shaders/text_vertex_shader.glsl";
-    std::string fragment_shader_path = getRessourceDir() + "/Shaders/text_fragment_shader.glsl";
+    std::string vertex_shader_path = Resources::getPath("Shaders/text_vertex_shader.glsl");
+    std::string fragment_shader_path = Resources::getPath("Shaders/text_fragment_shader.glsl");
 
 	_parseShaders(vertex_shader_path.c_str(), fragment_shader_path.c_str());
 	const char* v_shader_code = _vertex_shader_src.c_str();

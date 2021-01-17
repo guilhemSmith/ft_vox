@@ -1,5 +1,6 @@
 #include "OS.hpp"
 #include "Render.hpp"
+#include "Resources.hpp"
 
 Render::Render(unsigned int seed): _manager(seed), _cam(_manager) {
 	_win_w = 1280;
@@ -85,14 +86,13 @@ void 	Render::gameInit() {
 
 void 	Render::_loadSkyboxTextures() {
 	std::vector<std::string> textures;
-	std::string					src = getRessourceDir();
 
-	textures.push_back((src + "/textures/skybox/right.png").c_str());
-	textures.push_back((src + "/textures/skybox/left.png").c_str());
-	textures.push_back((src + "/textures/skybox/top.png").c_str());
-	textures.push_back((src + "/textures/skybox/bot.png").c_str());
-	textures.push_back((src + "/textures/skybox/front.png").c_str());
-	textures.push_back((src + "/textures/skybox/back.png").c_str());
+	textures.push_back(Resources::getPath("textures/skybox/right.png").c_str());
+	textures.push_back(Resources::getPath("textures/skybox/left.png").c_str());
+	textures.push_back(Resources::getPath("textures/skybox/top.png").c_str());
+	textures.push_back(Resources::getPath("textures/skybox/bot.png").c_str());
+	textures.push_back(Resources::getPath("textures/skybox/front.png").c_str());
+	textures.push_back(Resources::getPath("textures/skybox/back.png").c_str());
 	glGenTextures(1, &_skybox_id);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, _skybox_id);
 
@@ -147,16 +147,14 @@ void    Render::_loadCubeTextures(const char *file) {
 }
 
 void 	Render::_setupCubeTextures() {
-	std::string					src = getRessourceDir();
-	
-	_loadCubeTextures((src + "/textures/grass.png").c_str());
-	_loadCubeTextures((src + "/textures/grass_block_side.png").c_str());
-	_loadCubeTextures((src + "/textures/dirt.png").c_str());
-	_loadCubeTextures((src + "/textures/cobblestone.png").c_str());
-	_loadCubeTextures((src + "/textures/sand.png").c_str());
-	_loadCubeTextures((src + "/textures/snow.png").c_str());
-	_loadCubeTextures((src + "/textures/snow_block_side.png").c_str());
-	_loadCubeTextures((src + "/textures/stone.png").c_str());
+	_loadCubeTextures(Resources::getPath("textures/grass.png").c_str());
+	_loadCubeTextures(Resources::getPath("textures/grass_block_side.png").c_str());
+	_loadCubeTextures(Resources::getPath("textures/dirt.png").c_str());
+	_loadCubeTextures(Resources::getPath("textures/cobblestone.png").c_str());
+	_loadCubeTextures(Resources::getPath("textures/sand.png").c_str());
+	_loadCubeTextures(Resources::getPath("textures/snow.png").c_str());
+	_loadCubeTextures(Resources::getPath("textures/snow_block_side.png").c_str());
+	_loadCubeTextures(Resources::getPath("textures/stone.png").c_str());
 	_shader.setTexture("grass", 0);
 	_shader.setTexture("grass_side", 1);
 	_shader.setTexture("dirt", 2);

@@ -1,6 +1,7 @@
 #include "OS.hpp"
 #include "Skybox.hpp"
 #include "Render.hpp"
+#include "Resources.hpp"
 #include <fstream>
 #include <sstream>
 
@@ -98,8 +99,8 @@ void 		Skybox::computeShaders() {
 	unsigned int fragment_shader;
 	int success;
 	char info_log[512];
-    std::string vertex_shader_path = getRessourceDir() + "/Shaders/skybox_vertex_shader.glsl";
-    std::string fragment_shader_path = getRessourceDir() + "/Shaders/skybox_fragment_shader.glsl";
+    std::string vertex_shader_path = Resources::getPath("Shaders/skybox_vertex_shader.glsl");
+    std::string fragment_shader_path = Resources::getPath("Shaders/skybox_fragment_shader.glsl");
 
 	_parseShaders(vertex_shader_path.c_str(), fragment_shader_path.c_str());
 	const char* v_shader_code = _vertex_shader_src.c_str();

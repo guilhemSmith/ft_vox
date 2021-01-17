@@ -69,7 +69,7 @@ file(
 	"${PROJECT_SOURCE_DIR}/src/World.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Cavern.cpp"
 	"${PROJECT_SOURCE_DIR}/src/Text.cpp"
-	"${PROJECT_SOURCE_DIR}/src/OS.cpp"
+	"${PROJECT_SOURCE_DIR}/src/Resources.cpp"
 )
 
 file(
