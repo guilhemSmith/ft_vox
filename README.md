@@ -2,7 +2,11 @@
 
 ft_vox is a simple Voxel demo written in C++ using OpenGL made by [baudiber](https://github.com/baudiber) and [gsmith](https://github.com/guilhemSmith).
 
+<center>
+
 ![travel](media/travel.gif)
+
+</center>
 
 ## Compilation from sources
 ### git-lfs
@@ -17,6 +21,7 @@ When the build is done, the executable file `ft_vox` and its `resources` folder 
 To move them somewhere else on your system, always keep the binary and the resources folder together in the same dir.  
 _example: `cp -R ft_vox resources ~/mygamefolder/voxdemo`_
 
+![panorama](media/panorama.gif)
 ## Usage  
 ### Launch
 `./ft_vox` will launch the demo with a random seed.  
@@ -29,6 +34,8 @@ _example: `./ft_vox 1603917848`_
 ### controls
 
 On qwerty keyboard: 
+<center>
+
 | input                 | effect          |
 | --------------------- | --------------- |
 | <kbd>left-click</kbd> | delete cube     |
@@ -42,4 +49,6 @@ On qwerty keyboard:
 | <kbd>f</kbd>          | fullscreen mode |
 | <kbd>esc</kbd>        | quit demo       |
 
-![panorama](media/panorama.gif)
+![destruction](media/destruction.gif)
+
+</center>
