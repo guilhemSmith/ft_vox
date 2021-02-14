@@ -9,9 +9,6 @@ ft_vox is a simple Voxel demo written in C++ using OpenGL made by [baudiber](htt
 </center>
 
 ## Compilation from sources
-### git-lfs
-Textures and font files are stored with [git-lfs](https://git-lfs.github.com/).  
-Make sure it is installed before cloning.
 ### On macOs and Linux
 * `./setup.sh` to install external dependencies. On Mac it is advised to have brew already installed,
 * `mkdir build && cd build`, to create the build dir,
